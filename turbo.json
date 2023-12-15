@@ -1,0 +1,27 @@
+{
+  "$schema": "https://turborepo.org/schema.json",
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"]
+    },
+    "watch": {
+      // https://github.com/vercel/turborepo/issues/986#issuecomment-1091384632
+      "cache": false
+    },
+    "dev": {},
+    "lint": {
+      // A package's `lint` script has no dependencies and
+      // can be run whenever. It also has no filesystem outputs.
+      "outputs": []
+    },
+    "fix": {},
+    "ts-check": {},
+    "deploy": {
+      // A package's `deploy` script depends on the `build`,
+      // `test`, and `lint` scripts of the same package
+      // being completed. It also has no filesystem outputs.
+      "dependsOn": ["build", "test", "lint"],
+      "outputs": []
+    }
+  }
+}

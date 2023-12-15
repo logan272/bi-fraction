@@ -1,0 +1,36 @@
+{
+  "name": "@web3-utils/fraction",
+  "description": "Fraction number library",
+  "version": "0.0.1",
+  "keywords": [
+    "web3-utils",
+    "Fraction number"
+  ],
+  "author": "Logan Luo <github.com/logan272>",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "types": "./dist/esm/index.d.ts",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "scripts": {
+    "build": "tsc;tsc --module commonjs --outDir dist/cjs",
+    "watch": "chokidar 'src/**/*.ts' -c 'pnpm -wc exec turbo run build --filter=detect-provider'",
+    "lint": "eslint src",
+    "fix": "eslint src --fix",
+    "ts-check": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/web3-utils/web3-utils.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "bugs": {
+    "url": "https://github.com/web3-utils/web3-utils/issues"
+  },
+  "homepage": "https://github.com/web3-utils/web3-utils#readme"
+}

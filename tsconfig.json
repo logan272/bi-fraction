@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "ES2020",
+    "module": "ESNEXT",
+    "moduleResolution": "Node",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "noImplicitOverride": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": false,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "types": ["node", "jest"],
+    "forceConsistentCasingInFileNames": true,
+    "pretty": true,
+    "baseUrl": ".",
+    "paths": {
+      "@site/*": ["site/src/*"],
+      "@public/*": ["site/public/*"],
+      "@example-react/*": ["packages/examples/react/src/*"]
+    }
+  },
+  "exclude": ["**/*.spec.ts", "**/*.test.ts", "**/*.spec.tsx", "**/*.test.tsx"]
+}

@@ -1,0 +1,60 @@
+{
+  "name": "web3-utils",
+  "private": true,
+  "description": "Web3 util libraries",
+  "author": "Logan Luo <github.com/logan272>",
+  "license": "MIT",
+  "keywords": [
+    "web3",
+    "utils"
+  ],
+  "engines": {
+    "node": ">= 16",
+    "pnpm": ">= 8"
+  },
+  "packageManager": "pnpm@8.6.0",
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "turbo run build",
+    "watch": "turbo run watch --parallel",
+    "test": "jest --silent",
+    "lint": "turbo run lint",
+    "fix": "turbo run fix",
+    "ts-check": "turbo run ts-check",
+    "release": "changeset publish && git push --follow-tags",
+    "clean": "rm -rf node_modules/.cache && pnpm -p -r -c exec rm -rf dist tsconfig.tsbuildinfo .turbo .next",
+    "purge": "pnpm clean && pnpm -p -r -c exec rm -rf node_modules",
+    "refresh": "pnpm clean && pnpm build",
+    "prepare": "husky install && pnpm build"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": "eslint --fix"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.1",
+    "@commitlint/cli": "^18.4.3",
+    "@commitlint/config-conventional": "^18.4.3",
+    "@types/jest": "^29.5.11",
+    "@types/node": "^20.10.4",
+    "@typescript-eslint/eslint-plugin": "^6.14.0",
+    "@typescript-eslint/parser": "^6.14.0",
+    "chokidar-cli": "^3.0.0",
+    "eslint": "^8.55.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jest": "^27.6.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "eslint-plugin-unused-imports": "^3.0.0",
+    "husky": "^8.0.3",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "lint-staged": "^15.2.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^3.1.1",
+    "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.2",
+    "turbo": "^1.11.2",
+    "typescript": "^5.3.3"
+  }
+}

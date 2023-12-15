@@ -1,0 +1,39 @@
+{
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "files.associations": {
+    // allow comments in .evn.scripts.json
+    ".scripts.config.json": "jsonc",
+    "turbo.json": "jsonc"
+  },
+  "cSpell.words": [
+    "bignumber",
+    "chakra",
+    "changesets",
+    "Cronos",
+    "Cryptocom",
+    "defi",
+    "deficonnect",
+    "defiwallet",
+    "esbuild",
+    "ethersproject",
+    "imtoken",
+    "middlewares",
+    "Networkish",
+    "nextjs",
+    "partialize",
+    "pnpm",
+    "tanstack",
+    "tsbuildinfo",
+    "vuejs",
+    "walletconnect",
+    "web3-utils",
+    "xdefi",
+    "zustand"
+  ]
+}
