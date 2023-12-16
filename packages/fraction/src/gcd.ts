@@ -3,9 +3,6 @@ import type { BigIntIsh } from './constants';
 /**
  * Find the greatest common divisor(GCD) of `a` and `b`.
  *
- * It uses the Euclidean algorithm.
- * The time complexity of the Euclidean algorithm is O(log min(a, b)).
- *
  * @returns The sign is ignored, it always returns the positive gcd of `a` and `b`.
  */
 export const gcd = (a: BigIntIsh, b: BigIntIsh): bigint => {
