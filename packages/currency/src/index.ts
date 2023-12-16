@@ -1,8 +1,6 @@
-export interface SerializedToken {
-  chainId: number;
-  address: string;
-  decimals: number;
-  symbol: string;
-  name?: string;
-  projectLink?: string;
-}
+export * from './baseCurrency';
+export * from './constants';
+export * from './currency';
+export * from './currencyAmount';
+export * from './nativeCurrency';
+export * from './token';
