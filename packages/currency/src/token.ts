@@ -18,6 +18,9 @@ export interface SerializedToken {
 export class Token extends BaseCurrency {
   public readonly isNative: false = false as const;
   public readonly isToken: true = true as const;
+  public static isToken(currency: Currency): currency is Token {
+    return currency.isToken;
+  }
 
   /**
    * The contract address on the chain on which this token lives
