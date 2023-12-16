@@ -18,21 +18,22 @@
   "scripts": {
     "build": "tsc;tsc --module commonjs --outDir dist/cjs",
     "watch": "chokidar 'src/**/*.ts' -c 'pnpm -wc exec turbo run build --filter=detect-provider'",
+    "typedoc": "typedoc src/index.ts --out ../../docs/pkg/fraction",
     "lint": "eslint src",
     "fix": "eslint src --fix",
     "ts-check": "tsc --noEmit"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/web3-kit/web3-kit.git"
+    "url": "git+https://github.com/logan272/web3-kit.git"
   },
   "publishConfig": {
     "access": "public"
   },
   "bugs": {
-    "url": "https://github.com/web3-kit/web3-kit/issues"
+    "url": "https://github.com/logan272/web3-kit/issues"
   },
-  "homepage": "https://github.com/web3-kit/web3-kit#readme",
+  "homepage": "https://github.com/logan272/web3-kit#readme",
   "dependencies": {
     "bignumber.js": "^9.1.2"
   }
