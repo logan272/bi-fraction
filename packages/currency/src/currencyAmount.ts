@@ -10,7 +10,7 @@ export class CurrencyAmount<T extends Currency> extends Fraction {
   public readonly currency: T;
   public readonly decimalScale: bigint;
 
-  protected constructor(
+  public constructor(
     currency: T,
     numerator: BigIntIsh,
     denominator?: BigIntIsh,
