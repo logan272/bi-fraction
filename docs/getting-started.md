@@ -3,7 +3,7 @@
 ## Install
 
 ```bash
-pnpm add @web3-utils/react @web3-utils/metamask
+pnpm add @web3-kit/react @web3-kit/metamask
 ```
 
 ## Create a wallet
@@ -11,8 +11,8 @@ pnpm add @web3-utils/react @web3-utils/metamask
 If you only need to integrate a single wallet to your dApp:
 
 ```ts
-import { MetaMask } from '@web3-utils/metamask';
-import { createWallet } from '@web3-utils/react';
+import { MetaMask } from '@web3-kit/metamask';
+import { createWallet } from '@web3-kit/react';
 
 const metamask = createWallet(new MetaMask());
 
@@ -32,9 +32,9 @@ export const App = () => {
 It's a common pattern for dApps to support multiple wallets, but typically only one wallet can be active at a time. If your dApp follows this pattern, current wallet is what you need.
 
 ```ts
-import { MetaMask } from '@web3-utils/metamask';
-import { DeFiWallet } from '@web3-utils/defiwallet';
-import { createCurrentWallet } from '@web3-utils/react';
+import { MetaMask } from '@web3-kit/metamask';
+import { DeFiWallet } from '@web3-kit/defiwallet';
+import { createCurrentWallet } from '@web3-kit/react';
 
 export const currentWallet = createCurrentWallet([
   new MetaMask(),
@@ -57,14 +57,14 @@ In this minimal wallet modal example, we will:
 1. Setup MetaMask and DeFi Wallet.
 2. Create a wallet modal in which user can choose either MetaMask or DeFi Wallet to connect to our dApp.
 3. Display the connected wallet account/address.
-4. Check out [examples/react](https://github.com/web3-utils/web3-utils/tree/main/packages/examples/react) to see the complete example.
+4. Check out [examples/react](https://github.com/web3-kit/web3-kit/tree/main/packages/examples/react) to see the complete example.
 
 ```tsx
 // src/wallet.ts
 // ===========================
-import { MetaMask } from '@web3-utils/metamask';
-import { DeFiWallet } from '@web3-utils/defiwallet';
-import { type WalletName, createCurrentWallet } from '@web3-utils/react';
+import { MetaMask } from '@web3-kit/metamask';
+import { DeFiWallet } from '@web3-kit/defiwallet';
+import { type WalletName, createCurrentWallet } from '@web3-kit/react';
 import { useEffect } from 'react';
 
 export const currentWallet = createCurrentWallet([

@@ -4,7 +4,7 @@ module.exports = {
   modulePathIgnorePatterns: ['dist'],
   testMatch: ['<rootDir>/packages/**/*.spec.[jt]s?(x)'],
   moduleNameMapper: {
-    '^@web3-utils/(.*)$': [
+    '^@web3-kit/(.*)$': [
       '<rootDir>/packages/$1/src',
       '<rootDir>/connectors/$1/src',
     ],

@@ -9,8 +9,8 @@ type CreateWallet = (connector: Connector) => Wallet;
 The Wallet interface is returned from createWallet.
 
 ```ts
-import { MetaMask } from '@web3-utils/MetaMask';
-import { createWallet } from '@web3-utils/react';
+import { MetaMask } from '@web3-kit/MetaMask';
+import { createWallet } from '@web3-kit/react';
 
 const metaMask = createWallet(new MetaMask());
 ```
