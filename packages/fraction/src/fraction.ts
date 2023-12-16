@@ -1,6 +1,8 @@
 import BigNumberJs from 'bignumber.js';
 
+import { Bn } from './bn';
 import type { BigIntIsh } from './constants';
+import { gcd } from './gcd';
 
 export class Fraction {
   public readonly numerator: bigint;
@@ -10,20 +12,26 @@ export class Fraction {
   public static parse(value: number | string): Fraction {
     const parts = Bn(value).toFixed().split('.');
 
-    const [_, fraction] = parts;
+    const [integerPart, decimalPart] = parts;
 
-    if (parts[1] === undefined) {
+    if (decimalPart === undefined) {
       // `value` is an integer
       return new Fraction(value);
     } else {
       // `value` is a decimal
-      return new Fraction(parts.join(), 10n ** BigInt(fraction.length));
+      const decimalPlaces = BigInt(decimalPart.length);
+      const denominator = 10n ** decimalPlaces;
+      const numerator = BigInt(integerPart) * denominator + BigInt(decimalPart);
+
+      return new Fraction(numerator, denominator);
     }
   }
 
   constructor(numerator: BigIntIsh, denominator: BigIntIsh = 1n) {
-    this.numerator = BigInt(numerator);
-    this.denominator = BigInt(denominator);
+    const divisor = gcd(numerator, denominator);
+
+    this.numerator = BigInt(numerator) / divisor;
+    this.denominator = BigInt(denominator) / divisor;
   }
 
   parseOther(other: Fraction | BigIntIsh): Fraction {
@@ -162,39 +170,3 @@ export class Fraction {
     return new Fraction(this.numerator, this.denominator);
   }
 }
-
-// https://mikemcl.github.io/bignumber.js/#bignumber
-// Make an clone of the BigNumberJs constructor
-const Bn = BigNumberJs.clone({
-  // https://mikemcl.github.io/bignumber.js/#config
-  // Following config are the default settings. the defaults good enough
-  // we don't need to change the default settings.
-  // ================================
-  //
-  // DECIMAL_PLACES: 20,
-  // ROUNDING_MODE: BigNumberJs.ROUND_HALF_UP,
-  // EXPONENTIAL_AT: [-7, 20],
-  // RANGE: [-1e9, 1e9],
-  // CRYPTO: false,
-  // MODULO_MODE: BigNumberJs.ROUND_DOWN,
-  // POW_PRECISION: 0,
-  // ALPHABET: '0123456789abcdefghijklmnopqrstuvwxyz',
-  FORMAT: {
-    // string to prepend
-    prefix: '',
-    // decimal separator
-    decimalSeparator: '.',
-    // grouping separator of the integer part
-    groupSeparator: ',',
-    // primary grouping size of the integer part
-    groupSize: 3,
-    // secondary grouping size of the integer part
-    secondaryGroupSize: 0,
-    // grouping separator of the fraction part
-    fractionGroupSeparator: '\xA0', // non-breaking space
-    // grouping size of the fraction part
-    fractionGroupSize: 0,
-    // string to append
-    suffix: '',
-  },
-});
