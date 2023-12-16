@@ -8,6 +8,20 @@ import { CurrencyAmount } from './currencyAmount';
 
 /**
  * Subclass of Fraction. Represents a price between two currencies.
+ *
+ * A currency pair is considered a price quote between two different currencies, where one is quoted against the other.
+ *
+ * `Base_Currency/Quote_currency`
+ *
+ * In the `ETH/USD` pair, `ETH` is the base currency, USD is the quote currency.
+ * In the `USD/ETH` pair, `USD` is the base currency, ETH is the quote currency.
+ *
+ * When buying a currency pair, buyers purchase the base currency and sell the quoted currency.
+ * The bid price represents the amount of quote currency needed to receive one unit of the base currency.
+ *
+ * On the other hand, when the currency pair is sold, the seller sells the base currency and receives the quote currency.
+ * Thus, the selling price of the currency pair is the amount one will receive in the quote currency for providing one unit of the base currency.
+ *
  */
 export class Price<
   TBase extends Currency,
