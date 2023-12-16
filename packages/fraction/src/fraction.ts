@@ -111,6 +111,16 @@ export class Fraction {
   }
 
   /**
+   * Checks if the fraction is not equal to `other`.
+   *
+   * @param other - The value to compare with.
+   * @returns True if the fraction is not equal to `other`, false otherwise.
+   */
+  public neq(other: Fraction | BigIntIsh): boolean {
+    return !this.eq(other);
+  }
+
+  /**
    * Checks if the fraction is less than `other`.
    *
    * @param other - The value to compare with.

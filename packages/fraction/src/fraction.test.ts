@@ -113,6 +113,32 @@ describe('Fraction', () => {
     });
   });
 
+  describe('neq', () => {
+    it('should return true for equal fractions', () => {
+      const fraction1 = new Fraction(5n, 2n);
+      const fraction2 = new Fraction(10n, 4n);
+      expect(fraction1.neq(fraction2)).toBe(false);
+    });
+
+    it('should return false for unequal fractions', () => {
+      const fraction1 = new Fraction(5n, 2n);
+      const fraction2 = new Fraction(3n, 2n);
+      expect(fraction1.neq(fraction2)).toBe(true);
+    });
+
+    it('should return true for equal fractions with different signs', () => {
+      const fraction1 = new Fraction(5n, 2n);
+      const fraction2 = new Fraction(-5n, -2n);
+      expect(fraction1.neq(fraction2)).toBe(false);
+    });
+
+    it('should return false for unequal fractions with different signs', () => {
+      const fraction1 = new Fraction(5n, 2n);
+      const fraction2 = new Fraction(-5n, 2n);
+      expect(fraction1.neq(fraction2)).toBe(true);
+    });
+  });
+
   describe('add', () => {
     it('should add two fractions correctly', () => {
       const fraction1 = new Fraction(1n, 2n);
@@ -180,5 +206,4 @@ describe('Fraction', () => {
       expect(result.denominator).toBe(8n);
     });
   });
-  // Add more test cases for other methods
 });
