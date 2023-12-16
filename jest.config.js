@@ -2,7 +2,7 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
   modulePathIgnorePatterns: ['dist'],
-  testMatch: ['<rootDir>/packages/**/*.spec.[jt]s?(x)'],
+  testMatch: ['<rootDir>/packages/**/*.test.[jt]s?(x)'],
   moduleNameMapper: {
     '^@web3-kit/(.*)$': [
       '<rootDir>/packages/$1/src',
