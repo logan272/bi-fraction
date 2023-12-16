@@ -3,21 +3,24 @@ import invariant from 'tiny-invariant';
 import { BaseCurrency } from './baseCurrency';
 import type { Currency } from './currency';
 
-export interface SerializedToken {
-  chainId: number;
-  address: string;
-  decimals: number;
-  symbol: string;
-  name?: string;
-  projectLink?: string;
-}
-
 /**
  * Represents an ERC20 token with a unique address and some metadata.
  */
 export class Token extends BaseCurrency {
+  // Indicate that isNative is always false for tokens
   public readonly isNative: false = false as const;
+
+  // Indicate that isToken is always true for tokens
   public readonly isToken: true = true as const;
+
+  /**
+   * Token type guard
+   *
+   * Check if a given currency is a Token
+   *
+   * @param currency currency to check
+   * @returns true if the currency is a Token
+   */
   public static isToken(currency: Currency): currency is Token {
     return currency.isToken;
   }
@@ -27,23 +30,29 @@ export class Token extends BaseCurrency {
    */
   public readonly address: string;
 
-  public readonly projectLink?: string;
-
+  /**
+   * Create a new Token instance
+   *
+   * @param chainId the chain ID of the token
+   * @param address the contract address of the token
+   * @param decimals the number of decimals the token uses
+   * @param symbol the symbol of the token
+   * @param name (optional) the name of the token
+   */
   public constructor(
     chainId: number,
     address: string,
     decimals: number,
     symbol: string,
     name?: string,
-    projectLink?: string,
   ) {
     super(chainId, decimals, symbol, name);
     this.address = address;
-    this.projectLink = projectLink;
   }
 
   /**
    * Returns true if the two tokens are equivalent, i.e. have the same chainId and address.
+   *
    * @param other other token to compare
    */
   public eq(other: Currency): boolean {
@@ -56,6 +65,7 @@ export class Token extends BaseCurrency {
 
   /**
    * Returns true if the address of this token sorts before the address of the other token
+   *
    * @param other other token to compare
    * @throws if the tokens have the same address
    * @throws if the tokens are on different chains
@@ -67,16 +77,5 @@ export class Token extends BaseCurrency {
       'ADDRESSES',
     );
     return this.address.toLowerCase() < other.address.toLowerCase();
-  }
-
-  public get serialize(): SerializedToken {
-    return {
-      address: this.address,
-      chainId: this.chainId,
-      decimals: this.decimals,
-      symbol: this.symbol,
-      name: this.name,
-      projectLink: this.projectLink,
-    };
   }
 }

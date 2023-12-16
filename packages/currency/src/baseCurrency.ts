@@ -38,6 +38,7 @@ export abstract class BaseCurrency {
 
   /**
    * Constructs an instance of the base class `BaseCurrency`.
+   *
    * @param chainId the chain ID on which this currency resides
    * @param decimals decimals of the currency
    * @param symbol symbol of the currency

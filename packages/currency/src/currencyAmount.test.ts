@@ -4,8 +4,8 @@ import { CurrencyAmount } from './currencyAmount';
 import { Token } from './token';
 
 describe('CurrencyAmount', () => {
-  const token1 = new Token(25, '0x123', 18, 'TOKEN1');
-  const token2 = new Token(25, '0x456', 18, 'TOKEN2');
+  const token1 = new Token(1, '0x123', 18, 'TOKEN1');
+  const token2 = new Token(1, '0x456', 18, 'TOKEN2');
 
   describe('constructor', () => {
     it('should create a CurrencyAmount instance with the provided values', () => {
