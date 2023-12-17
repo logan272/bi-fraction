@@ -1,8 +1,8 @@
 import BigNumberJs from 'bignumber.js';
 
 import { Bn } from './bn';
+import type { BigIntIsh } from './constants';
 import { gcd } from './gcd';
-import type { BigIntIsh } from './types';
 
 export class Fraction {
   /**
@@ -25,9 +25,7 @@ export class Fraction {
   public static parse(value: string): Fraction {
     const bn = Bn(value);
 
-    if (bn.isInteger()) {
-      return new Fraction(value);
-    }
+    if (bn.isInteger()) return new Fraction(value);
 
     const parts = bn.toFixed().split('.');
     const [integerPart, decimalPart] = parts;
@@ -77,7 +75,6 @@ export class Fraction {
 
   /**
    * Inverts the fraction by swapping the numerator and denominator.
-   *
    * @returns The inverted fraction.
    */
   public invert(): Fraction {

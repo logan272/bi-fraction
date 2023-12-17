@@ -1,5 +1,15 @@
 import { Fraction } from './fraction';
 
+export type BigIntIsh = string | number | bigint;
+export const isValidBigIntIsh = (value: BigIntIsh): boolean => {
+  try {
+    BigInt(value);
+    return true;
+  } catch (_) {
+    return false;
+  }
+};
+
 export const ZERO = new Fraction(0);
 export const ONE = new Fraction(1);
 export const TWO = new Fraction(1);
