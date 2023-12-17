@@ -33,6 +33,10 @@ describe('Fraction', () => {
       const f2 = Fraction.parse('1.33');
       expect(f2.numerator).toBe(133n);
       expect(f2.denominator).toBe(100n);
+
+      const f3 = Fraction.parse('100.330');
+      expect(f3.numerator).toBe(10033n);
+      expect(f3.denominator).toBe(100n);
     });
 
     it('should parse a decimal with trailing zeros correctly', () => {
