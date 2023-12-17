@@ -14,9 +14,7 @@ describe('amount', () => {
       const amount = Amount.from(token1, numerator, denominator);
 
       expect(amount.currency).toBe(token1);
-      expect(amount.fraction.eq(new Fraction(numerator, denominator))).toBe(
-        true,
-      );
+      expect(amount.value.eq(new Fraction(numerator, denominator))).toBe(true);
     });
 
     it('should throw an error if the quotient exceeds MaxUint256', () => {
@@ -40,7 +38,7 @@ describe('amount', () => {
       const result = amount1.add(amount2);
 
       expect(result.currency).toBe(token1);
-      expect(result.fraction.eq(fraction1.add(fraction2))).toBe(true);
+      expect(result.value.eq(fraction1.add(fraction2))).toBe(true);
     });
 
     it('should throw an error if the amounts have different currencies', () => {
@@ -62,7 +60,7 @@ describe('amount', () => {
       const result = amount1.sub(amount2);
 
       expect(result.currency).toBe(token1);
-      expect(result.fraction.eq(fraction1.sub(fraction2))).toBe(true);
+      expect(result.value.eq(fraction1.sub(fraction2))).toBe(true);
     });
 
     it('should throw an error if the amounts have different currencies', () => {
@@ -83,7 +81,7 @@ describe('amount', () => {
       const result = amount.mul(fraction2);
 
       expect(result.currency).toBe(token1);
-      expect(result.fraction.eq(fraction1.mul(fraction2))).toBe(true);
+      expect(result.value.eq(fraction1.mul(fraction2))).toBe(true);
     });
 
     it('should multiply the amount by a BigIntIsh value', () => {
@@ -93,7 +91,7 @@ describe('amount', () => {
       const result = amount.mul(value);
 
       expect(result.currency).toBe(token1);
-      expect(result.fraction.eq(fraction.mul(2))).toBe(true);
+      expect(result.value.eq(fraction.mul(2))).toBe(true);
     });
   });
 
@@ -105,7 +103,7 @@ describe('amount', () => {
       const result = amount.div(fraction2);
 
       expect(result.currency).toBe(token1);
-      expect(result.fraction.eq(fraction1.div(fraction2))).toBe(true);
+      expect(result.value.eq(fraction1.div(fraction2))).toBe(true);
     });
 
     it('should divide the amount by a BigIntIsh value', () => {
@@ -115,7 +113,7 @@ describe('amount', () => {
       const result = amount.div(value);
 
       expect(result.currency).toBe(token1);
-      expect(result.fraction.eq(fraction.div(value))).toBe(true);
+      expect(result.value.eq(fraction.div(value))).toBe(true);
     });
   });
 

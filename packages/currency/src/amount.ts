@@ -21,7 +21,7 @@ export class Amount<T extends Currency> {
   /**
    * The underlining fraction value.
    */
-  public readonly fraction: Fraction;
+  public readonly value: Fraction;
 
   /**
    * Create a new amount
@@ -46,7 +46,7 @@ export class Amount<T extends Currency> {
    */
   public constructor(currency: T, fraction: Fraction) {
     invariant(fraction.quotient <= MaxUint256, 'AMOUNT');
-    this.fraction = fraction;
+    this.value = fraction;
     this.currency = currency;
   }
 
@@ -59,7 +59,7 @@ export class Amount<T extends Currency> {
   public eq(other: Amount<T>): boolean {
     // It only make sense to compare and add/sub the amounts of the same currency.
     invariant(this.currency.eq(other.currency), 'CURRENCY');
-    return this.fraction.eq(other.fraction);
+    return this.value.eq(other.value);
   }
 
   /**
@@ -80,7 +80,7 @@ export class Amount<T extends Currency> {
    */
   public lt(other: Amount<T>): boolean {
     invariant(this.currency.eq(other.currency), 'CURRENCY');
-    return this.fraction.lt(other.fraction);
+    return this.value.lt(other.value);
   }
 
   /**
@@ -91,7 +91,7 @@ export class Amount<T extends Currency> {
    */
   public lte(other: Amount<T>): boolean {
     invariant(this.currency.eq(other.currency), 'CURRENCY');
-    return this.fraction.lte(other.fraction);
+    return this.value.lte(other.value);
   }
 
   /**
@@ -102,7 +102,7 @@ export class Amount<T extends Currency> {
    */
   public gt(other: Amount<T>): boolean {
     invariant(this.currency.eq(other.currency), 'CURRENCY');
-    return this.fraction.gt(other.fraction);
+    return this.value.gt(other.value);
   }
 
   /**
@@ -113,7 +113,7 @@ export class Amount<T extends Currency> {
    */
   public gte(other: Amount<T>): boolean {
     invariant(this.currency.eq(other.currency), 'CURRENCY');
-    return this.fraction.gte(other.fraction);
+    return this.value.gte(other.value);
   }
 
   /**
@@ -125,7 +125,7 @@ export class Amount<T extends Currency> {
    */
   public add(other: Amount<T>): Amount<T> {
     invariant(this.currency.eq(other.currency), 'CURRENCY');
-    const added = this.fraction.add(other.fraction);
+    const added = this.value.add(other.value);
     return new Amount(this.currency, added);
   }
 
@@ -138,7 +138,7 @@ export class Amount<T extends Currency> {
    */
   public sub(other: Amount<T>): Amount<T> {
     invariant(this.currency.eq(other.currency), 'CURRENCY');
-    const subtracted = this.fraction.sub(other.fraction);
+    const subtracted = this.value.sub(other.value);
     return new Amount(this.currency, subtracted);
   }
 
@@ -149,7 +149,7 @@ export class Amount<T extends Currency> {
    * @returns A new amount instance representing the product.
    */
   public mul(other: Fraction | BigIntIsh): Amount<T> {
-    const multiplied = this.fraction.mul(other);
+    const multiplied = this.value.mul(other);
     return new Amount(this.currency, multiplied);
   }
 
@@ -160,7 +160,7 @@ export class Amount<T extends Currency> {
    * @returns A new amount instance representing the quotient.
    */
   public div(other: Fraction | BigIntIsh): Amount<T> {
-    const divided = this.fraction.div(other);
+    const divided = this.value.div(other);
     return new Amount(this.currency, divided);
   }
 
@@ -177,7 +177,7 @@ export class Amount<T extends Currency> {
     roundingMode?: BigNumberJs.RoundingMode,
   ): string {
     invariant(decimalPlaces <= this.currency.decimals, 'DECIMALS');
-    return this.fraction
+    return this.value
       .div(this.currency.decimalScale)
       .toFixed(decimalPlaces, roundingMode);
   }
@@ -197,7 +197,7 @@ export class Amount<T extends Currency> {
     format?: BigNumberJs.Format,
   ): string {
     invariant(decimalPlaces <= this.currency.decimals, 'DECIMALS');
-    return this.fraction
+    return this.value
       .div(this.currency.decimalScale)
       .toFormat(
         decimalPlaces,

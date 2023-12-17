@@ -37,7 +37,7 @@ export class Price<TBase extends Currency, TQuote extends Currency> {
   /**
    * The underlining fraction value.
    */
-  public readonly fraction: Fraction;
+  public readonly value: Fraction;
 
   /**
    * The scalar value used for conversions.
@@ -63,8 +63,8 @@ export class Price<TBase extends Currency, TQuote extends Currency> {
    * @param quoteAmount The quote currency amount.
    */
   public constructor(baseAmount: Amount<TBase>, quoteAmount: Amount<TQuote>) {
-    const result = quoteAmount.fraction.div(baseAmount.fraction);
-    this.fraction = new Fraction(result.numerator, result.denominator);
+    const result = quoteAmount.value.div(baseAmount.value);
+    this.value = new Fraction(result.numerator, result.denominator);
     this.baseCurrency = baseAmount.currency;
     this.quoteCurrency = quoteAmount.currency;
     this.scalar = new Fraction(
@@ -82,7 +82,7 @@ export class Price<TBase extends Currency, TQuote extends Currency> {
   public eq(other: Price<TBase, TQuote>): boolean {
     invariant(this.baseCurrency.eq(other.baseCurrency), 'CURRENCY');
     invariant(this.quoteCurrency.eq(other.quoteCurrency), 'CURRENCY');
-    return this.fraction.eq(other.fraction);
+    return this.value.eq(other.value);
   }
 
   /**
@@ -94,8 +94,8 @@ export class Price<TBase extends Currency, TQuote extends Currency> {
     return Price.from(
       this.quoteCurrency,
       this.baseCurrency,
-      this.fraction.numerator,
-      this.fraction.denominator,
+      this.value.numerator,
+      this.value.denominator,
     );
   }
 
@@ -113,7 +113,7 @@ export class Price<TBase extends Currency, TQuote extends Currency> {
   ): Price<TBase, TOtherQuote> {
     invariant(this.quoteCurrency.eq(other.baseCurrency), 'TOKEN');
     invariant(this.baseCurrency.neq(other.quoteCurrency), 'TOKEN');
-    const fraction = this.fraction.mul(other.fraction);
+    const fraction = this.value.mul(other.value);
     return Price.from(
       this.baseCurrency,
       other.quoteCurrency,
@@ -133,7 +133,7 @@ export class Price<TBase extends Currency, TQuote extends Currency> {
    */
   public quote(amount: Amount<TBase>): Amount<TQuote> {
     invariant(amount.currency.eq(this.baseCurrency), 'TOKEN');
-    const result = amount.fraction.mul(this.fraction);
+    const result = amount.value.mul(this.value);
     return new Amount(this.quoteCurrency, result);
   }
 
@@ -144,7 +144,7 @@ export class Price<TBase extends Currency, TQuote extends Currency> {
    * @returns The adjusted Fraction value.
    */
   private get adjustedForDecimals(): Fraction {
-    return this.fraction.mul(this.scalar);
+    return this.value.mul(this.scalar);
   }
 
   /**
