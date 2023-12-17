@@ -3,8 +3,8 @@ import { Fraction } from '@currencybase/fraction';
 import type BignumberJs from 'bignumber.js';
 import invariant from 'tiny-invariant';
 
+import { Amount } from './amount';
 import type { Currency } from './currency';
-import { CurrencyAmount } from './currencyAmount';
 
 /**
  * Subclass of Fraction. Represents a price between two currencies.
@@ -51,8 +51,8 @@ export class Price<TBase extends Currency, TQuote extends Currency> {
     numerator: BigIntIsh = 1,
   ): Price<TBase, TQuote> {
     return new Price(
-      CurrencyAmount.from(baseCurrency, denominator),
-      CurrencyAmount.from(quoteCurrency, numerator),
+      Amount.from(baseCurrency, denominator),
+      Amount.from(quoteCurrency, numerator),
     );
   }
 
@@ -62,10 +62,7 @@ export class Price<TBase extends Currency, TQuote extends Currency> {
    * @param baseAmount The base currency amount.
    * @param quoteAmount The quote currency amount.
    */
-  public constructor(
-    baseAmount: CurrencyAmount<TBase>,
-    quoteAmount: CurrencyAmount<TQuote>,
-  ) {
+  public constructor(baseAmount: Amount<TBase>, quoteAmount: Amount<TQuote>) {
     const result = quoteAmount.fraction.div(baseAmount.fraction);
     this.fraction = new Fraction(result.numerator, result.denominator);
     this.baseCurrency = baseAmount.currency;
@@ -130,14 +127,14 @@ export class Price<TBase extends Currency, TQuote extends Currency> {
    *
    * The quote method can be used to convert an amount of the base currency (TBase) to an equivalent amount in the quote currency (TQuote). This is useful when you need to calculate the value of a specific currency amount in a different currency.
    *
-   * @param currencyAmount The amount of base currency to quote against the price.
-   * @returns A new CurrencyAmount instance representing the quoted amount of quote currency.
+   * @param amount The amount of base currency to quote against the price.
+   * @returns A new amount instance representing the quoted amount of quote currency.
    * @throws 'TOKEN' if the currency amount's currency does not match this price's base currency.
    */
-  public quote(currencyAmount: CurrencyAmount<TBase>): CurrencyAmount<TQuote> {
-    invariant(currencyAmount.currency.eq(this.baseCurrency), 'TOKEN');
-    const result = currencyAmount.fraction.mul(this.fraction);
-    return new CurrencyAmount(this.quoteCurrency, result);
+  public quote(amount: Amount<TBase>): Amount<TQuote> {
+    invariant(amount.currency.eq(this.baseCurrency), 'TOKEN');
+    const result = amount.fraction.mul(this.fraction);
+    return new Amount(this.quoteCurrency, result);
   }
 
   /**

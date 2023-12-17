@@ -9,7 +9,7 @@ import type { Currency } from './currency';
 /**
  * Subclass of `Fraction`. Represents an amount of a specific currency.
  */
-export class CurrencyAmount<T extends Currency> {
+export class Amount<T extends Currency> {
   /**
    * The currency associated with the amount.
    */
@@ -21,7 +21,7 @@ export class CurrencyAmount<T extends Currency> {
   public readonly fraction: Fraction;
 
   /**
-   * Create a new CurrencyAmount
+   * Create a new amount
    *
    * @param currency The currency associated with the amount.
    * @param numerator The numerator of the fraction representing the amount.
@@ -31,12 +31,12 @@ export class CurrencyAmount<T extends Currency> {
     currency: T,
     numerator: BigIntIsh,
     denominator?: BigIntIsh,
-  ): CurrencyAmount<T> {
-    return new CurrencyAmount(currency, new Fraction(numerator, denominator));
+  ): Amount<T> {
+    return new Amount(currency, new Fraction(numerator, denominator));
   }
 
   /**
-   * Constructs a new CurrencyAmount instance.
+   * Constructs a new amount instance.
    *
    * @param currency The currency associated with the amount.
    * @param fraction The fraction value.
@@ -48,125 +48,125 @@ export class CurrencyAmount<T extends Currency> {
   }
 
   /**
-   * Check if the current CurrencyAmount is equal to another CurrencyAmount.
-   * @param other The CurrencyAmount to compare.
-   * @returns True if the CurrencyAmounts are equal, false otherwise.
-   * @throws 'CURRENCY' if the CurrencyAmounts have different currencies.
+   * Check if the current amount is equal to another amount.
+   * @param other The amount to compare.
+   * @returns True if the amounts are equal, false otherwise.
+   * @throws 'CURRENCY' if the amounts have different currencies.
    */
-  public eq(other: CurrencyAmount<T>): boolean {
+  public eq(other: Amount<T>): boolean {
     // It only make sense to compare and add/sub the amounts of the same currency.
     invariant(this.currency.eq(other.currency), 'CURRENCY');
     return this.fraction.eq(other.fraction);
   }
 
   /**
-   * Check if the current CurrencyAmount is not equal to another CurrencyAmount.
-   * @param other The CurrencyAmount to compare.
-   * @returns True if the CurrencyAmounts are not equal, false otherwise.
-   * @throws 'CURRENCY' if the CurrencyAmounts have different currencies.
+   * Check if the current amount is not equal to another amount.
+   * @param other The amount to compare.
+   * @returns True if the amounts are not equal, false otherwise.
+   * @throws 'CURRENCY' if the amounts have different currencies.
    */
-  public neq(other: CurrencyAmount<T>): boolean {
+  public neq(other: Amount<T>): boolean {
     return !this.currency.eq(other.currency);
   }
 
   /**
-   * Check if the current CurrencyAmount is less than another CurrencyAmount.
-   * @param other The CurrencyAmount to compare.
-   * @returns True if the current CurrencyAmount is less than the other CurrencyAmount, false otherwise.
-   * @throws 'CURRENCY' if the CurrencyAmounts have different currencies.
+   * Check if the current amount is less than another amount.
+   * @param other The amount to compare.
+   * @returns True if the current amount is less than the other amount, false otherwise.
+   * @throws 'CURRENCY' if the amounts have different currencies.
    */
-  public lt(other: CurrencyAmount<T>): boolean {
+  public lt(other: Amount<T>): boolean {
     invariant(this.currency.eq(other.currency), 'CURRENCY');
     return this.fraction.lt(other.fraction);
   }
 
   /**
-   * Check if the current CurrencyAmount is less than or equal to another CurrencyAmount.
-   * @param other The CurrencyAmount to compare.
-   * @returns True if the current CurrencyAmount is less than or equal to the other CurrencyAmount, false otherwise.
-   * @throws 'CURRENCY' if the CurrencyAmounts have different currencies.
+   * Check if the current amount is less than or equal to another amount.
+   * @param other The amount to compare.
+   * @returns True if the current amount is less than or equal to the other amount, false otherwise.
+   * @throws 'CURRENCY' if the amounts have different currencies.
    */
-  public lte(other: CurrencyAmount<T>): boolean {
+  public lte(other: Amount<T>): boolean {
     invariant(this.currency.eq(other.currency), 'CURRENCY');
     return this.fraction.lte(other.fraction);
   }
 
   /**
-   * Check if the current CurrencyAmount is greater than another CurrencyAmount.
-   * @param other The CurrencyAmount to compare.
-   * @returns True if the current CurrencyAmount is greater than the other CurrencyAmount, false otherwise.
-   * @throws 'CURRENCY' if the CurrencyAmounts have different currencies.
+   * Check if the current amount is greater than another amount.
+   * @param other The amount to compare.
+   * @returns True if the current amount is greater than the other amount, false otherwise.
+   * @throws 'CURRENCY' if the amounts have different currencies.
    */
-  public gt(other: CurrencyAmount<T>): boolean {
+  public gt(other: Amount<T>): boolean {
     invariant(this.currency.eq(other.currency), 'CURRENCY');
     return this.fraction.gt(other.fraction);
   }
 
   /**
-   * Check if the current CurrencyAmount is greater than or equal to another CurrencyAmount.
-   * @param other The CurrencyAmount to compare.
-   * @returns True if the current CurrencyAmount is greater than or equal to the other CurrencyAmount, false otherwise.
-   * @throws 'CURRENCY' if the CurrencyAmounts have different currencies.
+   * Check if the current amount is greater than or equal to another amount.
+   * @param other The amount to compare.
+   * @returns True if the current amount is greater than or equal to the other amount, false otherwise.
+   * @throws 'CURRENCY' if the amounts have different currencies.
    */
-  public gte(other: CurrencyAmount<T>): boolean {
+  public gte(other: Amount<T>): boolean {
     invariant(this.currency.eq(other.currency), 'CURRENCY');
     return this.fraction.gte(other.fraction);
   }
 
   /**
-   * Adds another CurrencyAmount to the current instance.
+   * Adds another amount to the current instance.
    *
-   * @param other The CurrencyAmount to add.
-   * @returns A new CurrencyAmount instance representing the sum.
-   * @throws 'CURRENCY' if the CurrencyAmounts have different currencies.
+   * @param other The amount to add.
+   * @returns A new amount instance representing the sum.
+   * @throws 'CURRENCY' if the amounts have different currencies.
    */
-  public add(other: CurrencyAmount<T>): CurrencyAmount<T> {
+  public add(other: Amount<T>): Amount<T> {
     invariant(this.currency.eq(other.currency), 'CURRENCY');
     const added = this.fraction.add(other.fraction);
-    return new CurrencyAmount(this.currency, added);
+    return new Amount(this.currency, added);
   }
 
   /**
-   * Subtracts another CurrencyAmount from the current instance.
+   * Subtracts another amount from the current instance.
    *
-   * @param other The CurrencyAmount to subtract.
-   * @returns A new CurrencyAmount instance representing the difference.
-   * @throws 'CURRENCY' if the CurrencyAmounts have different currencies.
+   * @param other The amount to subtract.
+   * @returns A new amount instance representing the difference.
+   * @throws 'CURRENCY' if the amounts have different currencies.
    */
-  public sub(other: CurrencyAmount<T>): CurrencyAmount<T> {
+  public sub(other: Amount<T>): Amount<T> {
     invariant(this.currency.eq(other.currency), 'CURRENCY');
     const subtracted = this.fraction.sub(other.fraction);
-    return new CurrencyAmount(this.currency, subtracted);
+    return new Amount(this.currency, subtracted);
   }
 
   /**
    * Multiplies the current instance by a Fraction or a BigIntIsh value.
    *
    * @param other The Fraction or BigIntIsh value to multiply by.
-   * @returns A new CurrencyAmount instance representing the product.
+   * @returns A new amount instance representing the product.
    */
-  public mul(other: Fraction | BigIntIsh): CurrencyAmount<T> {
+  public mul(other: Fraction | BigIntIsh): Amount<T> {
     const multiplied = this.fraction.mul(other);
-    return new CurrencyAmount(this.currency, multiplied);
+    return new Amount(this.currency, multiplied);
   }
 
   /**
    * Divides the current instance by a Fraction or a BigIntIsh value.
    *
    * @param other The Fraction or BigIntIsh value to divide by.
-   * @returns A new CurrencyAmount instance representing the quotient.
+   * @returns A new amount instance representing the quotient.
    */
-  public div(other: Fraction | BigIntIsh): CurrencyAmount<T> {
+  public div(other: Fraction | BigIntIsh): Amount<T> {
     const divided = this.fraction.div(other);
-    return new CurrencyAmount(this.currency, divided);
+    return new Amount(this.currency, divided);
   }
 
   /**
-   * Converts the CurrencyAmount to a fixed-point decimal string representation.
+   * Converts the amount to a fixed-point decimal string representation.
    *
    * @param decimalPlaces The number of decimal places to include in the string.
    * @param roundingMode The rounding mode to use.
-   * @returns The fixed-point decimal string representation of the CurrencyAmount.
+   * @returns The fixed-point decimal string representation of the amount.
    * @throws 'DECIMALS' if the specified decimal places exceed the currency decimals.
    */
   public toFixed(
@@ -180,12 +180,12 @@ export class CurrencyAmount<T extends Currency> {
   }
 
   /**
-   * Converts the CurrencyAmount to a formatted string representation.
+   * Converts the amount to a formatted string representation.
    *
    * @param decimalPlaces The number of decimal places to include in the string.
    * @param roundingMode The rounding mode to use.
    * @param format The formatting options to apply.
-   * @returns The formatted string representation of the CurrencyAmount.
+   * @returns The formatted string representation of the amount.
    * @throws 'DECIMALS' if the specified decimal places exceed the currency decimals.
    */
   public toFormat(

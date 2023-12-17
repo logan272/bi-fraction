@@ -1,6 +1,6 @@
 import { Fraction } from '@currencybase/fraction';
 
-import { CurrencyAmount } from './currencyAmount';
+import { Amount } from './amount';
 import { btc, eth, usdc } from './mockTokens';
 import { Price } from './price';
 
@@ -58,10 +58,7 @@ describe('Price', () => {
     });
 
     it('should create a new Price instance with base and quote currency amounts from an object', () => {
-      const price = new Price(
-        CurrencyAmount.from(eth, 1n),
-        CurrencyAmount.from(usdc, 2_000n),
-      );
+      const price = new Price(Amount.from(eth, 1n), Amount.from(usdc, 2_000n));
       expect(price.baseCurrency).toBe(eth);
       expect(price.quoteCurrency).toBe(usdc);
       expect(price.fraction.eq(new Fraction(2_000n))).toBe(true);
@@ -105,24 +102,18 @@ describe('Price', () => {
 
   describe('quote', () => {
     it('should return the corresponding amount of quote currency for a given base currency amount', () => {
-      const ethAmount = CurrencyAmount.from(eth, 10n * eth.decimalScale);
+      const ethAmount = Amount.from(eth, 10n * eth.decimalScale);
       const quotedAmount = priceEth2Usdc.quote(ethAmount);
       expect(quotedAmount.currency).toBe(usdc);
       expect(
-        quotedAmount.eq(
-          CurrencyAmount.from(usdc, 10n * 2_000n * usdc.decimalScale),
-        ),
+        quotedAmount.eq(Amount.from(usdc, 10n * 2_000n * usdc.decimalScale)),
       ).toBe(true);
     });
 
     it('should throw an if for invalid quote', () => {
       // can only quote currency amount of eth
-      expect(() => priceEth2Usdc.quote(CurrencyAmount.from(usdc, 1n))).toThrow(
-        'TOKEN',
-      );
-      expect(() => priceEth2Usdc.quote(CurrencyAmount.from(btc, 1n))).toThrow(
-        'TOKEN',
-      );
+      expect(() => priceEth2Usdc.quote(Amount.from(usdc, 1n))).toThrow('TOKEN');
+      expect(() => priceEth2Usdc.quote(Amount.from(btc, 1n))).toThrow('TOKEN');
     });
   });
 
