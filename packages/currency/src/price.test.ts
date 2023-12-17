@@ -1,4 +1,4 @@
-import { Fraction } from '@web3-kit/fraction';
+import { Fraction } from '@currencybase/fraction';
 
 import { CurrencyAmount } from './currencyAmount';
 import { Price } from './price';

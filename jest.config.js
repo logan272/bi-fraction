@@ -7,7 +7,7 @@ module.exports = {
   // https://github.com/jestjs/jest/issues/11617#issuecomment-1028651059
   maxWorkers: 1,
   moduleNameMapper: {
-    '^@web3-kit/(.*)$': [
+    '^@currencybase/(.*)$': [
       '<rootDir>/packages/$1/src',
       '<rootDir>/connectors/$1/src',
     ],

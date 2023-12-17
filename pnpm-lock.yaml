@@ -89,7 +89,7 @@ importers:
 
   packages/currency:
     dependencies:
-      '@web3-kit/fraction':
+      '@currencybase/fraction':
         specifier: workspace:*
         version: link:../fraction
       bignumber.js:

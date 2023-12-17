@@ -1,9 +1,9 @@
 {
-  "name": "@web3-kit/fraction",
+  "name": "@currencybase/fraction",
   "description": "Fraction number library",
   "version": "0.0.1",
   "keywords": [
-    "web3-kit",
+    "currencybase",
     "Fraction number"
   ],
   "author": "Logan Luo <github.com/logan272>",
@@ -25,15 +25,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/logan272/web3-kit.git"
+    "url": "git+https://github.com/currencybase/currencybase.git"
   },
   "publishConfig": {
     "access": "public"
   },
   "bugs": {
-    "url": "https://github.com/logan272/web3-kit/issues"
+    "url": "https://github.com/currencybase/currencybase/issues"
   },
-  "homepage": "https://github.com/logan272/web3-kit#readme",
+  "homepage": "https://github.com/currencybase/currencybase#readme",
   "dependencies": {
     "bignumber.js": "^9.1.2"
   }

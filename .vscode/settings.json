@@ -12,5 +12,5 @@
     ".scripts.config.json": "jsonc",
     "turbo.json": "jsonc"
   },
-  "cSpell.words": ["bignumber"]
+  "cSpell.words": ["bignumber", "currencybase"]
 }

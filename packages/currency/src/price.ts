@@ -1,5 +1,5 @@
-import type { BigIntIsh } from '@web3-kit/fraction';
-import { Fraction } from '@web3-kit/fraction';
+import type { BigIntIsh } from '@currencybase/fraction';
+import { Fraction } from '@currencybase/fraction';
 import type BignumberJs from 'bignumber.js';
 import invariant from 'tiny-invariant';
 
