@@ -77,7 +77,7 @@ out/
 **/.env.production
 
 # generated package docs
-docs/pkg/
+docs/api/
 
 # turbo
 .turbo
