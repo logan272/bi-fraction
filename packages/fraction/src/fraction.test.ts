@@ -3,7 +3,7 @@ import { Fraction } from './fraction';
 describe('Fraction', () => {
   describe('parse', () => {
     it('should parse an integer correctly', () => {
-      const fraction = Fraction.parse(5);
+      const fraction = new Fraction(5);
       expect(fraction.numerator).toBe(5n);
       expect(fraction.denominator).toBe(1n);
     });

@@ -1,7 +1,8 @@
 import BigNumberJs from 'bignumber.js';
 
-import { type BigIntIsh, ONE_HUNDRED } from './constants';
+import { ONE_HUNDRED } from './constants';
 import { Fraction } from './fraction';
+import type { BigIntIsh } from './types';
 
 /**
  * Represents a percentage value.

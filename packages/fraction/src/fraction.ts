@@ -1,8 +1,8 @@
 import BigNumberJs from 'bignumber.js';
 
 import { Bn } from './bn';
-import type { BigIntIsh } from './constants';
 import { gcd } from './gcd';
+import type { BigIntIsh } from './types';
 
 export class Fraction {
   /**
@@ -15,29 +15,25 @@ export class Fraction {
   public readonly denominator: bigint;
 
   /**
-   * Creates a Fraction instance by parsing a decimal number.
-   *
-   * It would throws if value is not a valid decimal number.
-   *
-   * @param value - The decimal number to parse.
-   * @returns A Fraction instance representing the parsed number.
+   * Creates a Fraction instance by parsing a decimal string.
+   * @param value - The decimal string to parse.
+   * @returns A Fraction instance representing the parsed decimals string.
+   * @throws If the string is not a valid decimals
    */
-  public static parse(value: number | string): Fraction {
-    const parts = Bn(value).toFixed().split('.');
+  public static parse(value: string): Fraction {
+    const bn = Bn(value);
 
-    const [integerPart, decimalPart] = parts;
-
-    if (decimalPart === undefined) {
-      // `value` is an integer
+    if (bn.isInteger()) {
       return new Fraction(value);
-    } else {
-      // `value` is a decimal
-      const decimalPlaces = BigInt(decimalPart.length);
-      const denominator = 10n ** decimalPlaces;
-      const numerator = BigInt(integerPart) * denominator + BigInt(decimalPart);
-
-      return new Fraction(numerator, denominator);
     }
+
+    const parts = bn.toFixed().split('.');
+    const [integerPart, decimalPart] = parts;
+    const decimalPlaces = BigInt(decimalPart.length);
+    const denominator = 10n ** decimalPlaces;
+    const numerator = BigInt(integerPart) * denominator + BigInt(decimalPart);
+
+    return new Fraction(numerator, denominator);
   }
 
   /**
@@ -45,6 +41,7 @@ export class Fraction {
    *
    * @param numerator - The numerator of the fraction.
    * @param denominator - The denominator of the fraction. (default: 1n)
+   * @throws If numerator or denominator is not a valid BigIntIsh
    */
   constructor(numerator: BigIntIsh, denominator: BigIntIsh = 1n) {
     const divisor = gcd(numerator, denominator);
@@ -285,7 +282,7 @@ export class Fraction {
    *
    * @returns A Fraction instance representing the current fraction.
    */
-  public get asFraction(): Fraction {
+  public get toFraction(): Fraction {
     return new Fraction(this.numerator, this.denominator);
   }
 }
