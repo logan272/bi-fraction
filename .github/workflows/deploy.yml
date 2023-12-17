@@ -11,10 +11,12 @@ jobs:
   deployment:
     name: Deploy site
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: checkout code repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -22,7 +24,7 @@ jobs:
         uses: pnpm/action-setup@v2
 
       - name: Setup node version
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: 'pnpm'
@@ -31,7 +33,7 @@ jobs:
       # generate api docs
       - run: pnpm typedoc
 
-      - name: Deploy
+      - name: Deploy gh pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           deploy_key: ${{ secrets.GITHUB_TOKEN }}
