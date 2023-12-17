@@ -2,6 +2,28 @@ import { Fraction } from './fraction';
 
 describe('Fraction', () => {
   describe('parse', () => {
+    it('should parse zero edge cases correctly', () => {
+      const f1 = Fraction.parse('0');
+      expect(f1.numerator).toBe(0n);
+      expect(f1.denominator).toBe(0n);
+      expect(f1.isZero()).toBe(true);
+
+      const f2 = Fraction.parse('000');
+      expect(f2.numerator).toBe(0n);
+      expect(f2.denominator).toBe(0n);
+      expect(f2.isZero()).toBe(true);
+
+      const f3 = Fraction.parse('0.000');
+      expect(f3.numerator).toBe(0n);
+      expect(f3.denominator).toBe(0n);
+      expect(f3.isZero()).toBe(true);
+
+      const f4 = Fraction.parse('000.000');
+      expect(f4.numerator).toBe(0n);
+      expect(f4.denominator).toBe(0n);
+      expect(f4.isZero()).toBe(true);
+    });
+
     it('should parse a valid numeric string correctly', () => {
       const f1 = Fraction.parse('1.25');
       expect(f1.numerator).toBe(5n);
@@ -310,6 +332,13 @@ describe('Fraction', () => {
   });
 
   describe('sub', () => {
+    it('should add two fractions correctly', () => {
+      const f1 = new Fraction(2n);
+      const result = f1.sub(f1);
+      expect(result.numerator).toBe(0n);
+      expect(result.denominator).toBe(0n);
+    });
+
     it('should subtract two fractions correctly', () => {
       const fraction1 = new Fraction(3n, 4n);
       const fraction2 = new Fraction(1n, 2n);

@@ -8,7 +8,6 @@ export class Fraction {
   /**
    * The numerator of the fraction.
    */
-
   public readonly numerator: bigint;
 
   /**
@@ -28,6 +27,7 @@ export class Fraction {
   public static parse(value: NumericString): Fraction {
     const bn = Bn(value);
 
+    if (bn.isZero()) return new Fraction(0);
     if (bn.isInteger()) return new Fraction(value);
 
     const parts = bn.toFixed().split('.');
@@ -49,9 +49,9 @@ export class Fraction {
     const n = BigInt(numerator);
     const d = BigInt(denominator);
 
-    if (n === 0n || n === 0n) {
-      this.numerator = n;
-      this.denominator = d;
+    if (n === 0n || d === 0n) {
+      this.numerator = 0n;
+      this.denominator = 0n;
     } else {
       const divisor = gcd(n, d);
       this.numerator = n / divisor;
@@ -198,6 +198,7 @@ export class Fraction {
       this.denominator * other.denominator,
     );
   }
+
   /**
    * Subtracts `other` from the fraction.
    * @param other - The value to subtract.
