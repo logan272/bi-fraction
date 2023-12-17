@@ -18,7 +18,7 @@
   "scripts": {
     "build": "tsc;tsc --module commonjs --outDir dist/cjs",
     "watch": "chokidar 'src/**/*.ts' -c 'pnpm -wc exec turbo run build --filter=detect-provider'",
-    "typedoc": "typedoc src/index.ts --out ../../docs/pkg/fraction",
+    "typedoc": "typedoc src/index.ts --out ../../docs/api/fraction",
     "lint": "eslint src",
     "fix": "eslint src --fix",
     "ts-check": "tsc --noEmit"

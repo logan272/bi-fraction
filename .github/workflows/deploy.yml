@@ -28,13 +28,11 @@ jobs:
           cache: 'pnpm'
 
       - run: pnpm install
-      # build all the packages
-      - run: pnpm build
-      # build the nextjs example
-      - run: pnpm export
+      # generate api docs
+      - run: pnpm typedoc
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
-          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-          publish_dir: ./site/out
+          deploy_key: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
