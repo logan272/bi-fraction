@@ -11,13 +11,12 @@ describe('CurrencyAmount', () => {
     it('should create a CurrencyAmount instance with the provided values', () => {
       const numerator = 100n * 10n ** 18n;
       const denominator = 1n;
-      const amount = new CurrencyAmount(token1, numerator, denominator);
+      const amount = CurrencyAmount.from(token1, numerator, denominator);
 
       expect(amount.currency).toBe(token1);
       expect(amount.fraction.eq(new Fraction(numerator, denominator))).toBe(
         true,
       );
-      expect(amount.decimalScale).toBe(10n ** BigInt(token1.decimals));
     });
 
     it('should throw an error if the quotient exceeds MaxUint256', () => {
@@ -25,7 +24,7 @@ describe('CurrencyAmount', () => {
       const denominator = 1n;
 
       expect(() => {
-        new CurrencyAmount(token1, numerator, denominator);
+        CurrencyAmount.from(token1, numerator, denominator);
       }).toThrow('AMOUNT');
     });
   });
@@ -36,8 +35,8 @@ describe('CurrencyAmount', () => {
       const numerator2 = 50n * 10n ** 18n;
       const fraction1 = new Fraction(numerator1, 1n);
       const fraction2 = new Fraction(numerator2, 1n);
-      const amount1 = new CurrencyAmount(token1, numerator1, 1n);
-      const amount2 = new CurrencyAmount(token1, numerator2, 1n);
+      const amount1 = CurrencyAmount.from(token1, numerator1, 1n);
+      const amount2 = CurrencyAmount.from(token1, numerator2, 1n);
       const result = amount1.add(amount2);
 
       expect(result.currency).toBe(token1);
@@ -45,8 +44,8 @@ describe('CurrencyAmount', () => {
     });
 
     it('should throw an error if the CurrencyAmounts have different currencies', () => {
-      const amount1 = new CurrencyAmount(token1, 100n, 1n);
-      const amount2 = new CurrencyAmount(token2, 50n, 1n);
+      const amount1 = CurrencyAmount.from(token1, 100n, 1n);
+      const amount2 = CurrencyAmount.from(token2, 50n, 1n);
 
       expect(() => {
         amount1.add(amount2);
@@ -58,8 +57,8 @@ describe('CurrencyAmount', () => {
     it('should subtract another CurrencyAmount of the same currency', () => {
       const fraction1 = new Fraction(100n, 1n);
       const fraction2 = new Fraction(50n, 1n);
-      const amount1 = new CurrencyAmount(token1, 100n, 1n);
-      const amount2 = new CurrencyAmount(token1, 50n, 1n);
+      const amount1 = CurrencyAmount.from(token1, 100n, 1n);
+      const amount2 = CurrencyAmount.from(token1, 50n, 1n);
       const result = amount1.sub(amount2);
 
       expect(result.currency).toBe(token1);
@@ -67,8 +66,8 @@ describe('CurrencyAmount', () => {
     });
 
     it('should throw an error if the CurrencyAmounts have different currencies', () => {
-      const amount1 = new CurrencyAmount(token1, 100n, 1n);
-      const amount2 = new CurrencyAmount(token2, 50n, 1n);
+      const amount1 = CurrencyAmount.from(token1, 100n, 1n);
+      const amount2 = CurrencyAmount.from(token2, 50n, 1n);
 
       expect(() => {
         amount1.sub(amount2);
@@ -79,7 +78,7 @@ describe('CurrencyAmount', () => {
   describe('mul', () => {
     it('should multiply the CurrencyAmount by a Fraction', () => {
       const fraction1 = new Fraction(100n, 1n);
-      const amount = new CurrencyAmount(token1, 100n, 1n);
+      const amount = CurrencyAmount.from(token1, 100n, 1n);
       const fraction2 = new Fraction(3n, 4n);
       const result = amount.mul(fraction2);
 
@@ -89,7 +88,7 @@ describe('CurrencyAmount', () => {
 
     it('should multiply the CurrencyAmount by a BigIntIsh value', () => {
       const fraction = new Fraction(100n, 1n);
-      const amount = new CurrencyAmount(token1, 100n, 1n);
+      const amount = CurrencyAmount.from(token1, 100n, 1n);
       const value = 2n;
       const result = amount.mul(value);
 
@@ -102,7 +101,7 @@ describe('CurrencyAmount', () => {
     it('should divide the CurrencyAmount by a Fraction', () => {
       const fraction1 = new Fraction(100n, 1n);
       const fraction2 = new Fraction(1n, 2n);
-      const amount = new CurrencyAmount(token1, 100n, 1n);
+      const amount = CurrencyAmount.from(token1, 100n, 1n);
       const result = amount.div(fraction2);
 
       expect(result.currency).toBe(token1);
@@ -111,7 +110,7 @@ describe('CurrencyAmount', () => {
 
     it('should divide the CurrencyAmount by a BigIntIsh value', () => {
       const fraction = new Fraction(100n, 1n);
-      const amount = new CurrencyAmount(token1, 100n, 1n);
+      const amount = CurrencyAmount.from(token1, 100n, 1n);
       const value = 2n;
       const result = amount.div(value);
 
@@ -122,14 +121,14 @@ describe('CurrencyAmount', () => {
 
   describe('toFixed', () => {
     it('should convert the CurrencyAmount to a fixed-point decimal string representation', () => {
-      const amount = new CurrencyAmount(token1, 100n * 10n ** 18n, 1n);
+      const amount = CurrencyAmount.from(token1, 100n * 10n ** 18n, 1n);
 
       expect(amount.toFixed(2)).toBe('100.00');
       expect(amount.mul(100).toFixed(3)).toBe('10000.000');
     });
 
     it('should throw an error if the specified decimal places exceed the currency decimals', () => {
-      const amount = new CurrencyAmount(token1, 100n, 1n);
+      const amount = CurrencyAmount.from(token1, 100n, 1n);
 
       expect(() => {
         amount.toFixed(20);
@@ -139,14 +138,14 @@ describe('CurrencyAmount', () => {
 
   describe('toFormat', () => {
     it('should convert the CurrencyAmount to a formatted string representation', () => {
-      const amount = new CurrencyAmount(token1, 100n * 10n ** 18n, 1n);
+      const amount = CurrencyAmount.from(token1, 100n * 10n ** 18n, 1n);
 
       expect(amount.toFormat(2)).toBe('100.00');
       expect(amount.mul(100).toFormat(2)).toBe('10,000.00');
     });
 
     it('should throw an error if the specified decimal places exceed the currency decimals', () => {
-      const amount = new CurrencyAmount(token1, 100n, 1n);
+      const amount = CurrencyAmount.from(token1, 100n, 1n);
 
       expect(() => {
         amount.toFormat(20);

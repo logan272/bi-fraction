@@ -21,27 +21,30 @@ export class CurrencyAmount<T extends Currency> {
   public readonly fraction: Fraction;
 
   /**
-   * The decimal scale of the currency, used for conversions.
-   */
-  public readonly decimalScale: bigint;
-
-  /**
-   * Constructs a new CurrencyAmount instance.
+   * Create a new CurrencyAmount
    *
    * @param currency The currency associated with the amount.
    * @param numerator The numerator of the fraction representing the amount.
    * @param denominator The denominator of the fraction representing the amount.
    */
-  public constructor(
+  public static from<T extends Currency>(
     currency: T,
     numerator: BigIntIsh,
     denominator?: BigIntIsh,
-  ) {
-    const fraction = new Fraction(numerator, denominator);
+  ): CurrencyAmount<T> {
+    return new CurrencyAmount(currency, new Fraction(numerator, denominator));
+  }
+
+  /**
+   * Constructs a new CurrencyAmount instance.
+   *
+   * @param currency The currency associated with the amount.
+   * @param fraction The fraction value.
+   */
+  public constructor(currency: T, fraction: Fraction) {
     invariant(fraction.quotient <= MaxUint256, 'AMOUNT');
     this.fraction = fraction;
     this.currency = currency;
-    this.decimalScale = 10n ** BigInt(currency.decimals);
   }
 
   /**
@@ -120,11 +123,7 @@ export class CurrencyAmount<T extends Currency> {
   public add(other: CurrencyAmount<T>): CurrencyAmount<T> {
     invariant(this.currency.eq(other.currency), 'CURRENCY');
     const added = this.fraction.add(other.fraction);
-    return new CurrencyAmount(
-      this.currency,
-      added.numerator,
-      added.denominator,
-    );
+    return new CurrencyAmount(this.currency, added);
   }
 
   /**
@@ -137,11 +136,7 @@ export class CurrencyAmount<T extends Currency> {
   public sub(other: CurrencyAmount<T>): CurrencyAmount<T> {
     invariant(this.currency.eq(other.currency), 'CURRENCY');
     const subtracted = this.fraction.sub(other.fraction);
-    return new CurrencyAmount(
-      this.currency,
-      subtracted.numerator,
-      subtracted.denominator,
-    );
+    return new CurrencyAmount(this.currency, subtracted);
   }
 
   /**
@@ -152,11 +147,7 @@ export class CurrencyAmount<T extends Currency> {
    */
   public mul(other: Fraction | BigIntIsh): CurrencyAmount<T> {
     const multiplied = this.fraction.mul(other);
-    return new CurrencyAmount(
-      this.currency,
-      multiplied.numerator,
-      multiplied.denominator,
-    );
+    return new CurrencyAmount(this.currency, multiplied);
   }
 
   /**
@@ -167,11 +158,7 @@ export class CurrencyAmount<T extends Currency> {
    */
   public div(other: Fraction | BigIntIsh): CurrencyAmount<T> {
     const divided = this.fraction.div(other);
-    return new CurrencyAmount(
-      this.currency,
-      divided.numerator,
-      divided.denominator,
-    );
+    return new CurrencyAmount(this.currency, divided);
   }
 
   /**
@@ -188,7 +175,7 @@ export class CurrencyAmount<T extends Currency> {
   ): string {
     invariant(decimalPlaces <= this.currency.decimals, 'DECIMALS');
     return this.fraction
-      .div(this.decimalScale)
+      .div(this.currency.decimalScale)
       .toFixed(decimalPlaces, roundingMode);
   }
 
@@ -208,7 +195,7 @@ export class CurrencyAmount<T extends Currency> {
   ): string {
     invariant(decimalPlaces <= this.currency.decimals, 'DECIMALS');
     return this.fraction
-      .div(this.decimalScale)
+      .div(this.currency.decimalScale)
       .toFormat(
         decimalPlaces,
         roundingMode ?? BigNumberJs.ROUND_HALF_UP,

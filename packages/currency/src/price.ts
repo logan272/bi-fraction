@@ -44,47 +44,35 @@ export class Price<TBase extends Currency, TQuote extends Currency> {
    */
   public readonly scalar: Fraction;
 
+  public static from<TBase extends Currency, TQuote extends Currency>(
+    baseCurrency: TBase,
+    quoteCurrency: TQuote,
+    denominator: BigIntIsh,
+    numerator: BigIntIsh = 1,
+  ): Price<TBase, TQuote> {
+    return new Price(
+      CurrencyAmount.from(baseCurrency, denominator),
+      CurrencyAmount.from(quoteCurrency, numerator),
+    );
+  }
+
   /**
    * Constructs a new Price instance.
    *
-   * @param args The base and quote currency amounts, or an object with baseAmount and quoteAmount properties.
+   * @param baseAmount The base currency amount.
+   * @param quoteAmount The quote currency amount.
    */
   public constructor(
-    ...args:
-      | [TBase, TQuote, BigIntIsh, BigIntIsh]
-      | [
-          {
-            baseAmount: CurrencyAmount<TBase>;
-            quoteAmount: CurrencyAmount<TQuote>;
-          },
-        ]
+    baseAmount: CurrencyAmount<TBase>,
+    quoteAmount: CurrencyAmount<TQuote>,
   ) {
-    let baseCurrency: TBase;
-    let quoteCurrency: TQuote;
-    let denominator: BigIntIsh;
-    let numerator: BigIntIsh;
-
-    if (args.length === 4) {
-      // eslint-disable-next-line @typescript-eslint/no-extra-semi
-      [baseCurrency, quoteCurrency, denominator, numerator] = args;
-    } else {
-      const result = args[0].quoteAmount.fraction.div(
-        args[0].baseAmount.fraction,
-      );
-      [baseCurrency, quoteCurrency, denominator, numerator] = [
-        args[0].baseAmount.currency,
-        args[0].quoteAmount.currency,
-        result.denominator,
-        result.numerator,
-      ];
-    }
-
-    this.fraction = new Fraction(numerator, denominator);
-    this.baseCurrency = baseCurrency;
-    this.quoteCurrency = quoteCurrency;
+    const result = quoteAmount.fraction.div(baseAmount.fraction);
+    this.fraction = new Fraction(result.numerator, result.denominator);
+    this.baseCurrency = baseAmount.currency;
+    this.quoteCurrency = quoteAmount.currency;
     this.scalar = new Fraction(
-      10n ** BigInt(baseCurrency.decimals),
-      10n ** BigInt(quoteCurrency.decimals),
+      this.baseCurrency.decimalScale,
+      this.quoteCurrency.decimalScale,
     );
   }
 
@@ -94,7 +82,7 @@ export class Price<TBase extends Currency, TQuote extends Currency> {
    * @returns A new Price instance with the flipped currencies.
    */
   public invert(): Price<TQuote, TBase> {
-    return new Price(
+    return Price.from(
       this.quoteCurrency,
       this.baseCurrency,
       this.fraction.numerator,
@@ -117,7 +105,7 @@ export class Price<TBase extends Currency, TQuote extends Currency> {
     invariant(this.quoteCurrency.eq(other.baseCurrency), 'TOKEN');
     invariant(this.baseCurrency.neq(other.quoteCurrency), 'TOKEN');
     const fraction = this.fraction.mul(other.fraction);
-    return new Price(
+    return Price.from(
       this.baseCurrency,
       other.quoteCurrency,
       fraction.denominator,
@@ -136,13 +124,8 @@ export class Price<TBase extends Currency, TQuote extends Currency> {
    */
   public quote(currencyAmount: CurrencyAmount<TBase>): CurrencyAmount<TQuote> {
     invariant(currencyAmount.currency.eq(this.baseCurrency), 'TOKEN');
-
-    const result = this.fraction.mul(currencyAmount.fraction);
-    return new CurrencyAmount(
-      this.quoteCurrency,
-      result.numerator,
-      result.denominator,
-    );
+    const result = currencyAmount.fraction.mul(this.fraction);
+    return new CurrencyAmount(this.quoteCurrency, result);
   }
 
   /**

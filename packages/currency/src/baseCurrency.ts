@@ -37,6 +37,13 @@ export abstract class BaseCurrency {
   public readonly name?: string;
 
   /**
+   * The decimal scale of the currency, used for conversions.
+   */
+  public get decimalScale(): bigint {
+    return 10n ** BigInt(this.decimals);
+  }
+
+  /**
    * Constructs an instance of the base class `BaseCurrency`.
    *
    * @param chainId the chain ID on which this currency resides
