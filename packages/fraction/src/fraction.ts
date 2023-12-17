@@ -46,10 +46,17 @@ export class Fraction {
    * @throws If numerator or denominator is not a valid BigIntIsh
    */
   constructor(numerator: BigIntIsh, denominator: BigIntIsh = 1n) {
-    const divisor = gcd(numerator, denominator);
+    const n = BigInt(numerator);
+    const d = BigInt(denominator);
 
-    this.numerator = BigInt(numerator) / divisor;
-    this.denominator = BigInt(denominator) / divisor;
+    if (n === 0n || n === 0n) {
+      this.numerator = n;
+      this.denominator = d;
+    } else {
+      const divisor = gcd(n, d);
+      this.numerator = n / divisor;
+      this.denominator = d / divisor;
+    }
   }
 
   /**
@@ -250,6 +257,10 @@ export class Fraction {
     decimalPlaces = 0,
     roundingMode?: BigNumberJs.RoundingMode,
   ): string {
+    if (this.isZero()) {
+      return Bn(0).toFixed(decimalPlaces, roundingMode);
+    }
+
     return Bn(this.numerator.toString())
       .div(this.denominator.toString())
       .toFixed(decimalPlaces, roundingMode);
@@ -267,6 +278,14 @@ export class Fraction {
     roundingMode?: BigNumberJs.RoundingMode,
     format?: BigNumberJs.Format,
   ): string {
+    if (this.isZero()) {
+      return Bn(0).toFormat(
+        decimalPlaces,
+        roundingMode ?? BigNumberJs.ROUND_HALF_UP,
+        format,
+      );
+    }
+
     return Bn(this.numerator.toString())
       .div(this.denominator.toString())
       .toFormat(
