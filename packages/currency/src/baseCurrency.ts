@@ -67,4 +67,12 @@ export abstract class BaseCurrency {
    * @param other the other currency
    */
   public abstract eq(other: Currency): boolean;
+
+  /**
+   * Returns whether this currency is not functionally equivalent to the other currency
+   * @param other the other currency
+   */
+  public neq(other: Currency): boolean {
+    return !this.eq(other);
+  }
 }
