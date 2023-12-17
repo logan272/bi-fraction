@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { Fraction } from './fraction';
 
 describe('Fraction', () => {
@@ -62,6 +63,23 @@ describe('Fraction', () => {
   });
 
   describe('constructor', () => {
+    it('should parse zero edge cases correctly', () => {
+      const f1 = new Fraction(0, 100);
+      expect(f1.numerator).toBe(0n);
+      expect(f1.denominator).toBe(0n);
+      expect(f1.isZero()).toBe(true);
+
+      const f2 = new Fraction(1000, 0);
+      expect(f2.numerator).toBe(0n);
+      expect(f2.denominator).toBe(0n);
+      expect(f2.isZero()).toBe(true);
+
+      const f3 = new Fraction('0', 1);
+      expect(f3.numerator).toBe(0n);
+      expect(f3.denominator).toBe(0n);
+      expect(f3.isZero()).toBe(true);
+    });
+
     it('should create a Fraction correctly with integers', () => {
       const f1 = new Fraction(1, 1);
       expect(f1.numerator).toBe(1n);
@@ -229,18 +247,40 @@ describe('Fraction', () => {
 
   describe('remainder', () => {
     it('should return the correct remainder', () => {
-      const fraction = new Fraction(5n, 2n);
-      expect(fraction.remainder.numerator).toBe(1n);
-      expect(fraction.remainder.denominator).toBe(2n);
+      const f1 = new Fraction(5n, 2n);
+      expect(f1.remainder.numerator).toBe(1n);
+      expect(f1.remainder.denominator).toBe(2n);
+
+      const f2 = new Fraction(5n, 3n);
+      expect(f2.remainder.numerator).toBe(2n);
+      expect(f2.remainder.denominator).toBe(3n);
+
+      const f3 = new Fraction(3, 6);
+      expect(f3.remainder.numerator).toBe(1n);
+      expect(f3.remainder.denominator).toBe(2n);
+
+      const f4 = new Fraction(123n, 124n);
+      expect(f4.remainder.numerator).toBe(123n);
+      expect(f4.remainder.denominator).toBe(124n);
     });
   });
 
   describe('invert', () => {
     it('should return the inverted fraction', () => {
-      const fraction = new Fraction(5n, 2n);
-      const inverted = fraction.invert();
-      expect(inverted.numerator).toBe(2n);
-      expect(inverted.denominator).toBe(5n);
+      const f1 = new Fraction(5, 2);
+      const inverted1 = f1.invert();
+      expect(inverted1.numerator).toBe(2n);
+      expect(inverted1.denominator).toBe(5n);
+
+      const f2 = new Fraction(5);
+      const inverted2 = f2.invert();
+      expect(inverted2.numerator).toBe(1n);
+      expect(inverted2.denominator).toBe(5n);
+
+      const f3 = new Fraction(3, 10);
+      const inverted3 = f3.invert();
+      expect(inverted3.numerator).toBe(10n);
+      expect(inverted3.denominator).toBe(3n);
     });
   });
 
@@ -257,75 +297,170 @@ describe('Fraction', () => {
     });
 
     it('should return false for a non-zero fraction', () => {
-      const fraction = new Fraction(5n, 2n);
-      expect(fraction.isZero()).toBe(false);
+      const f1 = new Fraction(5, 2);
+      expect(f1.isZero()).toBe(false);
+
+      const f2 = new Fraction(5);
+      expect(f2.isZero()).toBe(false);
+
+      const f3 = new Fraction(3, 5);
+      expect(f3.isZero()).toBe(false);
     });
   });
 
   describe('eq', () => {
+    it('should handle zero edge cases correctly', () => {
+      const f1 = new Fraction(10, 0);
+      const f2 = new Fraction(0, 2);
+      const f3 = new Fraction(10, 0);
+      expect(f1.eq(f2)).toBe(true);
+      expect(f1.eq(f3)).toBe(true);
+      expect(f3.isZero()).toBe(true);
+    });
+
     it('should return true for equal fractions', () => {
-      const fraction1 = new Fraction(5n, 2n);
-      const fraction2 = new Fraction(10n, 4n);
-      expect(fraction1.eq(fraction2)).toBe(true);
+      const f1 = new Fraction(5n, 2n);
+      const f2 = new Fraction(10n, 4n);
+      expect(f1.eq(f2)).toBe(true);
     });
 
     it('should return false for unequal fractions', () => {
-      const fraction1 = new Fraction(5n, 2n);
-      const fraction2 = new Fraction(3n, 2n);
-      expect(fraction1.eq(fraction2)).toBe(false);
+      const f1 = new Fraction(5n, 2n);
+      const f2 = new Fraction(3n, 2n);
+      expect(f1.eq(f2)).toBe(false);
     });
 
     it('should return true for equal fractions with different signs', () => {
-      const fraction1 = new Fraction(5n, 2n);
-      const fraction2 = new Fraction(-5n, -2n);
-      expect(fraction1.eq(fraction2)).toBe(true);
+      const f1 = new Fraction(5n, 2n);
+      const f2 = new Fraction(-5n, -2n);
+      expect(f1.eq(f2)).toBe(true);
     });
 
     it('should return false for unequal fractions with different signs', () => {
-      const fraction1 = new Fraction(5n, 2n);
-      const fraction2 = new Fraction(-5n, 2n);
-      expect(fraction1.eq(fraction2)).toBe(false);
+      const f1 = new Fraction(5n, 2n);
+      const f2 = new Fraction(-5n, 2n);
+      expect(f1.eq(f2)).toBe(false);
     });
   });
 
   describe('neq', () => {
     it('should return true for equal fractions', () => {
-      const fraction1 = new Fraction(5n, 2n);
-      const fraction2 = new Fraction(10n, 4n);
-      expect(fraction1.neq(fraction2)).toBe(false);
+      const f1 = new Fraction(5n, 2n);
+      const f2 = new Fraction(10n, 4n);
+      expect(f1.neq(f2)).toBe(false);
     });
 
     it('should return false for unequal fractions', () => {
-      const fraction1 = new Fraction(5n, 2n);
-      const fraction2 = new Fraction(3n, 2n);
-      expect(fraction1.neq(fraction2)).toBe(true);
+      const f1 = new Fraction(5n, 2n);
+      const f2 = new Fraction(3n, 2n);
+      expect(f1.neq(f2)).toBe(true);
     });
 
     it('should return true for equal fractions with different signs', () => {
-      const fraction1 = new Fraction(5n, 2n);
-      const fraction2 = new Fraction(-5n, -2n);
-      expect(fraction1.neq(fraction2)).toBe(false);
+      const f1 = new Fraction(5n, 2n);
+      const f2 = new Fraction(-5n, -2n);
+      expect(f1.neq(f2)).toBe(false);
     });
 
     it('should return false for unequal fractions with different signs', () => {
-      const fraction1 = new Fraction(5n, 2n);
-      const fraction2 = new Fraction(-5n, 2n);
-      expect(fraction1.neq(fraction2)).toBe(true);
+      const f1 = new Fraction(5n, 2n);
+      const f2 = new Fraction(-5n, 2n);
+      expect(f1.neq(f2)).toBe(true);
+    });
+  });
+
+  describe('lt', () => {
+    it('should return true if the fraction is less than the other fraction', () => {
+      const f1 = new Fraction(1n, 2n);
+      const f2 = new Fraction(3n, 4n);
+      expect(f1.lt(f2)).toBe(true);
+    });
+
+    it('should return false if the fraction is equal to the other fraction', () => {
+      const f1 = new Fraction(1n, 2n);
+      const f2 = new Fraction(1n, 2n);
+      expect(f1.lt(f2)).toBe(false);
+    });
+
+    it('should return false if the fraction is greater than the other fraction', () => {
+      const f1 = new Fraction(1n, 2n);
+      const f2 = new Fraction(1n, 4n);
+      expect(f1.lt(f2)).toBe(false);
+    });
+  });
+
+  describe('lte', () => {
+    it('should return true if the fraction is less than or equal to the other fraction', () => {
+      const f1 = new Fraction(1n, 2n);
+      const f2 = new Fraction(3n, 4n);
+      expect(f1.lte(f2)).toBe(true);
+    });
+
+    it('should return true if the fraction is equal to the other fraction', () => {
+      const f1 = new Fraction(1n, 2n);
+      const f2 = new Fraction(1n, 2n);
+      expect(f1.lte(f2)).toBe(true);
+    });
+
+    it('should return false if the fraction is greater than the other fraction', () => {
+      const f1 = new Fraction(1n, 2n);
+      const f2 = new Fraction(1n, 4n);
+      expect(f1.lte(f2)).toBe(false);
+    });
+  });
+
+  describe('gt', () => {
+    it('should return true if the fraction is greater than the other fraction', () => {
+      const f1 = new Fraction(1n, 2n);
+      const f2 = new Fraction(1n, 4n);
+      expect(f1.gt(f2)).toBe(true);
+    });
+
+    it('should return false if the fraction is equal to the other fraction', () => {
+      const f1 = new Fraction(1n, 2n);
+      const f2 = new Fraction(1n, 2n);
+      expect(f1.gt(f2)).toBe(false);
+    });
+
+    it('should return false if the fraction is less than the other fraction', () => {
+      const f1 = new Fraction(1n, 2n);
+      const f2 = new Fraction(3n, 4n);
+      expect(f1.gt(f2)).toBe(false);
+    });
+  });
+
+  describe('gte', () => {
+    it('should return true if the fraction is greater than or equal to the other fraction', () => {
+      const f1 = new Fraction(1n, 2n);
+      const f2 = new Fraction(1n, 4n);
+      expect(f1.gte(f2)).toBe(true);
+    });
+
+    it('should return true if the fraction is equal to the other fraction', () => {
+      const fraction1 = new Fraction(1n, 2n);
+      const fraction2 = new Fraction(1n, 2n);
+      expect(fraction1.gte(fraction2)).toBe(true);
+    });
+
+    it('should return false if the fraction is less than the other fraction', () => {
+      const f1 = new Fraction(1n, 2n);
+      const f2 = new Fraction(3n, 4n);
+      expect(f1.gte(f2)).toBe(false);
     });
   });
 
   describe('add', () => {
     it('should add two fractions correctly', () => {
-      const fraction1 = new Fraction(1n, 2n);
+      const f1 = new Fraction(1n, 2n);
       const fraction2 = new Fraction(3n, 4n);
-      const result = fraction1.add(fraction2);
+      const result = f1.add(fraction2);
       expect(result.numerator).toBe(5n);
       expect(result.denominator).toBe(4n);
     });
 
     it('should add a fraction and an integer correctly', () => {
-      const fraction = new Fraction(1n, 2n);
-      const result = fraction.add(3);
+      const f1 = new Fraction(1n, 2n);
+      const result = f1.add(3);
       expect(result.numerator).toBe(7n);
       expect(result.denominator).toBe(2n);
     });
@@ -340,16 +475,16 @@ describe('Fraction', () => {
     });
 
     it('should subtract two fractions correctly', () => {
-      const fraction1 = new Fraction(3n, 4n);
-      const fraction2 = new Fraction(1n, 2n);
-      const result = fraction1.sub(fraction2);
+      const f1 = new Fraction(3n, 4n);
+      const f2 = new Fraction(1n, 2n);
+      const result = f1.sub(f2);
       expect(result.numerator).toBe(1n);
       expect(result.denominator).toBe(4n);
     });
 
     it('should subtract an integer from a fraction correctly', () => {
-      const fraction = new Fraction(3n, 4n);
-      const result = fraction.sub(1);
+      const f1 = new Fraction(3n, 4n);
+      const result = f1.sub(1);
       expect(result.numerator).toBe(-1n);
       expect(result.denominator).toBe(4n);
     });
@@ -357,16 +492,16 @@ describe('Fraction', () => {
 
   describe('mul', () => {
     it('should multiply two fractions correctly', () => {
-      const fraction1 = new Fraction(2n, 3n);
-      const fraction2 = new Fraction(3n, 4n);
-      const result = fraction1.mul(fraction2);
+      const f1 = new Fraction(2n, 3n);
+      const f2 = new Fraction(3n, 4n);
+      const result = f1.mul(f2);
       expect(result.numerator).toBe(1n);
       expect(result.denominator).toBe(2n);
     });
 
     it('should multiply a fraction and an integer correctly', () => {
-      const fraction = new Fraction(2n, 3n);
-      const result = fraction.mul(3);
+      const f1 = new Fraction(2n, 3n);
+      const result = f1.mul(3);
       expect(result.numerator).toBe(2n);
       expect(result.denominator).toBe(1n);
     });
@@ -374,16 +509,16 @@ describe('Fraction', () => {
 
   describe('div', () => {
     it('should divide two fractions correctly', () => {
-      const fraction1 = new Fraction(3n, 4n);
-      const fraction2 = new Fraction(2n, 3n);
-      const result = fraction1.div(fraction2);
+      const f1 = new Fraction(3n, 4n);
+      const f2 = new Fraction(2n, 3n);
+      const result = f1.div(f2);
       expect(result.numerator).toBe(9n);
       expect(result.denominator).toBe(8n);
     });
 
     it('should divide a fraction by an integer correctly', () => {
-      const fraction = new Fraction(3n, 4n);
-      const result = fraction.div(2);
+      const f1 = new Fraction(3n, 4n);
+      const result = f1.div(2);
       expect(result.numerator).toBe(3n);
       expect(result.denominator).toBe(8n);
     });
