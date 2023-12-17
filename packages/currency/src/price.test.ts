@@ -50,20 +50,28 @@ describe('Price', () => {
   });
 
   describe('mul', () => {
-    it('should return a new Price instance with multiplied prices', () => {
-      const multipliedPrice = priceEth2Usdc.mul(priceUsdc2Btc);
-      expect(multipliedPrice.baseCurrency).toBe(eth);
-      expect(multipliedPrice.quoteCurrency).toBe(btc);
-      expect(multipliedPrice.eq(priceEth2Btc)).toBe(true);
+    it('should not to throw for valid prices multiplications', () => {
+      // priceEth2Usdc can only multiplied with USDC/xxx
+      // priceEth2Usdc can not multiple with priceEth2Usdc.invert()
+      expect(() => priceEth2Usdc.mul(priceUsdc2Btc)).not.toThrow('TOKEN');
     });
 
     it('should throw errors for invalid prices multiplications', () => {
-      // priceEth2Usdc can only multiplied with USDC/xxx
+      // priceEth2Usdc can only multiplied with USDC/OTHER
+      // priceEth2Usdc can not multiple with priceEth2Usdc.invert()
+      expect(() => priceEth2Usdc.mul(priceUsdc2Eth)).toThrow('TOKEN');
       expect(() => priceEth2Usdc.mul(priceEth2Usdc)).toThrow('TOKEN');
       expect(() => priceEth2Usdc.mul(priceEth2Usdc)).toThrow('TOKEN');
       expect(() => priceEth2Usdc.mul(priceBtc2Usdc)).toThrow('TOKEN');
       expect(() => priceEth2Usdc.mul(priceEth2Btc)).toThrow('TOKEN');
       expect(() => priceEth2Usdc.mul(priceBtc2Eth)).toThrow('TOKEN');
+    });
+
+    it('should return a new Price instance with multiplied prices', () => {
+      const multipliedPrice = priceEth2Usdc.mul(priceUsdc2Btc);
+      expect(multipliedPrice.baseCurrency).toBe(eth);
+      expect(multipliedPrice.quoteCurrency).toBe(btc);
+      expect(multipliedPrice.eq(priceEth2Btc)).toBe(true);
     });
   });
 
