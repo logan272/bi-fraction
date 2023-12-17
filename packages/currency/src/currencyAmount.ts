@@ -9,11 +9,16 @@ import type { Currency } from './currency';
 /**
  * Subclass of `Fraction`. Represents an amount of a specific currency.
  */
-export class CurrencyAmount<T extends Currency> extends Fraction {
+export class CurrencyAmount<T extends Currency> {
   /**
    * The currency associated with the amount.
    */
   public readonly currency: T;
+
+  /**
+   * The underlining fraction value.
+   */
+  public readonly fraction: Fraction;
 
   /**
    * The decimal scale of the currency, used for conversions.
@@ -32,8 +37,9 @@ export class CurrencyAmount<T extends Currency> extends Fraction {
     numerator: BigIntIsh,
     denominator?: BigIntIsh,
   ) {
-    super(numerator, denominator);
-    invariant(this.quotient <= MaxUint256, 'AMOUNT');
+    const fraction = new Fraction(numerator, denominator);
+    invariant(fraction.quotient <= MaxUint256, 'AMOUNT');
+    this.fraction = fraction;
     this.currency = currency;
     this.decimalScale = 10n ** BigInt(currency.decimals);
   }
@@ -45,10 +51,10 @@ export class CurrencyAmount<T extends Currency> extends Fraction {
    * @returns A new CurrencyAmount instance representing the sum.
    * @throws 'CURRENCY' if the CurrencyAmounts have different currencies.
    */
-  public override add(other: CurrencyAmount<T>): CurrencyAmount<T> {
+  public add(other: CurrencyAmount<T>): CurrencyAmount<T> {
     // It only make sense to add the amounts of the same currency.
     invariant(this.currency.eq(other.currency), 'CURRENCY');
-    const added = super.add(other);
+    const added = this.fraction.add(other.fraction);
     return new CurrencyAmount(
       this.currency,
       added.numerator,
@@ -63,10 +69,10 @@ export class CurrencyAmount<T extends Currency> extends Fraction {
    * @returns A new CurrencyAmount instance representing the difference.
    * @throws 'CURRENCY' if the CurrencyAmounts have different currencies.
    */
-  public override sub(other: CurrencyAmount<T>): CurrencyAmount<T> {
+  public sub(other: CurrencyAmount<T>): CurrencyAmount<T> {
     // It only make sense to sub the amounts of the same currency.
     invariant(this.currency.eq(other.currency), 'CURRENCY');
-    const subtracted = super.sub(other);
+    const subtracted = this.fraction.sub(other.fraction);
     return new CurrencyAmount(
       this.currency,
       subtracted.numerator,
@@ -80,8 +86,8 @@ export class CurrencyAmount<T extends Currency> extends Fraction {
    * @param other The Fraction or BigIntIsh value to multiply by.
    * @returns A new CurrencyAmount instance representing the product.
    */
-  public override mul(other: Fraction | BigIntIsh): CurrencyAmount<T> {
-    const multiplied = super.mul(other);
+  public mul(other: Fraction | BigIntIsh): CurrencyAmount<T> {
+    const multiplied = this.fraction.mul(other);
     return new CurrencyAmount(
       this.currency,
       multiplied.numerator,
@@ -95,8 +101,8 @@ export class CurrencyAmount<T extends Currency> extends Fraction {
    * @param other The Fraction or BigIntIsh value to divide by.
    * @returns A new CurrencyAmount instance representing the quotient.
    */
-  public override div(other: Fraction | BigIntIsh): CurrencyAmount<T> {
-    const divided = super.div(other);
+  public div(other: Fraction | BigIntIsh): CurrencyAmount<T> {
+    const divided = this.fraction.div(other);
     return new CurrencyAmount(
       this.currency,
       divided.numerator,
@@ -112,12 +118,14 @@ export class CurrencyAmount<T extends Currency> extends Fraction {
    * @returns The fixed-point decimal string representation of the CurrencyAmount.
    * @throws 'DECIMALS' if the specified decimal places exceed the currency decimals.
    */
-  public override toFixed(
+  public toFixed(
     decimalPlaces: number = this.currency.decimals,
     roundingMode?: BigNumberJs.RoundingMode,
   ): string {
     invariant(decimalPlaces <= this.currency.decimals, 'DECIMALS');
-    return super.div(this.decimalScale).toFixed(decimalPlaces, roundingMode);
+    return this.fraction
+      .div(this.decimalScale)
+      .toFixed(decimalPlaces, roundingMode);
   }
 
   /**
@@ -129,13 +137,13 @@ export class CurrencyAmount<T extends Currency> extends Fraction {
    * @returns The formatted string representation of the CurrencyAmount.
    * @throws 'DECIMALS' if the specified decimal places exceed the currency decimals.
    */
-  public override toFormat(
+  public toFormat(
     decimalPlaces: number = this.currency.decimals,
     roundingMode?: BigNumberJs.RoundingMode,
     format?: BigNumberJs.Format,
   ): string {
     invariant(decimalPlaces <= this.currency.decimals, 'DECIMALS');
-    return super
+    return this.fraction
       .div(this.decimalScale)
       .toFormat(
         decimalPlaces,

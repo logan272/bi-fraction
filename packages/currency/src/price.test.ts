@@ -1,3 +1,5 @@
+import { Fraction } from '@web3-kit/fraction';
+
 import { CurrencyAmount } from './currencyAmount';
 import { Price } from './price';
 import { Token } from './token';
@@ -63,7 +65,7 @@ describe('Price', () => {
     it('should return the corresponding amount of quote currency for a given base currency amount', () => {
       const quotedAmount = price.quote(baseAmount);
       expect(quotedAmount.currency).toBe(quoteCurrency);
-      expect(quotedAmount.numerator).toBe(50n);
+      expect(quotedAmount.fraction.eq(new Fraction(50n, 1))).toBe(true);
     });
 
     it('should throw an error if the currency amount has a different currency', () => {

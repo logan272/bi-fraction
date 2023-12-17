@@ -66,7 +66,9 @@ export class Price<
       // eslint-disable-next-line @typescript-eslint/no-extra-semi
       [baseCurrency, quoteCurrency, denominator, numerator] = args;
     } else {
-      const result = args[0].quoteAmount.div(args[0].baseAmount);
+      const result = args[0].quoteAmount.fraction.div(
+        args[0].baseAmount.fraction,
+      );
       [baseCurrency, quoteCurrency, denominator, numerator] = [
         args[0].baseAmount.currency,
         args[0].quoteAmount.currency,
@@ -133,7 +135,7 @@ export class Price<
   public quote(currencyAmount: CurrencyAmount<TBase>): CurrencyAmount<TQuote> {
     invariant(currencyAmount.currency.eq(this.baseCurrency), 'TOKEN');
 
-    const result = super.mul(currencyAmount);
+    const result = super.mul(currencyAmount.fraction);
     return new CurrencyAmount(
       this.quoteCurrency,
       result.numerator,

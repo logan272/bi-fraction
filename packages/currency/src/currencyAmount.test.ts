@@ -14,8 +14,9 @@ describe('CurrencyAmount', () => {
       const amount = new CurrencyAmount(token1, numerator, denominator);
 
       expect(amount.currency).toBe(token1);
-      expect(amount.numerator).toBe(numerator);
-      expect(amount.denominator).toBe(denominator);
+      expect(amount.fraction.eq(new Fraction(numerator, denominator))).toBe(
+        true,
+      );
       expect(amount.decimalScale).toBe(10n ** BigInt(token1.decimals));
     });
 
@@ -33,13 +34,14 @@ describe('CurrencyAmount', () => {
     it('should add another CurrencyAmount of the same currency', () => {
       const numerator1 = 100n * 10n ** 18n;
       const numerator2 = 50n * 10n ** 18n;
+      const fraction1 = new Fraction(numerator1, 1n);
+      const fraction2 = new Fraction(numerator2, 1n);
       const amount1 = new CurrencyAmount(token1, numerator1, 1n);
       const amount2 = new CurrencyAmount(token1, numerator2, 1n);
       const result = amount1.add(amount2);
 
       expect(result.currency).toBe(token1);
-      expect(result.numerator).toBe(numerator1 + numerator2);
-      expect(result.denominator).toBe(1n);
+      expect(result.fraction.eq(fraction1.add(fraction2))).toBe(true);
     });
 
     it('should throw an error if the CurrencyAmounts have different currencies', () => {
@@ -54,13 +56,14 @@ describe('CurrencyAmount', () => {
 
   describe('sub', () => {
     it('should subtract another CurrencyAmount of the same currency', () => {
+      const fraction1 = new Fraction(100n, 1n);
+      const fraction2 = new Fraction(50n, 1n);
       const amount1 = new CurrencyAmount(token1, 100n, 1n);
       const amount2 = new CurrencyAmount(token1, 50n, 1n);
       const result = amount1.sub(amount2);
 
       expect(result.currency).toBe(token1);
-      expect(result.numerator).toBe(50n);
-      expect(result.denominator).toBe(1n);
+      expect(result.fraction.eq(fraction1.sub(fraction2))).toBe(true);
     });
 
     it('should throw an error if the CurrencyAmounts have different currencies', () => {
@@ -75,45 +78,45 @@ describe('CurrencyAmount', () => {
 
   describe('mul', () => {
     it('should multiply the CurrencyAmount by a Fraction', () => {
+      const fraction1 = new Fraction(100n, 1n);
       const amount = new CurrencyAmount(token1, 100n, 1n);
-      const fraction = new Fraction(3n, 4n);
-      const result = amount.mul(fraction);
+      const fraction2 = new Fraction(3n, 4n);
+      const result = amount.mul(fraction2);
 
       expect(result.currency).toBe(token1);
-      expect(result.numerator).toBe(75n);
-      expect(result.denominator).toBe(1n);
+      expect(result.fraction.eq(fraction1.mul(fraction2))).toBe(true);
     });
 
     it('should multiply the CurrencyAmount by a BigIntIsh value', () => {
+      const fraction = new Fraction(100n, 1n);
       const amount = new CurrencyAmount(token1, 100n, 1n);
       const value = 2n;
       const result = amount.mul(value);
 
       expect(result.currency).toBe(token1);
-      expect(result.numerator).toBe(200n);
-      expect(result.denominator).toBe(1n);
+      expect(result.fraction.eq(fraction.mul(2))).toBe(true);
     });
   });
 
   describe('div', () => {
     it('should divide the CurrencyAmount by a Fraction', () => {
+      const fraction1 = new Fraction(100n, 1n);
+      const fraction2 = new Fraction(1n, 2n);
       const amount = new CurrencyAmount(token1, 100n, 1n);
-      const fraction = new Fraction(1n, 2n);
-      const result = amount.div(fraction);
+      const result = amount.div(fraction2);
 
       expect(result.currency).toBe(token1);
-      expect(result.numerator).toBe(200n);
-      expect(result.denominator).toBe(1n);
+      expect(result.fraction.eq(fraction1.div(fraction2))).toBe(true);
     });
 
     it('should divide the CurrencyAmount by a BigIntIsh value', () => {
+      const fraction = new Fraction(100n, 1n);
       const amount = new CurrencyAmount(token1, 100n, 1n);
       const value = 2n;
       const result = amount.div(value);
 
       expect(result.currency).toBe(token1);
-      expect(result.numerator).toBe(50n);
-      expect(result.denominator).toBe(1n);
+      expect(result.fraction.eq(fraction.div(value))).toBe(true);
     });
   });
 
@@ -150,5 +153,4 @@ describe('CurrencyAmount', () => {
       }).toThrow('DECIMALS');
     });
   });
-  // Add test cases for the remaining methods (sub, mul, div, toFixed, toFormat)
 });
