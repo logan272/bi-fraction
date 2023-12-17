@@ -1,6 +1,7 @@
 import { Fraction } from './fraction';
 
-export type BigIntIsh = string | number | bigint;
+export type NumericString = string;
+export type BigIntIsh = NumericString | number | bigint;
 export const isValidBigIntIsh = (value: BigIntIsh): boolean => {
   try {
     BigInt(value);

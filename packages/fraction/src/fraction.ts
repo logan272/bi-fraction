@@ -1,7 +1,7 @@
 import BigNumberJs from 'bignumber.js';
 
 import { Bn } from './bn';
-import type { BigIntIsh } from './constants';
+import type { BigIntIsh, NumericString } from './constants';
 import { gcd } from './gcd';
 
 export class Fraction {
@@ -17,12 +17,15 @@ export class Fraction {
   public readonly denominator: bigint;
 
   /**
-   * Creates a Fraction instance by parsing a decimal string.
+   * Creates a Fraction instance by parsing a numeric string.
+   *
+   * `Fraction.parse(str)` is less efficient compare to `new Fraction(...args)`.
+   * You should use `new Fraction(...args)` instead most of the time.
    * @param value - The decimal string to parse.
    * @returns A Fraction instance representing the parsed decimals string.
-   * @throws If the string is not a valid decimals
+   * @throws If the string can not be parsed to a number
    */
-  public static parse(value: string): Fraction {
+  public static parse(value: NumericString): Fraction {
     const bn = Bn(value);
 
     if (bn.isInteger()) return new Fraction(value);
