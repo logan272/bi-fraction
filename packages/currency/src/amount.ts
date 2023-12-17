@@ -3,8 +3,11 @@ import { Fraction } from '@currencybase/fraction';
 import BigNumberJs from 'bignumber.js';
 import invariant from 'tiny-invariant';
 
-import { MaxUint256 } from './constants';
 import type { Currency } from './currency';
+
+const MaxUint256 = BigInt(
+  '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+);
 
 /**
  * Subclass of `Fraction`. Represents an amount of a specific currency.
