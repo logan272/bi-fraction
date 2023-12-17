@@ -17,16 +17,14 @@ describe('Price', () => {
     it('should create a new Price instance with base and quote currency amounts', () => {
       expect(price.baseCurrency).toBe(baseCurrency);
       expect(price.quoteCurrency).toBe(quoteCurrency);
-      expect(price.numerator).toBe(1n);
-      expect(price.denominator).toBe(2n);
+      expect(price.fraction.eq(new Fraction(1n, 2n))).toBe(true);
     });
 
     it('should create a new Price instance with base and quote currency amounts from an object', () => {
       const price = new Price({ baseAmount, quoteAmount });
       expect(price.baseCurrency).toBe(baseCurrency);
       expect(price.quoteCurrency).toBe(quoteCurrency);
-      expect(price.numerator).toBe(2n);
-      expect(price.denominator).toBe(1n);
+      expect(price.fraction.eq(new Fraction(200n, 100n))).toBe(true);
     });
   });
 
@@ -35,8 +33,7 @@ describe('Price', () => {
       const invertedPrice = price.invert();
       expect(invertedPrice.baseCurrency).toBe(quoteCurrency);
       expect(invertedPrice.quoteCurrency).toBe(baseCurrency);
-      expect(invertedPrice.numerator).toBe(2n);
-      expect(invertedPrice.denominator).toBe(1n);
+      expect(invertedPrice.fraction.eq(new Fraction(2n, 1n))).toBe(true);
     });
   });
 
@@ -46,8 +43,9 @@ describe('Price', () => {
       const multipliedPrice = price.mul(otherPrice);
       expect(multipliedPrice.baseCurrency).toBe(baseCurrency);
       expect(multipliedPrice.quoteCurrency).toBe(otherPrice.quoteCurrency);
-      expect(multipliedPrice.numerator).toBe(1n);
-      expect(multipliedPrice.denominator).toBe(6n);
+      expect(
+        multipliedPrice.fraction.eq(price.fraction.mul(otherPrice.fraction)),
+      ).toBe(true);
     });
 
     it('should throw an error if the other price has a different base currency', () => {

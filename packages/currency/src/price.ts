@@ -23,10 +23,7 @@ import { CurrencyAmount } from './currencyAmount';
  * Thus, the selling price of the currency pair is the amount one will receive in the quote currency for providing one unit of the base currency.
  *
  */
-export class Price<
-  TBase extends Currency,
-  TQuote extends Currency,
-> extends Fraction {
+export class Price<TBase extends Currency, TQuote extends Currency> {
   /**
    * The base currency of the price.
    */
@@ -36,6 +33,11 @@ export class Price<
    * The quote currency of the price.
    */
   public readonly quoteCurrency: TQuote;
+
+  /**
+   * The underlining fraction value.
+   */
+  public readonly fraction: Fraction;
 
   /**
    * The scalar value used for conversions.
@@ -76,8 +78,8 @@ export class Price<
         result.numerator,
       ];
     }
-    super(numerator, denominator);
 
+    this.fraction = new Fraction(numerator, denominator);
     this.baseCurrency = baseCurrency;
     this.quoteCurrency = quoteCurrency;
     this.scalar = new Fraction(
@@ -91,12 +93,12 @@ export class Price<
    *
    * @returns A new Price instance with the flipped currencies.
    */
-  public override invert(): Price<TQuote, TBase> {
+  public invert(): Price<TQuote, TBase> {
     return new Price(
       this.quoteCurrency,
       this.baseCurrency,
-      this.numerator,
-      this.denominator,
+      this.fraction.numerator,
+      this.fraction.denominator,
     );
   }
 
@@ -109,12 +111,12 @@ export class Price<
    * @returns A new Price instance representing the product.
    * @throws 'TOKEN' if the other price's base currency does not match this price's quote currency.
    */
-  public override mul<TOtherQuote extends Currency>(
+  public mul<TOtherQuote extends Currency>(
     other: Price<TQuote, TOtherQuote>,
   ): Price<TBase, TOtherQuote> {
     invariant(this.quoteCurrency.eq(other.baseCurrency), 'TOKEN');
     invariant(this.baseCurrency.neq(other.quoteCurrency), 'TOKEN');
-    const fraction = super.mul(other);
+    const fraction = this.fraction.mul(other.fraction);
     return new Price(
       this.baseCurrency,
       other.quoteCurrency,
@@ -135,7 +137,7 @@ export class Price<
   public quote(currencyAmount: CurrencyAmount<TBase>): CurrencyAmount<TQuote> {
     invariant(currencyAmount.currency.eq(this.baseCurrency), 'TOKEN');
 
-    const result = super.mul(currencyAmount.fraction);
+    const result = this.fraction.mul(currencyAmount.fraction);
     return new CurrencyAmount(
       this.quoteCurrency,
       result.numerator,
@@ -150,7 +152,7 @@ export class Price<
    * @returns The adjusted Fraction value.
    */
   private get adjustedForDecimals(): Fraction {
-    return super.mul(this.scalar);
+    return this.fraction.mul(this.scalar);
   }
 
   /**
@@ -160,7 +162,7 @@ export class Price<
    * @param rounding The rounding mode to use.
    * @returns The fixed-point decimal string representation of the Price.
    */
-  public override toFixed(
+  public toFixed(
     decimalPlaces = 4,
     rounding?: BignumberJs.RoundingMode,
   ): string {
@@ -175,7 +177,7 @@ export class Price<
    * @param format The formatting options to apply.
    * @returns The formatted string representation of the Price.
    */
-  public override toFormat(
+  public toFormat(
     decimalPlaces = 4,
     roundingMode?: BignumberJs.RoundingMode,
     format?: BignumberJs.Format,
