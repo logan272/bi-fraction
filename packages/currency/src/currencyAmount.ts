@@ -45,6 +45,72 @@ export class CurrencyAmount<T extends Currency> {
   }
 
   /**
+   * Check if the current CurrencyAmount is equal to another CurrencyAmount.
+   * @param other The CurrencyAmount to compare.
+   * @returns True if the CurrencyAmounts are equal, false otherwise.
+   * @throws 'CURRENCY' if the CurrencyAmounts have different currencies.
+   */
+  public eq(other: CurrencyAmount<T>): boolean {
+    // It only make sense to compare and add/sub the amounts of the same currency.
+    invariant(this.currency.eq(other.currency), 'CURRENCY');
+    return this.fraction.eq(other.fraction);
+  }
+
+  /**
+   * Check if the current CurrencyAmount is not equal to another CurrencyAmount.
+   * @param other The CurrencyAmount to compare.
+   * @returns True if the CurrencyAmounts are not equal, false otherwise.
+   * @throws 'CURRENCY' if the CurrencyAmounts have different currencies.
+   */
+  public neq(other: CurrencyAmount<T>): boolean {
+    return !this.currency.eq(other.currency);
+  }
+
+  /**
+   * Check if the current CurrencyAmount is less than another CurrencyAmount.
+   * @param other The CurrencyAmount to compare.
+   * @returns True if the current CurrencyAmount is less than the other CurrencyAmount, false otherwise.
+   * @throws 'CURRENCY' if the CurrencyAmounts have different currencies.
+   */
+  public lt(other: CurrencyAmount<T>): boolean {
+    invariant(this.currency.eq(other.currency), 'CURRENCY');
+    return this.fraction.lt(other.fraction);
+  }
+
+  /**
+   * Check if the current CurrencyAmount is less than or equal to another CurrencyAmount.
+   * @param other The CurrencyAmount to compare.
+   * @returns True if the current CurrencyAmount is less than or equal to the other CurrencyAmount, false otherwise.
+   * @throws 'CURRENCY' if the CurrencyAmounts have different currencies.
+   */
+  public lte(other: CurrencyAmount<T>): boolean {
+    invariant(this.currency.eq(other.currency), 'CURRENCY');
+    return this.fraction.lte(other.fraction);
+  }
+
+  /**
+   * Check if the current CurrencyAmount is greater than another CurrencyAmount.
+   * @param other The CurrencyAmount to compare.
+   * @returns True if the current CurrencyAmount is greater than the other CurrencyAmount, false otherwise.
+   * @throws 'CURRENCY' if the CurrencyAmounts have different currencies.
+   */
+  public gt(other: CurrencyAmount<T>): boolean {
+    invariant(this.currency.eq(other.currency), 'CURRENCY');
+    return this.fraction.gt(other.fraction);
+  }
+
+  /**
+   * Check if the current CurrencyAmount is greater than or equal to another CurrencyAmount.
+   * @param other The CurrencyAmount to compare.
+   * @returns True if the current CurrencyAmount is greater than or equal to the other CurrencyAmount, false otherwise.
+   * @throws 'CURRENCY' if the CurrencyAmounts have different currencies.
+   */
+  public gte(other: CurrencyAmount<T>): boolean {
+    invariant(this.currency.eq(other.currency), 'CURRENCY');
+    return this.fraction.gte(other.fraction);
+  }
+
+  /**
    * Adds another CurrencyAmount to the current instance.
    *
    * @param other The CurrencyAmount to add.
@@ -52,7 +118,6 @@ export class CurrencyAmount<T extends Currency> {
    * @throws 'CURRENCY' if the CurrencyAmounts have different currencies.
    */
   public add(other: CurrencyAmount<T>): CurrencyAmount<T> {
-    // It only make sense to add the amounts of the same currency.
     invariant(this.currency.eq(other.currency), 'CURRENCY');
     const added = this.fraction.add(other.fraction);
     return new CurrencyAmount(
@@ -70,7 +135,6 @@ export class CurrencyAmount<T extends Currency> {
    * @throws 'CURRENCY' if the CurrencyAmounts have different currencies.
    */
   public sub(other: CurrencyAmount<T>): CurrencyAmount<T> {
-    // It only make sense to sub the amounts of the same currency.
     invariant(this.currency.eq(other.currency), 'CURRENCY');
     const subtracted = this.fraction.sub(other.fraction);
     return new CurrencyAmount(
