@@ -2,53 +2,206 @@ import { Fraction } from './fraction';
 
 describe('Fraction', () => {
   describe('parse', () => {
-    it('should parse an integer correctly', () => {
-      const fraction = new Fraction(5);
-      expect(fraction.numerator).toBe(5n);
-      expect(fraction.denominator).toBe(1n);
-    });
+    it('should parse a valid numeric string correctly', () => {
+      const f1 = Fraction.parse('1.25');
+      expect(f1.numerator).toBe(5n);
+      expect(f1.denominator).toBe(4n);
 
-    it('should parse a decimal correctly', () => {
-      const fraction = Fraction.parse('1.25');
-      expect(fraction.numerator).toBe(5n);
-      expect(fraction.denominator).toBe(4n);
+      const f2 = Fraction.parse('1.33');
+      expect(f2.numerator).toBe(133n);
+      expect(f2.denominator).toBe(100n);
     });
 
     it('should parse a decimal with trailing zeros correctly', () => {
-      const fraction = Fraction.parse('2.5000');
-      expect(fraction.numerator).toBe(5n);
-      expect(fraction.denominator).toBe(2n);
+      const f1 = Fraction.parse('1.25000');
+      expect(f1.numerator).toBe(5n);
+      expect(f1.denominator).toBe(4n);
+
+      const f2 = Fraction.parse('1.33000');
+      expect(f2.numerator).toBe(133n);
+      expect(f2.denominator).toBe(100n);
+
+      const f3 = Fraction.parse('1.33000000000000000');
+      expect(f3.numerator).toBe(133n);
+      expect(f3.denominator).toBe(100n);
     });
 
-    it('should throw when parsing an invalid number string', () => {
-      expect(() => Fraction.parse('2.5000abc')).toThrow();
+    it('should throw when parsing an invalid numeric string', () => {
+      expect(() => Fraction.parse('invalid numeric string')).toThrow();
+      expect(() => Fraction.parse('2.5000 USD')).toThrow();
+      expect(() => Fraction.parse('$2.5000')).toThrow();
+      expect(() => Fraction.parse('25,000')).toThrow();
+      expect(() => Fraction.parse('2.5,000')).toThrow();
+      expect(() => Fraction.parse('2.5.000')).toThrow();
+      expect(() => Fraction.parse('25_000')).toThrow();
+      expect(() => Fraction.parse('1n')).toThrow();
+      expect(() => Fraction.parse('123n')).toThrow();
     });
   });
 
-  describe('should apply gcd correctly to numerator and denominator', () => {
+  describe('constructor', () => {
+    it('should create a Fraction correctly with integers', () => {
+      const f1 = new Fraction(1, 1);
+      expect(f1.numerator).toBe(1n);
+      expect(f1.denominator).toBe(1n);
+
+      const f2 = new Fraction(3, 2);
+      expect(f2.numerator).toBe(3n);
+      expect(f2.denominator).toBe(2n);
+
+      const f3 = new Fraction(133, 100);
+      expect(f3.numerator).toBe(133n);
+      expect(f3.denominator).toBe(100n);
+    });
+
+    it('should create a Fraction correctly with a valid integer-ish strings', () => {
+      const f1 = new Fraction('2', '1');
+      expect(f1.numerator).toBe(2n);
+      expect(f1.denominator).toBe(1n);
+
+      const f2 = new Fraction('3', '2');
+      expect(f2.numerator).toBe(3n);
+      expect(f2.denominator).toBe(2n);
+
+      const f3 = new Fraction('133', '100');
+      expect(f3.numerator).toBe(133n);
+      expect(f3.denominator).toBe(100n);
+    });
+
+    it('should create a Fraction correctly with BigInt', () => {
+      const f1 = new Fraction(2n, 1n);
+      expect(f1.numerator).toBe(2n);
+      expect(f1.denominator).toBe(1n);
+
+      const f2 = new Fraction(3n, 2n);
+      expect(f2.numerator).toBe(3n);
+      expect(f2.denominator).toBe(2n);
+
+      const f3 = new Fraction(133n, 100n);
+      expect(f3.numerator).toBe(133n);
+      expect(f3.denominator).toBe(100n);
+    });
+
+    it('should create a Fraction without passing the `denominator`', () => {
+      const f1 = new Fraction(2n);
+      expect(f1.numerator).toBe(2n);
+      expect(f1.denominator).toBe(1n);
+
+      const f2 = new Fraction(3n);
+      expect(f2.numerator).toBe(3n);
+      expect(f2.denominator).toBe(1n);
+
+      const f3 = new Fraction(133n);
+      expect(f3.numerator).toBe(133n);
+      expect(f3.denominator).toBe(1n);
+
+      const f5 = new Fraction(123);
+      expect(f5.numerator).toBe(123n);
+      expect(f5.denominator).toBe(1n);
+
+      const f4 = new Fraction('123');
+      expect(f4.numerator).toBe(123n);
+      expect(f4.denominator).toBe(1n);
+    });
+
+    it('should throw if passing invalid string `numerator` or `denominator` value', () => {
+      expect(() => new Fraction('invalid numeric string')).toThrow();
+      expect(() => new Fraction('1.1')).toThrow();
+      expect(() => new Fraction('1.000000001')).toThrow();
+      expect(() => new Fraction('2.5000')).toThrow();
+      expect(() => new Fraction('2.5000 USD')).toThrow();
+      expect(() => new Fraction('$2.5000')).toThrow();
+      expect(() => new Fraction('25,000')).toThrow();
+      expect(() => new Fraction('2.5,000')).toThrow();
+      expect(() => new Fraction('2.5.000')).toThrow();
+      expect(() => new Fraction('25_000')).toThrow();
+      expect(() => new Fraction('1n')).toThrow();
+      expect(() => new Fraction('123n')).toThrow();
+
+      expect(() => new Fraction(0, 'invalid numeric string')).toThrow();
+      expect(() => new Fraction(1, '1.1')).toThrow();
+      expect(() => new Fraction(2, '1.000000001')).toThrow();
+      expect(() => new Fraction(3, '2.5000')).toThrow();
+      expect(() => new Fraction(4, '2.5000 USD')).toThrow();
+      expect(() => new Fraction(5, '$2.5000')).toThrow();
+      expect(() => new Fraction(6, '25,000')).toThrow();
+      expect(() => new Fraction(7, '2.5,000')).toThrow();
+      expect(() => new Fraction(8, '2.5.000')).toThrow();
+      expect(() => new Fraction(9, '25_000')).toThrow();
+      expect(() => new Fraction(10, '1n')).toThrow();
+      expect(() => new Fraction(11, '123n')).toThrow();
+    });
+
+    it('should throw if passing decimal `numerator` or `denominator` value', () => {
+      expect(() => new Fraction(1.1)).toThrow();
+      expect(() => new Fraction(1.000000001)).toThrow();
+      expect(() => new Fraction(2.5)).toThrow();
+      expect(() => new Fraction(0.1 + 0.2)).toThrow();
+      expect(() => new Fraction(100.1)).toThrow();
+
+      expect(() => new Fraction(1, 1.1)).toThrow();
+      expect(() => new Fraction(2, 1.000000001)).toThrow();
+      expect(() => new Fraction(3, 2.5)).toThrow();
+      expect(() => new Fraction(4, 0.1 + 0.2)).toThrow();
+      expect(() => new Fraction(5, 100.1)).toThrow();
+    });
+
+    it('should throw if both `numerator` or `denominator` are invalid', () => {
+      expect(() => new Fraction('1.1', 1.1)).toThrow();
+      expect(() => new Fraction('21.12', 1.000000001)).toThrow();
+      expect(() => new Fraction('321.123', 2.5)).toThrow();
+      expect(() => new Fraction('4321.1234', 0.1 + 0.2)).toThrow();
+      expect(() => new Fraction('54321.12345', 100.1)).toThrow();
+    });
+  });
+
+  describe('should apply gcd to numerator and denominator correctly', () => {
     it('should return the correct quotient', () => {
-      const fraction1 = new Fraction(3n, 9n);
-      expect(fraction1.numerator).toBe(1n);
-      expect(fraction1.denominator).toBe(3n);
+      const f1 = new Fraction(2, 2);
+      expect(f1.numerator).toBe(1n);
+      expect(f1.denominator).toBe(1n);
 
-      const fraction2 = new Fraction(-3n, 9n);
-      expect(fraction2.numerator).toBe(-1n);
-      expect(fraction2.denominator).toBe(3n);
+      const f2 = new Fraction(3, 9);
+      expect(f2.numerator).toBe(1n);
+      expect(f2.denominator).toBe(3n);
 
-      const fraction3 = new Fraction(3n, -9n);
-      expect(fraction3.numerator).toBe(1n);
-      expect(fraction3.denominator).toBe(-3n);
+      const f3 = new Fraction(9, 3);
+      expect(f3.numerator).toBe(3n);
+      expect(f3.denominator).toBe(1n);
 
-      const fraction4 = new Fraction(123n * 10n ** 18n, 10n ** 18n);
-      expect(fraction4.numerator).toBe(123n);
-      expect(fraction4.denominator).toBe(1n);
+      const f4 = new Fraction(-3, 9);
+      expect(f4.numerator).toBe(-1n);
+      expect(f4.denominator).toBe(3n);
+
+      const f5 = new Fraction(3, -9);
+      expect(f5.numerator).toBe(1n);
+      expect(f5.denominator).toBe(-3n);
+
+      const f6 = new Fraction(123n * 10n ** 18n, 10n ** 18n);
+      expect(f6.numerator).toBe(123n);
+      expect(f6.denominator).toBe(1n);
     });
   });
 
   describe('quotient', () => {
     it('should return the correct quotient', () => {
-      const fraction = new Fraction(5n, 2n);
-      expect(fraction.quotient).toBe(2n);
+      const f1 = new Fraction(5n, 2n);
+      expect(f1.quotient).toBe(2n);
+
+      const f2 = new Fraction(5n, 3n);
+      expect(f2.quotient).toBe(1n);
+
+      const f3 = new Fraction(6n, 3n);
+      expect(f3.quotient).toBe(2n);
+
+      const f4 = new Fraction(2n, 3n);
+      expect(f4.quotient).toBe(0n);
+
+      const f5 = new Fraction(123n, 123n);
+      expect(f5.quotient).toBe(1n);
+
+      const f6 = new Fraction(123n, 124n);
+      expect(f6.quotient).toBe(0n);
     });
   });
 
