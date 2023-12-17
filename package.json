@@ -18,6 +18,7 @@
     "build": "turbo run build",
     "watch": "turbo run watch --parallel",
     "test": "jest --silent",
+    "coverage": "jest --silent --coverage",
     "lint": "turbo run lint",
     "fix": "turbo run fix",
     "typedoc": "turbo run typedoc",
