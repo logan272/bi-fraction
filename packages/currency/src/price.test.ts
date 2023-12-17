@@ -13,20 +13,48 @@ describe('Price', () => {
   const priceBtc2Usdc = Price.from(btc, usdc, 1n, 4_0000n);
   // 1/40_000 USDC/BTC (1/4_0000 BTC per USDC)
   const priceUsdc2Btc = Price.from(usdc, btc, 40_000n);
-  // 1/20 ETH/BTC (1/20 ETH per BTC)
-  const priceEth2Btc = Price.from(eth, btc, 20n);
-  // 1/20 ETH/BTC (1/20 ETH per BTC)
-  const priceBtc2Eth = Price.from(btc, eth, 1n, 20n);
+  // 1/20 ETH/BTC (1/20 BTC per ETH)
+  const priceEth2Btc = Price.from(eth, btc, 40_000n, 2_000n);
+  // 20 BTC/ETH (20 ETH per BTC)
+  const priceBtc2Eth = Price.from(btc, eth, 2_000n, 40_000n);
 
   describe('constructor', () => {
     it('should create a new Price instance with base and quote currency amounts', () => {
+      // ETH/USDC
       expect(priceEth2Usdc.baseCurrency).toBe(eth);
       expect(priceEth2Usdc.quoteCurrency).toBe(usdc);
       expect(priceEth2Usdc.fraction.eq(new Fraction(2_000n))).toBe(true);
 
+      // USDC/ETH
+      expect(priceUsdc2Eth.baseCurrency).toBe(usdc);
+      expect(priceUsdc2Eth.quoteCurrency).toBe(eth);
+      expect(priceUsdc2Eth.fraction.eq(new Fraction(1n, 2_000n))).toBe(true);
+
+      // BTC/USDC
       expect(priceBtc2Usdc.baseCurrency).toBe(btc);
       expect(priceBtc2Usdc.quoteCurrency).toBe(usdc);
       expect(priceBtc2Usdc.fraction.eq(new Fraction(40_000n))).toBe(true);
+
+      // USDC/BTC
+      expect(priceUsdc2Btc.baseCurrency).toBe(usdc);
+      expect(priceUsdc2Btc.quoteCurrency).toBe(btc);
+      expect(priceUsdc2Btc.fraction.eq(new Fraction(1n, 40_000n))).toBe(true);
+
+      // ETH/BTC
+      expect(priceEth2Btc.baseCurrency).toBe(eth);
+      expect(priceEth2Btc.quoteCurrency).toBe(btc);
+      expect(priceEth2Btc.fraction.eq(new Fraction(2_000n, 40_000n))).toBe(
+        true,
+      );
+      expect(priceEth2Btc.fraction.eq(new Fraction(1, 20n))).toBe(true);
+
+      // BTC/ETH
+      expect(priceBtc2Eth.baseCurrency).toBe(btc);
+      expect(priceBtc2Eth.quoteCurrency).toBe(eth);
+      expect(priceBtc2Eth.fraction.eq(new Fraction(40_000n, 2_000n))).toBe(
+        true,
+      );
+      expect(priceBtc2Eth.fraction.eq(new Fraction(20n))).toBe(true);
     });
 
     it('should create a new Price instance with base and quote currency amounts from an object', () => {

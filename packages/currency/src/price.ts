@@ -77,10 +77,10 @@ export class Price<TBase extends Currency, TQuote extends Currency> {
   }
 
   /**
-   * Check if the current CurrencyAmount is equal to another CurrencyAmount.
-   * @param other The CurrencyAmount to compare.
-   * @returns True if the CurrencyAmounts are equal, false otherwise.
-   * @throws 'CURRENCY' if the CurrencyAmounts have different currencies.
+   * Check if the current Price is equal to another Price.
+   * @param other The Price to compare.
+   * @returns True if the Prices are equal, false otherwise.
+   * @throws 'CURRENCY' if the Prices have different currencies.
    */
   public eq(other: Price<TBase, TQuote>): boolean {
     invariant(this.baseCurrency.eq(other.baseCurrency), 'CURRENCY');
