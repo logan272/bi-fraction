@@ -77,6 +77,18 @@ export class Price<TBase extends Currency, TQuote extends Currency> {
   }
 
   /**
+   * Check if the current CurrencyAmount is equal to another CurrencyAmount.
+   * @param other The CurrencyAmount to compare.
+   * @returns True if the CurrencyAmounts are equal, false otherwise.
+   * @throws 'CURRENCY' if the CurrencyAmounts have different currencies.
+   */
+  public eq(other: Price<TBase, TQuote>): boolean {
+    invariant(this.baseCurrency.eq(other.baseCurrency), 'CURRENCY');
+    invariant(this.quoteCurrency.eq(other.quoteCurrency), 'CURRENCY');
+    return this.fraction.eq(other.fraction);
+  }
+
+  /**
    * Flips the price, switching the base and quote currencies.
    *
    * @returns A new Price instance with the flipped currencies.
