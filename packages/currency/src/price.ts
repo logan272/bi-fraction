@@ -111,6 +111,7 @@ export class Price<
     other: Price<TQuote, TOtherQuote>,
   ): Price<TBase, TOtherQuote> {
     invariant(this.quoteCurrency.eq(other.baseCurrency), 'TOKEN');
+    invariant(this.baseCurrency.neq(other.quoteCurrency), 'TOKEN');
     const fraction = super.mul(other);
     return new Price(
       this.baseCurrency,
@@ -122,6 +123,8 @@ export class Price<
 
   /**
    * Returns the amount of quote currency corresponding to a given amount of the base currency.
+   *
+   * The quote method can be used to convert an amount of the base currency (TBase) to an equivalent amount in the quote currency (TQuote). This is useful when you need to calculate the value of a specific currency amount in a different currency.
    *
    * @param currencyAmount The amount of base currency to quote against the price.
    * @returns A new CurrencyAmount instance representing the quoted amount of quote currency.
