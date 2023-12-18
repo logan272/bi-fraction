@@ -197,6 +197,15 @@ export class Amount<T extends Currency = Currency> {
   }
 
   /**
+   * Gets the value scaled by decimals for formatting.
+   *
+   * @returns The adjusted Fraction value.
+   */
+  public adjustForDecimals(): Fraction {
+    return this.value.div(this.currency.decimalScale);
+  }
+
+  /**
    * Converts the amount to a fixed-point decimal string representation.
    *
    * @param decimalPlaces The number of decimal places to include in the string.
@@ -209,9 +218,7 @@ export class Amount<T extends Currency = Currency> {
     roundingMode?: BigNumberJs.RoundingMode,
   ): string {
     invariant(decimalPlaces <= this.currency.decimals, 'DECIMALS');
-    return this.value
-      .div(this.currency.decimalScale)
-      .toFixed(decimalPlaces, roundingMode);
+    return this.adjustForDecimals().toFixed(decimalPlaces, roundingMode);
   }
 
   /**
@@ -229,12 +236,10 @@ export class Amount<T extends Currency = Currency> {
     format?: BigNumberJs.Format,
   ): string {
     invariant(decimalPlaces <= this.currency.decimals, 'DECIMALS');
-    return this.value
-      .div(this.currency.decimalScale)
-      .toFormat(
-        decimalPlaces,
-        roundingMode ?? BigNumberJs.ROUND_HALF_UP,
-        format,
-      );
+    return this.adjustForDecimals().toFormat(
+      decimalPlaces,
+      roundingMode ?? BigNumberJs.ROUND_HALF_UP,
+      format,
+    );
   }
 }
