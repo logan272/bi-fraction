@@ -1,4 +1,4 @@
-import type { BigIntIsh } from '@currencybase/fraction';
+import type { BigIntIsh, NumericString } from '@currencybase/fraction';
 import { Fraction } from '@currencybase/fraction';
 import BigNumberJs from 'bignumber.js';
 import invariant from 'tiny-invariant';
@@ -12,7 +12,7 @@ const MaxUint256 = BigInt(
 /**
  * Subclass of `Fraction`. Represents an amount of a specific currency.
  */
-export class Amount<T extends Currency> {
+export class Amount<T extends Currency = Currency> {
   /**
    * The currency associated with the amount.
    */
@@ -22,6 +22,21 @@ export class Amount<T extends Currency> {
    * The underlining fraction value.
    */
   public readonly value: Fraction;
+
+  /**
+   * Creates a Amount instance by parsing a numeric string.
+   * @param currency The currency associated with the amount.
+   * @param value - The decimal string to parse.
+   * @returns A Amount instance representing the parsed decimals string.
+   * @throws If the string can not be parsed to a number
+   */
+  public static parse<T extends Currency>(
+    currency: T,
+    value: NumericString,
+  ): Amount {
+    const fraction = Fraction.parse(value);
+    return new Amount(currency, fraction);
+  }
 
   /**
    * Create a new amount
