@@ -23,7 +23,10 @@ import type { Currency } from './currency';
  * Thus, the selling price of the currency pair is the amount one will receive in the quote currency for providing one unit of the base currency.
  *
  */
-export class Price<TBase extends Currency, TQuote extends Currency> {
+export class Price<
+  TBase extends Currency = Currency,
+  TQuote extends Currency = Currency,
+> {
   /**
    * The base currency of the price.
    */
