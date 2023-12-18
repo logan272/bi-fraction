@@ -99,6 +99,14 @@ export class Price<
   }
 
   /**
+   * Checks if the Price is zero.
+   * @returns True if the fraction is zero, false otherwise.
+   */
+  public isZero(): boolean {
+    return this.value.isZero();
+  }
+
+  /**
    * Check if the current Price is equal to another Price.
    * @param other The Price to compare.
    * @returns True if the Prices are equal, false otherwise.
