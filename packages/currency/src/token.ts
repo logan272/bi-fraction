@@ -14,18 +14,6 @@ export class Token extends BaseCurrency {
   public readonly isToken: true = true as const;
 
   /**
-   * Token type guard
-   *
-   * Check if a given currency is a Token
-   *
-   * @param currency currency to check
-   * @returns true if the currency is a Token
-   */
-  public static isToken(currency: Currency): currency is Token {
-    return currency.isToken;
-  }
-
-  /**
    * The contract address on the chain on which this token lives
    */
   public readonly address: string;
