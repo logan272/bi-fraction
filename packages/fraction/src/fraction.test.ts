@@ -54,15 +54,20 @@ describe('Fraction', () => {
     });
 
     it('should throw when parsing an invalid numeric string', () => {
-      expect(() => Fraction.parse('invalid numeric string')).toThrow();
-      expect(() => Fraction.parse('2.5000 USD')).toThrow();
-      expect(() => Fraction.parse('$2.5000')).toThrow();
+      expect(() => Fraction.parse('1n')).toThrow();
+      expect(() => Fraction.parse('123n')).toThrow();
+      expect(() => Fraction.parse('1e3')).toThrow();
+      expect(() => Fraction.parse('1e6')).toThrow();
+      expect(() => Fraction.parse('10e10')).toThrow();
+      expect(() => Fraction.parse('3e+24')).toThrow();
+      expect(() => Fraction.parse('25_000')).toThrow();
       expect(() => Fraction.parse('25,000')).toThrow();
       expect(() => Fraction.parse('2.5,000')).toThrow();
       expect(() => Fraction.parse('2.5.000')).toThrow();
-      expect(() => Fraction.parse('25_000')).toThrow();
-      expect(() => Fraction.parse('1n')).toThrow();
-      expect(() => Fraction.parse('123n')).toThrow();
+      expect(() => Fraction.parse('$2.5000')).toThrow();
+      expect(() => Fraction.parse('2.5000 USD')).toThrow();
+      expect(() => Fraction.parse('3.0000000000000005e+21')).toThrow();
+      expect(() => Fraction.parse('random invalid numeric string')).toThrow();
     });
   });
 
