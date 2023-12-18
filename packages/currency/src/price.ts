@@ -1,4 +1,4 @@
-import type { BigIntIsh } from '@currencybase/fraction';
+import type { BigIntIsh, NumericString } from '@currencybase/fraction';
 import { Fraction } from '@currencybase/fraction';
 import type BignumberJs from 'bignumber.js';
 import invariant from 'tiny-invariant';
@@ -46,6 +46,28 @@ export class Price<
    * The scalar value used for conversions.
    */
   public readonly scalar: Fraction;
+
+  /**
+   * Creates a Price instance by parsing a numeric string.
+   * @param baseAmount The base currency amount.
+   * @param quoteAmount The quote currency amount.
+   * @param value - The decimal string to parse.
+   * @returns A Price instance representing the parsed decimals string.
+   * @throws If the string can not be parsed to a number
+   */
+  public static parse<TBase extends Currency, TQuote extends Currency>(
+    baseCurrency: TBase,
+    quoteCurrency: TQuote,
+    value: NumericString,
+  ): Price {
+    const fraction = Fraction.parse(value);
+    return Price.from(
+      baseCurrency,
+      quoteCurrency,
+      fraction.denominator,
+      fraction.numerator,
+    );
+  }
 
   public static from<TBase extends Currency, TQuote extends Currency>(
     baseCurrency: TBase,
