@@ -66,7 +66,7 @@ describe('Price', () => {
       const invertedPrice = priceEth2Usdc.invert();
       expect(invertedPrice.baseCurrency).toBe(usdc);
       expect(invertedPrice.quoteCurrency).toBe(eth);
-      expect(invertedPrice.eq(Price.from(usdc, eth, 2_000n))).toBe(true);
+      expect(invertedPrice.value.eq(new Fraction(1, 2_000n))).toBe(true);
     });
   });
 
@@ -92,7 +92,7 @@ describe('Price', () => {
       const multipliedPrice = priceEth2Usdc.mul(priceUsdc2Btc);
       expect(multipliedPrice.baseCurrency).toBe(eth);
       expect(multipliedPrice.quoteCurrency).toBe(btc);
-      expect(multipliedPrice.eq(priceEth2Btc)).toBe(true);
+      expect(multipliedPrice.value.eq(priceEth2Btc.value)).toBe(true);
     });
   });
 
