@@ -165,10 +165,9 @@ export class Price<
   /**
    * Gets the value scaled by decimals for formatting.
    *
-   * @private
    * @returns The adjusted Fraction value.
    */
-  private get adjustedForDecimals(): Fraction {
+  public adjustForDecimals(): Fraction {
     return this.value.mul(this.scalar);
   }
 
@@ -183,7 +182,7 @@ export class Price<
     decimalPlaces = 4,
     rounding?: BignumberJs.RoundingMode,
   ): string {
-    return this.adjustedForDecimals.toFixed(decimalPlaces, rounding);
+    return this.adjustForDecimals().toFixed(decimalPlaces, rounding);
   }
 
   /**
@@ -199,7 +198,7 @@ export class Price<
     roundingMode?: BignumberJs.RoundingMode,
     format?: BignumberJs.Format,
   ): string {
-    return this.adjustedForDecimals.toFormat(
+    return this.adjustForDecimals().toFormat(
       decimalPlaces,
       roundingMode,
       format,
