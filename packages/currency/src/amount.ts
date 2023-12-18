@@ -54,6 +54,15 @@ export class Amount<T extends Currency = Currency> {
   }
 
   /**
+   * Create a new amount with the value of one currency.decimalScale
+   *
+   * @param currency The currency associated with the amount.
+   */
+  public static one<T extends Currency>(currency: T): Amount<T> {
+    return new Amount(currency, new Fraction(currency.decimalScale));
+  }
+
+  /**
    * Constructs a new amount instance.
    *
    * @param currency The currency associated with the amount.
@@ -63,6 +72,14 @@ export class Amount<T extends Currency = Currency> {
     invariant(fraction.quotient <= MaxUint256, 'AMOUNT');
     this.value = fraction;
     this.currency = currency;
+  }
+
+  /**
+   * Checks if the Amount is zero.
+   * @returns True if the Amount is zero, false otherwise.
+   */
+  public isZero(): boolean {
+    return this.value.isZero();
   }
 
   /**
