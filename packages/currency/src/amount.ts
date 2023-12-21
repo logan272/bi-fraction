@@ -36,7 +36,6 @@ export class Amount<T extends Currency = Currency> {
 
   /**
    * Create a new amount
-   *
    * @param currency The currency associated with the amount.
    * @param numerator The numerator of the fraction representing the amount.
    * @param denominator The denominator of the fraction representing the amount.
@@ -60,7 +59,6 @@ export class Amount<T extends Currency = Currency> {
 
   /**
    * Constructs a new amount instance.
-   *
    * @param currency The currency associated with the amount.
    * @param fraction The fraction value.
    */
@@ -152,7 +150,6 @@ export class Amount<T extends Currency = Currency> {
 
   /**
    * Adds another amount to the current instance.
-   *
    * @param other The amount to add.
    * @returns A new amount instance representing the sum.
    * @throws 'CURRENCY' if the amounts have different currencies.
@@ -165,7 +162,6 @@ export class Amount<T extends Currency = Currency> {
 
   /**
    * Subtracts another amount from the current instance.
-   *
    * @param other The amount to subtract.
    * @returns A new amount instance representing the difference.
    * @throws 'CURRENCY' if the amounts have different currencies.
@@ -178,7 +174,6 @@ export class Amount<T extends Currency = Currency> {
 
   /**
    * Multiplies the current instance by a Fraction or a BigIntIsh value.
-   *
    * @param other The Fraction or BigIntIsh value to multiply by.
    * @returns A new amount instance representing the product.
    */
@@ -189,7 +184,6 @@ export class Amount<T extends Currency = Currency> {
 
   /**
    * Divides the current instance by a Fraction or a BigIntIsh value.
-   *
    * @param other The Fraction or BigIntIsh value to divide by.
    * @returns A new amount instance representing the quotient.
    */
@@ -200,7 +194,6 @@ export class Amount<T extends Currency = Currency> {
 
   /**
    * Gets the value scaled by decimals for formatting.
-   *
    * @returns The adjusted Fraction value.
    */
   public adjustForDecimals(): Fraction {
@@ -208,8 +201,33 @@ export class Amount<T extends Currency = Currency> {
   }
 
   /**
-   * Converts the amount to a fixed-point decimal string representation.
+   * Converts the Amount to a number.
+   * @returns The number representation of the fraction.
+   */
+  public toNumber(): number {
+    return this.adjustForDecimals().toNumber();
+  }
+
+  /**
+   * Converts the Price to a number a string whose value is the value of this Price rounded to a precision of
+   * `significantDigits` significant digits using rounding mode `roundingMode`.
    *
+   * @param significantDigits Significant digits, integer, 1 to 1e+9.
+   * @param [roundingMode] `BigNumberJs.RoundingMode`.
+   * @throws If `significantDigits` or `roundingMode` is invalid.
+   */
+  public toSignificant(
+    significantDigits: number,
+    roundingMode?: BigNumberJs.RoundingMode,
+  ): string {
+    return this.adjustForDecimals().toSignificant(
+      significantDigits,
+      roundingMode,
+    );
+  }
+
+  /**
+   * Converts the amount to a fixed-point decimal string representation.
    * @param decimalPlaces The number of decimal places to include in the string.
    * @param roundingMode The rounding mode to use.
    * @returns The fixed-point decimal string representation of the amount.
@@ -225,7 +243,6 @@ export class Amount<T extends Currency = Currency> {
 
   /**
    * Converts the amount to a formatted string representation.
-   *
    * @param decimalPlaces The number of decimal places to include in the string.
    * @param roundingMode The rounding mode to use.
    * @param format The formatting options to apply.
