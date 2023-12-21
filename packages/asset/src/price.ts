@@ -1,5 +1,5 @@
-import type { BigIntIsh, NumericString } from '@currencybase/fraction';
-import { Fraction } from '@currencybase/fraction';
+import type { BigIntIsh, NumericString } from '@fraction-asset/fraction';
+import { Fraction } from '@fraction-asset/fraction';
 import type BigNumberJs from 'bignumber.js';
 import invariant from 'tiny-invariant';
 
@@ -9,28 +9,28 @@ import type { Asset } from './asset';
 /**
  * Subclass of Fraction. Represents a price between two currencies.
  *
- * A currency pair is considered a price quote between two different currencies, where one is quoted against the other.
+ * A asset pair is considered a price quote between two different currencies, where one is quoted against the other.
  *
- * `Base_Currency/Quote_currency`
+ * `Base_asset/Quote_asset`
  *
- * In the `ETH/USD` pair, `ETH` is the base currency, USD is the quote currency.
- * In the `USD/ETH` pair, `USD` is the base currency, ETH is the quote currency.
+ * In the `ETH/USD` pair, `ETH` is the base asset, USD is the quote asset.
+ * In the `USD/ETH` pair, `USD` is the base asset, ETH is the quote asset.
  *
- * When buying a currency pair, buyers purchase the base currency and sell the quoted currency.
- * The bid price represents the amount of quote currency needed to receive one unit of the base currency.
+ * When buying a asset pair, buyers purchase the base asset and sell the quoted asset.
+ * The bid price represents the amount of quote asset needed to receive one unit of the base asset.
  *
- * On the other hand, when the currency pair is sold, the seller sells the base currency and receives the quote currency.
- * Thus, the selling price of the currency pair is the amount one will receive in the quote currency for providing one unit of the base currency.
+ * On the other hand, when the asset pair is sold, the seller sells the base asset and receives the quote asset.
+ * Thus, the selling price of the asset pair is the amount one will receive in the quote asset for providing one unit of the base asset.
  *
  */
 export class Price<TBase extends Asset = Asset, TQuote extends Asset = Asset> {
   /**
-   * The base currency of the price.
+   * The base asset of the price.
    */
   public readonly baseAsset: TBase;
 
   /**
-   * The quote currency of the price.
+   * The quote asset of the price.
    */
   public readonly quoteAsset: TQuote;
 
@@ -46,42 +46,42 @@ export class Price<TBase extends Asset = Asset, TQuote extends Asset = Asset> {
 
   /**
    * Creates a Price instance by parsing a numeric string.
-   * @param baseAmount The base currency amount.
-   * @param quoteAmount The quote currency amount.
+   * @param baseAmount The base asset amount.
+   * @param quoteAmount The quote asset amount.
    * @param value - The decimal string to parse.
    * @returns A Price instance representing the parsed decimals string.
    * @throws If the string can not be parsed to a number
    */
   public static parse<TBase extends Asset, TQuote extends Asset>(
-    baseCurrency: TBase,
-    quoteCurrency: TQuote,
+    baseAsset: TBase,
+    quoteAsset: TQuote,
     value: NumericString,
   ): Price {
     const fraction = Fraction.parse(value);
     return Price.from(
-      baseCurrency,
-      quoteCurrency,
+      baseAsset,
+      quoteAsset,
       fraction.denominator,
       fraction.numerator,
     );
   }
 
   public static from<TBase extends Asset, TQuote extends Asset>(
-    baseCurrency: TBase,
-    quoteCurrency: TQuote,
+    baseAsset: TBase,
+    quoteAsset: TQuote,
     denominator: BigIntIsh,
     numerator: BigIntIsh = 1,
   ): Price<TBase, TQuote> {
     return new Price(
-      Amount.from(baseCurrency, denominator),
-      Amount.from(quoteCurrency, numerator),
+      Amount.from(baseAsset, denominator),
+      Amount.from(quoteAsset, numerator),
     );
   }
 
   /**
    * Constructs a new Price instance.
-   * @param baseAmount The base currency amount.
-   * @param quoteAmount The quote currency amount.
+   * @param baseAmount The base asset amount.
+   * @param quoteAmount The quote asset amount.
    */
   public constructor(baseAmount: Amount<TBase>, quoteAmount: Amount<TQuote>) {
     const result = quoteAmount.value.div(baseAmount.value);
@@ -118,11 +118,11 @@ export class Price<TBase extends Asset = Asset, TQuote extends Asset = Asset> {
   /**
    * Multiplies the price by another price, returning a new price.
    *
-   *  The other price must have the same base currency as this price's quote currency.
+   *  The other price must have the same base asset as this price's quote asset.
    *
    * @param other The other price to multiply by.
    * @returns A new Price instance representing the product.
-   * @throws 'TOKEN' if the other price's base currency does not match this price's quote currency.
+   * @throws 'TOKEN' if the other price's base asset does not match this price's quote asset.
    */
   public mul<TOtherQuote extends Asset>(
     other: Price<TQuote, TOtherQuote>,
@@ -139,13 +139,13 @@ export class Price<TBase extends Asset = Asset, TQuote extends Asset = Asset> {
   }
 
   /**
-   * Returns the amount of quote currency corresponding to a given amount of the base currency.
+   * Returns the amount of quote asset corresponding to a given amount of the base asset.
    *
-   * The quote method can be used to convert an amount of the base currency (TBase) to an equivalent amount in the quote currency (TQuote). This is useful when you need to calculate the value of a specific currency amount in a different currency.
+   * The quote method can be used to convert an amount of the base asset (TBase) to an equivalent amount in the quote asset (TQuote). This is useful when you need to calculate the value of a specific asset amount in a different asset.
    *
-   * @param amount The amount of base currency to quote against the price.
-   * @returns A new amount instance representing the quoted amount of quote currency.
-   * @throws 'TOKEN' if the currency amount's currency does not match this price's base currency.
+   * @param amount The amount of base asset to quote against the price.
+   * @returns A new amount instance representing the quoted amount of quote asset.
+   * @throws 'TOKEN' if the asset amount's asset does not match this price's base asset.
    */
   public quote(amount: Amount<TBase>): Amount<TQuote> {
     invariant(amount.asset.eq(this.baseAsset), 'TOKEN');

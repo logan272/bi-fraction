@@ -1,10 +1,10 @@
 {
-  "name": "@currencybase/currency",
+  "name": "@fraction-asset/asset",
   "description": "Fraction number library",
   "version": "0.0.1",
   "keywords": [
-    "currencybase",
-    "currency"
+    "fraction-asset",
+    "asset"
   ],
   "author": "Logan Luo <github.com/logan272>",
   "license": "MIT",
@@ -18,24 +18,24 @@
   "scripts": {
     "build": "tsc;tsc --module commonjs --outDir dist/cjs",
     "watch": "chokidar 'src/**/*.ts' -c 'pnpm -wc exec turbo run build --filter=detect-provider'",
-    "typedoc": "typedoc src/index.ts --out ../../docs/api/currency",
+    "typedoc": "typedoc src/index.ts --out ../../docs/api/asset",
     "lint": "eslint src",
     "fix": "eslint src --fix",
     "ts-check": "tsc --noEmit"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/currencybase/currencybase.git"
+    "url": "git+https://github.com/fraction-asset/fraction-asset.git"
   },
   "publishConfig": {
     "access": "public"
   },
   "bugs": {
-    "url": "https://github.com/currencybase/currencybase/issues"
+    "url": "https://github.com/fraction-asset/fraction-asset/issues"
   },
-  "homepage": "https://github.com/currencybase/currencybase#readme",
+  "homepage": "https://github.com/fraction-asset/fraction-asset#readme",
   "dependencies": {
-    "@currencybase/fraction": "workspace:*",
+    "@fraction-asset/fraction": "workspace:*",
     "bignumber.js": "^9.1.2",
     "tiny-invariant": "^1.3.1"
   }

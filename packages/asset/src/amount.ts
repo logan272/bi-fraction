@@ -1,16 +1,16 @@
-import type { BigIntIsh, NumericString } from '@currencybase/fraction';
-import { Fraction } from '@currencybase/fraction';
+import type { BigIntIsh, NumericString } from '@fraction-asset/fraction';
+import { Fraction } from '@fraction-asset/fraction';
 import BignumberJs from 'bignumber.js';
 import invariant from 'tiny-invariant';
 
 import type { Asset } from './asset';
 
 /**
- * Subclass of `Fraction`. Represents an amount of a specific currency.
+ * Subclass of `Fraction`. Represents an amount of a specific asset.
  */
 export class Amount<T extends Asset = Asset> {
   /**
-   * The currency associated with the amount.
+   * The asset associated with the amount.
    */
   public readonly asset: T;
 
@@ -21,50 +21,47 @@ export class Amount<T extends Asset = Asset> {
 
   /**
    * Creates a Amount instance by parsing a numeric string.
-   * @param currency The currency associated with the amount.
+   * @param asset The asset associated with the amount.
    * @param value - The decimal string to parse.
    * @returns A Amount instance representing the parsed decimals string.
    * @throws If the string can not be parsed to a number
    */
-  public static parse<T extends Asset>(
-    currency: T,
-    value: NumericString,
-  ): Amount {
+  public static parse<T extends Asset>(asset: T, value: NumericString): Amount {
     const fraction = Fraction.parse(value);
-    return new Amount(currency, fraction);
+    return new Amount(asset, fraction);
   }
 
   /**
    * Create a new amount
-   * @param currency The currency associated with the amount.
+   * @param asset The asset associated with the amount.
    * @param numerator The numerator of the fraction representing the amount.
    * @param denominator The denominator of the fraction representing the amount.
    */
   public static from<T extends Asset>(
-    currency: T,
+    asset: T,
     numerator: BigIntIsh,
     denominator?: BigIntIsh,
   ): Amount<T> {
-    return new Amount(currency, new Fraction(numerator, denominator));
+    return new Amount(asset, new Fraction(numerator, denominator));
   }
 
   /**
-   * Create a new amount with the value of one currency.decimalScale
+   * Create a new amount with the value of one asset.decimalScale
    *
-   * @param currency The currency associated with the amount.
+   * @param asset The asset associated with the amount.
    */
-  public static one<T extends Asset>(currency: T): Amount<T> {
-    return new Amount(currency, new Fraction(currency.decimalScale));
+  public static one<T extends Asset>(asset: T): Amount<T> {
+    return new Amount(asset, new Fraction(asset.decimalScale));
   }
 
   /**
    * Constructs a new amount instance.
-   * @param currency The currency associated with the amount.
+   * @param asset The asset associated with the amount.
    * @param fraction The fraction value.
    */
-  public constructor(currency: T, fraction: Fraction) {
+  public constructor(asset: T, fraction: Fraction) {
     this.value = fraction;
-    this.asset = currency;
+    this.asset = asset;
   }
 
   /**
@@ -86,11 +83,11 @@ export class Amount<T extends Asset = Asset> {
    * Check if the current amount is equal to another amount.
    * @param other The amount to compare.
    * @returns True if the amounts are equal, false otherwise.
-   * @throws 'CURRENCY' if the amounts have different currencies.
+   * @throws 'asset' if the amounts have different currencies.
    */
   public eq(other: Amount<T>): boolean {
-    // It only make sense to compare and add/sub the amounts of the same currency.
-    invariant(this.asset.eq(other.asset), 'CURRENCY');
+    // It only make sense to compare and add/sub the amounts of the same asset.
+    invariant(this.asset.eq(other.asset), 'asset');
     return this.value.eq(other.value);
   }
 
@@ -98,7 +95,7 @@ export class Amount<T extends Asset = Asset> {
    * Check if the current amount is not equal to another amount.
    * @param other The amount to compare.
    * @returns True if the amounts are not equal, false otherwise.
-   * @throws 'CURRENCY' if the amounts have different currencies.
+   * @throws 'asset' if the amounts have different currencies.
    */
   public neq(other: Amount<T>): boolean {
     return !this.asset.eq(other.asset);
@@ -108,10 +105,10 @@ export class Amount<T extends Asset = Asset> {
    * Check if the current amount is less than another amount.
    * @param other The amount to compare.
    * @returns True if the current amount is less than the other amount, false otherwise.
-   * @throws 'CURRENCY' if the amounts have different currencies.
+   * @throws 'asset' if the amounts have different currencies.
    */
   public lt(other: Amount<T>): boolean {
-    invariant(this.asset.eq(other.asset), 'CURRENCY');
+    invariant(this.asset.eq(other.asset), 'asset');
     return this.value.lt(other.value);
   }
 
@@ -119,10 +116,10 @@ export class Amount<T extends Asset = Asset> {
    * Check if the current amount is less than or equal to another amount.
    * @param other The amount to compare.
    * @returns True if the current amount is less than or equal to the other amount, false otherwise.
-   * @throws 'CURRENCY' if the amounts have different currencies.
+   * @throws 'asset' if the amounts have different currencies.
    */
   public lte(other: Amount<T>): boolean {
-    invariant(this.asset.eq(other.asset), 'CURRENCY');
+    invariant(this.asset.eq(other.asset), 'asset');
     return this.value.lte(other.value);
   }
 
@@ -130,10 +127,10 @@ export class Amount<T extends Asset = Asset> {
    * Check if the current amount is greater than another amount.
    * @param other The amount to compare.
    * @returns True if the current amount is greater than the other amount, false otherwise.
-   * @throws 'CURRENCY' if the amounts have different currencies.
+   * @throws 'asset' if the amounts have different currencies.
    */
   public gt(other: Amount<T>): boolean {
-    invariant(this.asset.eq(other.asset), 'CURRENCY');
+    invariant(this.asset.eq(other.asset), 'asset');
     return this.value.gt(other.value);
   }
 
@@ -141,10 +138,10 @@ export class Amount<T extends Asset = Asset> {
    * Check if the current amount is greater than or equal to another amount.
    * @param other The amount to compare.
    * @returns True if the current amount is greater than or equal to the other amount, false otherwise.
-   * @throws 'CURRENCY' if the amounts have different currencies.
+   * @throws 'asset' if the amounts have different currencies.
    */
   public gte(other: Amount<T>): boolean {
-    invariant(this.asset.eq(other.asset), 'CURRENCY');
+    invariant(this.asset.eq(other.asset), 'asset');
     return this.value.gte(other.value);
   }
 
@@ -152,10 +149,10 @@ export class Amount<T extends Asset = Asset> {
    * Adds another amount to the current instance.
    * @param other The amount to add.
    * @returns A new amount instance representing the sum.
-   * @throws 'CURRENCY' if the amounts have different currencies.
+   * @throws 'asset' if the amounts have different currencies.
    */
   public add(other: Amount<T>): Amount<T> {
-    invariant(this.asset.eq(other.asset), 'CURRENCY');
+    invariant(this.asset.eq(other.asset), 'asset');
     const added = this.value.add(other.value);
     return new Amount(this.asset, added);
   }
@@ -164,10 +161,10 @@ export class Amount<T extends Asset = Asset> {
    * Subtracts another amount from the current instance.
    * @param other The amount to subtract.
    * @returns A new amount instance representing the difference.
-   * @throws 'CURRENCY' if the amounts have different currencies.
+   * @throws 'asset' if the amounts have different currencies.
    */
   public sub(other: Amount<T>): Amount<T> {
-    invariant(this.asset.eq(other.asset), 'CURRENCY');
+    invariant(this.asset.eq(other.asset), 'asset');
     const subtracted = this.value.sub(other.value);
     return new Amount(this.asset, subtracted);
   }
@@ -231,7 +228,7 @@ export class Amount<T extends Asset = Asset> {
    * @param decimalPlaces The number of decimal places to include in the string.
    * @param roundingMode The rounding mode to use.
    * @returns The fixed-point decimal string representation of the amount.
-   * @throws 'DECIMALS' if the specified decimal places exceed the currency decimals.
+   * @throws 'DECIMALS' if the specified decimal places exceed the asset decimals.
    */
   public toFixed(
     decimalPlaces: number = this.asset.decimals,
@@ -247,7 +244,7 @@ export class Amount<T extends Asset = Asset> {
    * @param roundingMode The rounding mode to use.
    * @param format The formatting options to apply.
    * @returns The formatted string representation of the amount.
-   * @throws 'DECIMALS' if the specified decimal places exceed the currency decimals.
+   * @throws 'DECIMALS' if the specified decimal places exceed the asset decimals.
    */
   public toFormat(
     decimalPlaces: number = this.asset.decimals,

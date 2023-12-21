@@ -1,4 +1,4 @@
-import { Fraction } from '@currencybase/fraction';
+import { Fraction } from '@fraction-asset/fraction';
 
 import { Amount } from './amount';
 import { Asset } from './asset';
@@ -19,7 +19,7 @@ describe('amount', () => {
   });
 
   describe('add', () => {
-    it('should add another amount of the same currency', () => {
+    it('should add another amount of the same asset', () => {
       const numerator1 = 100n * 10n ** 18n;
       const numerator2 = 50n * 10n ** 18n;
       const fraction1 = new Fraction(numerator1, 1n);
@@ -38,12 +38,12 @@ describe('amount', () => {
 
       expect(() => {
         amount1.add(amount2);
-      }).toThrow('CURRENCY');
+      }).toThrow('asset');
     });
   });
 
   describe('sub', () => {
-    it('should subtract another amount of the same currency', () => {
+    it('should subtract another amount of the same asset', () => {
       const fraction1 = new Fraction(100n, 1n);
       const fraction2 = new Fraction(50n, 1n);
       const amount1 = Amount.from(token1, 100n, 1n);
@@ -60,7 +60,7 @@ describe('amount', () => {
 
       expect(() => {
         amount1.sub(amount2);
-      }).toThrow('CURRENCY');
+      }).toThrow('asset');
     });
   });
 
@@ -116,7 +116,7 @@ describe('amount', () => {
       expect(amount.mul(100).toFixed(3)).toBe('10000.000');
     });
 
-    it('should throw an error if the specified decimal places exceed the currency decimals', () => {
+    it('should throw an error if the specified decimal places exceed the asset decimals', () => {
       const amount = Amount.from(token1, 100n, 1n);
 
       expect(() => {
@@ -133,7 +133,7 @@ describe('amount', () => {
       expect(amount.mul(100).toFormat(2)).toBe('10,000.00');
     });
 
-    it('should throw an error if the specified decimal places exceed the currency decimals', () => {
+    it('should throw an error if the specified decimal places exceed the asset decimals', () => {
       const amount = Amount.from(token1, 100n, 1n);
 
       expect(() => {

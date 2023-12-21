@@ -1,4 +1,4 @@
-import { Fraction } from '@currencybase/fraction';
+import { Fraction } from '@fraction-asset/fraction';
 
 import { Amount } from './amount';
 import { btc, eth, usdc } from './mockTokens';
@@ -19,44 +19,44 @@ describe('Price', () => {
   const priceBtc2Eth = Price.from(btc, eth, 2_000n, 40_000n);
 
   describe('constructor', () => {
-    it('should create a new Price instance with base and quote currency amounts', () => {
+    it('should create a new Price instance with base and quote asset amounts', () => {
       // ETH/USDC
       expect(priceEth2Usdc.baseAsset).toBe(eth);
-      expect(priceEth2Usdc.quoteCurrency).toBe(usdc);
+      expect(priceEth2Usdc.quoteAsset).toBe(usdc);
       expect(priceEth2Usdc.value.eq(new Fraction(2_000n))).toBe(true);
 
       // USDC/ETH
       expect(priceUsdc2Eth.baseAsset).toBe(usdc);
-      expect(priceUsdc2Eth.quoteCurrency).toBe(eth);
+      expect(priceUsdc2Eth.quoteAsset).toBe(eth);
       expect(priceUsdc2Eth.value.eq(new Fraction(1n, 2_000n))).toBe(true);
 
       // BTC/USDC
       expect(priceBtc2Usdc.baseAsset).toBe(btc);
-      expect(priceBtc2Usdc.quoteCurrency).toBe(usdc);
+      expect(priceBtc2Usdc.quoteAsset).toBe(usdc);
       expect(priceBtc2Usdc.value.eq(new Fraction(40_000n))).toBe(true);
 
       // USDC/BTC
       expect(priceUsdc2Btc.baseAsset).toBe(usdc);
-      expect(priceUsdc2Btc.quoteCurrency).toBe(btc);
+      expect(priceUsdc2Btc.quoteAsset).toBe(btc);
       expect(priceUsdc2Btc.value.eq(new Fraction(1n, 40_000n))).toBe(true);
 
       // ETH/BTC
       expect(priceEth2Btc.baseAsset).toBe(eth);
-      expect(priceEth2Btc.quoteCurrency).toBe(btc);
+      expect(priceEth2Btc.quoteAsset).toBe(btc);
       expect(priceEth2Btc.value.eq(new Fraction(2_000n, 40_000n))).toBe(true);
       expect(priceEth2Btc.value.eq(new Fraction(1, 20n))).toBe(true);
 
       // BTC/ETH
       expect(priceBtc2Eth.baseAsset).toBe(btc);
-      expect(priceBtc2Eth.quoteCurrency).toBe(eth);
+      expect(priceBtc2Eth.quoteAsset).toBe(eth);
       expect(priceBtc2Eth.value.eq(new Fraction(40_000n, 2_000n))).toBe(true);
       expect(priceBtc2Eth.value.eq(new Fraction(20n))).toBe(true);
     });
 
-    it('should create a new Price instance with base and quote currency amounts from an object', () => {
+    it('should create a new Price instance with base and quote asset amounts from an object', () => {
       const price = new Price(Amount.from(eth, 1n), Amount.from(usdc, 2_000n));
       expect(price.baseAsset).toBe(eth);
-      expect(price.quoteCurrency).toBe(usdc);
+      expect(price.quoteAsset).toBe(usdc);
       expect(price.value.eq(new Fraction(2_000n))).toBe(true);
     });
   });
@@ -65,7 +65,7 @@ describe('Price', () => {
     it('should return a new Price instance with flipped currencies', () => {
       const invertedPrice = priceEth2Usdc.invert();
       expect(invertedPrice.baseAsset).toBe(usdc);
-      expect(invertedPrice.quoteCurrency).toBe(eth);
+      expect(invertedPrice.quoteAsset).toBe(eth);
       expect(invertedPrice.value.eq(new Fraction(1, 2_000n))).toBe(true);
     });
   });
@@ -91,13 +91,13 @@ describe('Price', () => {
     it('should return a new Price instance with multiplied prices', () => {
       const multipliedPrice = priceEth2Usdc.mul(priceUsdc2Btc);
       expect(multipliedPrice.baseAsset).toBe(eth);
-      expect(multipliedPrice.quoteCurrency).toBe(btc);
+      expect(multipliedPrice.quoteAsset).toBe(btc);
       expect(multipliedPrice.value.eq(priceEth2Btc.value)).toBe(true);
     });
   });
 
   describe('quote', () => {
-    it('should return the corresponding amount of quote currency for a given base currency amount', () => {
+    it('should return the corresponding amount of quote asset for a given base asset amount', () => {
       const ethAmount = Amount.from(eth, 10n * eth.decimalScale);
       const quotedAmount = priceEth2Usdc.quote(ethAmount);
       expect(quotedAmount.asset).toBe(usdc);
@@ -107,7 +107,7 @@ describe('Price', () => {
     });
 
     it('should throw an if for invalid quote', () => {
-      // can only quote currency amount of eth
+      // can only quote asset amount of eth
       expect(() => priceEth2Usdc.quote(Amount.from(usdc, 1n))).toThrow('TOKEN');
       expect(() => priceEth2Usdc.quote(Amount.from(btc, 1n))).toThrow('TOKEN');
     });
