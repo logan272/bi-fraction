@@ -5,10 +5,6 @@ import invariant from 'tiny-invariant';
 
 import type { Currency } from './currency';
 
-const MaxUint256 = BigInt(
-  '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
-);
-
 /**
  * Subclass of `Fraction`. Represents an amount of a specific currency.
  */
@@ -69,7 +65,6 @@ export class Amount<T extends Currency = Currency> {
    * @param fraction The fraction value.
    */
   public constructor(currency: T, fraction: Fraction) {
-    invariant(fraction.quotient <= MaxUint256, 'AMOUNT');
     this.value = fraction;
     this.currency = currency;
   }
