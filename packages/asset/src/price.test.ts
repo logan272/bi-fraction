@@ -21,33 +21,33 @@ describe('Price', () => {
   describe('constructor', () => {
     it('should create a new Price instance with base and quote currency amounts', () => {
       // ETH/USDC
-      expect(priceEth2Usdc.baseCurrency).toBe(eth);
+      expect(priceEth2Usdc.baseAsset).toBe(eth);
       expect(priceEth2Usdc.quoteCurrency).toBe(usdc);
       expect(priceEth2Usdc.value.eq(new Fraction(2_000n))).toBe(true);
 
       // USDC/ETH
-      expect(priceUsdc2Eth.baseCurrency).toBe(usdc);
+      expect(priceUsdc2Eth.baseAsset).toBe(usdc);
       expect(priceUsdc2Eth.quoteCurrency).toBe(eth);
       expect(priceUsdc2Eth.value.eq(new Fraction(1n, 2_000n))).toBe(true);
 
       // BTC/USDC
-      expect(priceBtc2Usdc.baseCurrency).toBe(btc);
+      expect(priceBtc2Usdc.baseAsset).toBe(btc);
       expect(priceBtc2Usdc.quoteCurrency).toBe(usdc);
       expect(priceBtc2Usdc.value.eq(new Fraction(40_000n))).toBe(true);
 
       // USDC/BTC
-      expect(priceUsdc2Btc.baseCurrency).toBe(usdc);
+      expect(priceUsdc2Btc.baseAsset).toBe(usdc);
       expect(priceUsdc2Btc.quoteCurrency).toBe(btc);
       expect(priceUsdc2Btc.value.eq(new Fraction(1n, 40_000n))).toBe(true);
 
       // ETH/BTC
-      expect(priceEth2Btc.baseCurrency).toBe(eth);
+      expect(priceEth2Btc.baseAsset).toBe(eth);
       expect(priceEth2Btc.quoteCurrency).toBe(btc);
       expect(priceEth2Btc.value.eq(new Fraction(2_000n, 40_000n))).toBe(true);
       expect(priceEth2Btc.value.eq(new Fraction(1, 20n))).toBe(true);
 
       // BTC/ETH
-      expect(priceBtc2Eth.baseCurrency).toBe(btc);
+      expect(priceBtc2Eth.baseAsset).toBe(btc);
       expect(priceBtc2Eth.quoteCurrency).toBe(eth);
       expect(priceBtc2Eth.value.eq(new Fraction(40_000n, 2_000n))).toBe(true);
       expect(priceBtc2Eth.value.eq(new Fraction(20n))).toBe(true);
@@ -55,7 +55,7 @@ describe('Price', () => {
 
     it('should create a new Price instance with base and quote currency amounts from an object', () => {
       const price = new Price(Amount.from(eth, 1n), Amount.from(usdc, 2_000n));
-      expect(price.baseCurrency).toBe(eth);
+      expect(price.baseAsset).toBe(eth);
       expect(price.quoteCurrency).toBe(usdc);
       expect(price.value.eq(new Fraction(2_000n))).toBe(true);
     });
@@ -64,7 +64,7 @@ describe('Price', () => {
   describe('invert', () => {
     it('should return a new Price instance with flipped currencies', () => {
       const invertedPrice = priceEth2Usdc.invert();
-      expect(invertedPrice.baseCurrency).toBe(usdc);
+      expect(invertedPrice.baseAsset).toBe(usdc);
       expect(invertedPrice.quoteCurrency).toBe(eth);
       expect(invertedPrice.value.eq(new Fraction(1, 2_000n))).toBe(true);
     });
@@ -90,7 +90,7 @@ describe('Price', () => {
 
     it('should return a new Price instance with multiplied prices', () => {
       const multipliedPrice = priceEth2Usdc.mul(priceUsdc2Btc);
-      expect(multipliedPrice.baseCurrency).toBe(eth);
+      expect(multipliedPrice.baseAsset).toBe(eth);
       expect(multipliedPrice.quoteCurrency).toBe(btc);
       expect(multipliedPrice.value.eq(priceEth2Btc.value)).toBe(true);
     });
@@ -100,7 +100,7 @@ describe('Price', () => {
     it('should return the corresponding amount of quote currency for a given base currency amount', () => {
       const ethAmount = Amount.from(eth, 10n * eth.decimalScale);
       const quotedAmount = priceEth2Usdc.quote(ethAmount);
-      expect(quotedAmount.currency).toBe(usdc);
+      expect(quotedAmount.asset).toBe(usdc);
       expect(
         quotedAmount.eq(Amount.from(usdc, 10n * 2_000n * usdc.decimalScale)),
       ).toBe(true);
