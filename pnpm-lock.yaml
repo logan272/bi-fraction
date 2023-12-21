@@ -87,9 +87,9 @@ importers:
         specifier: ^5.3.3
         version: 5.3.3
 
-  packages/currency:
+  packages/asset:
     dependencies:
-      '@currencybase/fraction':
+      '@fraction-asset/fraction':
         specifier: workspace:*
         version: link:../fraction
       bignumber.js:

@@ -1,9 +1,9 @@
 {
-  "name": "@currencybase/fraction",
+  "name": "@fraction-asset/fraction",
   "description": "Fraction number library",
   "version": "0.0.1",
   "keywords": [
-    "currencybase",
+    "fraction-asset",
     "Fraction number"
   ],
   "author": "Logan Luo <github.com/logan272>",
@@ -25,15 +25,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/currencybase/currencybase.git"
+    "url": "git+https://github.com/fraction-asset/fraction-asset.git"
   },
   "publishConfig": {
     "access": "public"
   },
   "bugs": {
-    "url": "https://github.com/currencybase/currencybase/issues"
+    "url": "https://github.com/fraction-asset/fraction-asset/issues"
   },
-  "homepage": "https://github.com/currencybase/currencybase#readme",
+  "homepage": "https://github.com/fraction-asset/fraction-asset#readme",
   "dependencies": {
     "bignumber.js": "^9.1.2"
   }
