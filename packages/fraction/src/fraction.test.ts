@@ -6,22 +6,22 @@ describe('Fraction', () => {
     it('should parse zero edge cases correctly', () => {
       const f1 = Fraction.parse('0');
       expect(f1.numerator).toBe(0n);
-      expect(f1.denominator).toBe(0n);
+      expect(f1.denominator).toBe(1n);
       expect(f1.isZero()).toBe(true);
 
       const f2 = Fraction.parse('000');
       expect(f2.numerator).toBe(0n);
-      expect(f2.denominator).toBe(0n);
+      expect(f2.denominator).toBe(1n);
       expect(f2.isZero()).toBe(true);
 
       const f3 = Fraction.parse('0.000');
       expect(f3.numerator).toBe(0n);
-      expect(f3.denominator).toBe(0n);
+      expect(f3.denominator).toBe(1n);
       expect(f3.isZero()).toBe(true);
 
       const f4 = Fraction.parse('000.000');
       expect(f4.numerator).toBe(0n);
-      expect(f4.denominator).toBe(0n);
+      expect(f4.denominator).toBe(1n);
       expect(f4.isZero()).toBe(true);
     });
 
@@ -75,7 +75,7 @@ describe('Fraction', () => {
     it('should parse zero edge cases correctly', () => {
       const f1 = new Fraction(0, 100);
       expect(f1.numerator).toBe(0n);
-      expect(f1.denominator).toBe(0n);
+      expect(f1.denominator).toBe(100n);
       expect(f1.isZero()).toBe(true);
 
       const f2 = new Fraction(1000, 0);
@@ -85,7 +85,7 @@ describe('Fraction', () => {
 
       const f3 = new Fraction('0', 1);
       expect(f3.numerator).toBe(0n);
-      expect(f3.denominator).toBe(0n);
+      expect(f3.denominator).toBe(1n);
       expect(f3.isZero()).toBe(true);
     });
 
@@ -379,6 +379,12 @@ describe('Fraction', () => {
   });
 
   describe('lt', () => {
+    it('zero edge cases', () => {
+      expect(new Fraction(0n).lt(new Fraction(0n))).toBe(false);
+      expect(new Fraction(0n).lt(new Fraction(1n))).toBe(true);
+      expect(new Fraction(1n).lt(new Fraction(0n))).toBe(false);
+    });
+
     it('should return true if the fraction is less than the other fraction', () => {
       const f1 = new Fraction(1n, 2n);
       const f2 = new Fraction(3n, 4n);
@@ -399,6 +405,12 @@ describe('Fraction', () => {
   });
 
   describe('lte', () => {
+    it('zero edge cases', () => {
+      expect(new Fraction(0n).lte(new Fraction(0n))).toBe(true);
+      expect(new Fraction(0n).lte(new Fraction(1n))).toBe(true);
+      expect(new Fraction(1n).lte(new Fraction(0n))).toBe(false);
+    });
+
     it('should return true if the fraction is less than or equal to the other fraction', () => {
       const f1 = new Fraction(1n, 2n);
       const f2 = new Fraction(3n, 4n);
@@ -419,6 +431,12 @@ describe('Fraction', () => {
   });
 
   describe('gt', () => {
+    it('zero edge cases', () => {
+      expect(new Fraction(0n).gt(new Fraction(0n))).toBe(false);
+      expect(new Fraction(1n).gt(new Fraction(0n))).toBe(true);
+      expect(new Fraction(0n).gt(new Fraction(1n))).toBe(false);
+    });
+
     it('should return true if the fraction is greater than the other fraction', () => {
       const f1 = new Fraction(1n, 2n);
       const f2 = new Fraction(1n, 4n);
@@ -439,6 +457,12 @@ describe('Fraction', () => {
   });
 
   describe('gte', () => {
+    it('zero edge cases', () => {
+      expect(new Fraction(0n).gte(new Fraction(0n))).toBe(true);
+      expect(new Fraction(1n).gte(new Fraction(0n))).toBe(true);
+      expect(new Fraction(0n).gte(new Fraction(1n))).toBe(false);
+    });
+
     it('should return true if the fraction is greater than or equal to the other fraction', () => {
       const f1 = new Fraction(1n, 2n);
       const f2 = new Fraction(1n, 4n);
@@ -480,7 +504,7 @@ describe('Fraction', () => {
       const f1 = new Fraction(2n);
       const result = f1.sub(f1);
       expect(result.numerator).toBe(0n);
-      expect(result.denominator).toBe(0n);
+      expect(result.denominator).toBe(1n);
     });
 
     it('should subtract two fractions correctly', () => {
