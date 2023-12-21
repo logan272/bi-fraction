@@ -267,6 +267,36 @@ export class Fraction {
   }
 
   /**
+   * Returns a string whose value is the value of this Fraction rounded to a precision of
+   * `significantDigits` significant digits using rounding mode `roundingMode`.
+   *
+   * If `roundingMode` is omitted or is `null` or `undefined`, `ROUNDING_MODE` will be used.
+   *
+   *
+   * ```ts
+   * x = new Fraction.parse('9876.54321')
+   * x.precision(6)                         // '9876.54'
+   * x.precision(6, BigNumber.ROUND_UP)     // '9876.55'
+   * x.precision(2)                         // '9900'
+   * x.precision(2, 1)                      // '9800'
+   * x                                      // '9876.54321'
+   * ```
+   *
+   * @param significantDigits Significant digits, integer, 1 to 1e+9.
+   * @param [roundingMode] `BigNumberJs.RoundingMode`.
+   * @throws If `significantDigits` or `roundingMode` is invalid.
+   */
+  public toSignificant(
+    significantDigits: number,
+    roundingMode?: BigNumberJs.RoundingMode,
+  ): string {
+    return Bn(this.numerator.toString())
+      .div(this.denominator.toString())
+      .precision(significantDigits, roundingMode)
+      .toString();
+  }
+
+  /**
    * Converts the fraction to a fixed-point decimal string representation.
    * @param decimalPlaces - The number of decimal places to include. (default: 0)
    * @param roundingMode - The rounding mode to use. (optional)
