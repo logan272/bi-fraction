@@ -647,4 +647,30 @@ describe('Fraction', () => {
       expect(f2.toFixed(24)).toBe('1.234567890123456789010000');
     });
   });
+
+  describe('toFormat', () => {
+    it('should convert the fraction to a formatted string representation', () => {
+      const bigPi = Fraction.parse('314159.2653');
+      expect(bigPi.toFormat()).toBe('314,159');
+      expect(bigPi.toFormat(1, BigNumberJs.ROUND_FLOOR)).toBe('314,159.2');
+      expect(bigPi.toFormat(1)).toBe('314,159.3');
+      expect(bigPi.toFormat(2, BigNumberJs.ROUND_FLOOR)).toBe('314,159.26');
+      expect(bigPi.toFormat(2)).toBe('314,159.27');
+      expect(bigPi.toFormat(3)).toBe('314,159.265');
+      expect(bigPi.toFormat(4)).toBe('314,159.2653');
+      expect(bigPi.toFormat(5)).toBe('314,159.26530');
+    });
+  });
+
+  describe('asFraction', () => {
+    it('should pass', () => {
+      const pi = Fraction.parse('3.14159');
+      expect(pi.asFraction.numerator).toBe(pi.numerator);
+      expect(pi.asFraction.denominator).toBe(pi.denominator);
+
+      const e = Fraction.parse('2.71');
+      expect(e.asFraction.numerator).toBe(e.numerator);
+      expect(e.asFraction.denominator).toBe(e.denominator);
+    });
+  });
 });
