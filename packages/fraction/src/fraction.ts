@@ -249,6 +249,24 @@ export class Fraction {
   }
 
   /**
+   * Converts the fraction to a Javascript number.
+   *
+   * ```ts
+   * x = new Fraction('45987349857634085409857349856430985')
+   * x.toNumber()                    // 4.598734985763409e+34
+   *
+   * y = new Fraction(456.789)
+   * y.toNumber()                    // 456.789
+   * ```
+   * @returns The number representation of the fraction.
+   */
+  public toNumber(): number {
+    return Bn(this.numerator.toString())
+      .div(this.denominator.toString())
+      .toNumber();
+  }
+
+  /**
    * Converts the fraction to a fixed-point decimal string representation.
    * @param decimalPlaces - The number of decimal places to include. (default: 0)
    * @param roundingMode - The rounding mode to use. (optional)
