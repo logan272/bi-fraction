@@ -273,6 +273,12 @@ describe('Fraction', () => {
       const f4 = new Fraction(123n, 124n);
       expect(f4.remainder.numerator).toBe(123n);
       expect(f4.remainder.denominator).toBe(124n);
+
+      const f5 = Fraction.parse('3.14');
+      expect(f5.remainder.toFixed(2)).toBe('0.14');
+      expect(f5.remainder.toFixed(4)).toBe('0.1400');
+      expect(f5.remainder.toSignificant(2)).toBe('0.14');
+      expect(f5.remainder.toSignificant(4)).toBe('0.14');
     });
   });
 
