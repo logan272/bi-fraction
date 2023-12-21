@@ -75,6 +75,13 @@ export class Amount<T extends Currency = Currency> {
   }
 
   /**
+   * The quotient of the fraction after performing floor division.
+   */
+  public get quotient(): bigint {
+    return this.value.quotient;
+  }
+
+  /**
    * Checks if the Amount is zero.
    * @returns True if the Amount is zero, false otherwise.
    */
