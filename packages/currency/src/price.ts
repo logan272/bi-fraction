@@ -1,6 +1,6 @@
 import type { BigIntIsh, NumericString } from '@currencybase/fraction';
 import { Fraction } from '@currencybase/fraction';
-import type BignumberJs from 'bignumber.js';
+import type BigNumberJs from 'bignumber.js';
 import invariant from 'tiny-invariant';
 
 import { Amount } from './amount';
@@ -83,7 +83,6 @@ export class Price<
 
   /**
    * Constructs a new Price instance.
-   *
    * @param baseAmount The base currency amount.
    * @param quoteAmount The quote currency amount.
    */
@@ -108,7 +107,6 @@ export class Price<
 
   /**
    * Flips the price, switching the base and quote currencies.
-   *
    * @returns A new Price instance with the flipped currencies.
    */
   public invert(): Price<TQuote, TBase> {
@@ -168,22 +166,46 @@ export class Price<
   }
 
   /**
-   * Converts the Price to a fixed-point decimal string representation.
+   * Converts the Price to a number.
    *
+   * @returns The number representation of the fraction.
+   */
+  public toNumber(): number {
+    return this.adjustForDecimals().toNumber();
+  }
+
+  /**
+   * Converts the Price to a number a string whose value is the value of this Price rounded to a precision of
+   * `significantDigits` significant digits using rounding mode `roundingMode`.
+   * @param significantDigits Significant digits, integer, 1 to 1e+9.
+   * @param [roundingMode] `BigNumberJs.RoundingMode`.
+   * @throws If `significantDigits` or `roundingMode` is invalid.
+   */
+  public toSignificant(
+    significantDigits: number,
+    roundingMode?: BigNumberJs.RoundingMode,
+  ): string {
+    return this.adjustForDecimals().toSignificant(
+      significantDigits,
+      roundingMode,
+    );
+  }
+
+  /**
+   * Converts the Price to a fixed-point decimal string representation.
    * @param decimalPlaces The number of decimal places to include in the string.
    * @param rounding The rounding mode to use.
    * @returns The fixed-point decimal string representation of the Price.
    */
   public toFixed(
     decimalPlaces = 4,
-    rounding?: BignumberJs.RoundingMode,
+    rounding?: BigNumberJs.RoundingMode,
   ): string {
     return this.adjustForDecimals().toFixed(decimalPlaces, rounding);
   }
 
   /**
    * Converts the price to a formatted string representation.
-   *
    * @param decimalPlaces The number of decimal places to include in the string.
    * @param roundingMode The rounding mode to use.
    * @param format The formatting options to apply.
@@ -191,8 +213,8 @@ export class Price<
    */
   public toFormat(
     decimalPlaces = 4,
-    roundingMode?: BignumberJs.RoundingMode,
-    format?: BignumberJs.Format,
+    roundingMode?: BigNumberJs.RoundingMode,
+    format?: BigNumberJs.Format,
   ): string {
     return this.adjustForDecimals().toFormat(
       decimalPlaces,
