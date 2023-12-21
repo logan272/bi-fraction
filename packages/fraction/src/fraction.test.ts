@@ -1,4 +1,6 @@
 /* eslint-disable max-lines */
+import BigNumberJs from 'bignumber.js';
+
 import { Fraction } from './fraction';
 
 describe('Fraction', () => {
@@ -554,6 +556,51 @@ describe('Fraction', () => {
       const result = f1.div(2);
       expect(result.numerator).toBe(3n);
       expect(result.denominator).toBe(8n);
+    });
+  });
+
+  describe('toSignificant', () => {
+    it('should convert to an string with the specified significant digits', () => {
+      const f1 = Fraction.parse('12345.67890');
+      expect(f1.toSignificant(12)).toBe('12345.6789');
+      expect(f1.toSignificant(12)).toBe('12345.6789');
+      expect(f1.toSignificant(9)).toBe('12345.6789');
+      expect(f1.toSignificant(8, BigNumberJs.ROUND_HALF_UP)).toBe('12345.679');
+      expect(f1.toSignificant(8, BigNumberJs.ROUND_FLOOR)).toBe('12345.678');
+      expect(f1.toSignificant(5, BigNumberJs.ROUND_FLOOR)).toBe('12345');
+      expect(f1.toSignificant(2, BigNumberJs.ROUND_FLOOR)).toBe('12000');
+    });
+
+    it('should throw if significantDigits <= 0', () => {
+      const f1 = new Fraction(123);
+      expect(() => f1.toSignificant(0)).toThrow();
+      expect(() => f1.toSignificant(-100)).toThrow();
+    });
+
+    it('should convert to an string with the specified significant digits when apply to very large/small number', () => {
+      const large = '12345678901234567890';
+      const f1 = Fraction.parse(large);
+      expect(f1.toSignificant(12)).toBe(
+        '123456789012'.padEnd(large.length, '0'),
+      );
+      expect(f1.toSignificant(10)).toBe('123456789'.padEnd(large.length, '0'));
+      expect(f1.toSignificant(2)).toBe('12'.padEnd(large.length, '0'));
+
+      const huge = '12345678901234567890123';
+      const f2 = Fraction.parse(huge);
+      expect(f2.toSignificant(12)).toBe('1.23456789012e+22');
+      expect(f2.toSignificant(2)).toBe('1.2e+22');
+
+      const small = '1.2345678901234567890';
+      const f3 = Fraction.parse(small);
+      expect(f3.toSignificant(20)).toBe('1.234567890123456789');
+      expect(f3.toSignificant(12)).toBe('1.23456789012');
+      expect(f3.toSignificant(12)).toBe('1.23456789012');
+      expect(f3.toSignificant(2)).toBe('1.2');
+
+      const withMoreThan21DecimalPlaces = '1.23456789012345678901234567890';
+      const f4 = Fraction.parse(withMoreThan21DecimalPlaces);
+      expect(f4.toSignificant(100)).toBe('1.23456789012345678901');
     });
   });
 });
