@@ -1,18 +1,18 @@
 import type { BigIntIsh, NumericString } from '@currencybase/fraction';
 import { Fraction } from '@currencybase/fraction';
-import BigNumberJs from 'bignumber.js';
+import BignumberJs from 'bignumber.js';
 import invariant from 'tiny-invariant';
 
-import type { Currency } from './currency';
+import type { Asset } from './asset';
 
 /**
  * Subclass of `Fraction`. Represents an amount of a specific currency.
  */
-export class Amount<T extends Currency = Currency> {
+export class Amount<T extends Asset = Asset> {
   /**
    * The currency associated with the amount.
    */
-  public readonly currency: T;
+  public readonly asset: T;
 
   /**
    * The underlining fraction value.
@@ -26,7 +26,7 @@ export class Amount<T extends Currency = Currency> {
    * @returns A Amount instance representing the parsed decimals string.
    * @throws If the string can not be parsed to a number
    */
-  public static parse<T extends Currency>(
+  public static parse<T extends Asset>(
     currency: T,
     value: NumericString,
   ): Amount {
@@ -40,7 +40,7 @@ export class Amount<T extends Currency = Currency> {
    * @param numerator The numerator of the fraction representing the amount.
    * @param denominator The denominator of the fraction representing the amount.
    */
-  public static from<T extends Currency>(
+  public static from<T extends Asset>(
     currency: T,
     numerator: BigIntIsh,
     denominator?: BigIntIsh,
@@ -53,7 +53,7 @@ export class Amount<T extends Currency = Currency> {
    *
    * @param currency The currency associated with the amount.
    */
-  public static one<T extends Currency>(currency: T): Amount<T> {
+  public static one<T extends Asset>(currency: T): Amount<T> {
     return new Amount(currency, new Fraction(currency.decimalScale));
   }
 
@@ -64,7 +64,7 @@ export class Amount<T extends Currency = Currency> {
    */
   public constructor(currency: T, fraction: Fraction) {
     this.value = fraction;
-    this.currency = currency;
+    this.asset = currency;
   }
 
   /**
@@ -90,7 +90,7 @@ export class Amount<T extends Currency = Currency> {
    */
   public eq(other: Amount<T>): boolean {
     // It only make sense to compare and add/sub the amounts of the same currency.
-    invariant(this.currency.eq(other.currency), 'CURRENCY');
+    invariant(this.asset.eq(other.asset), 'CURRENCY');
     return this.value.eq(other.value);
   }
 
@@ -101,7 +101,7 @@ export class Amount<T extends Currency = Currency> {
    * @throws 'CURRENCY' if the amounts have different currencies.
    */
   public neq(other: Amount<T>): boolean {
-    return !this.currency.eq(other.currency);
+    return !this.asset.eq(other.asset);
   }
 
   /**
@@ -111,7 +111,7 @@ export class Amount<T extends Currency = Currency> {
    * @throws 'CURRENCY' if the amounts have different currencies.
    */
   public lt(other: Amount<T>): boolean {
-    invariant(this.currency.eq(other.currency), 'CURRENCY');
+    invariant(this.asset.eq(other.asset), 'CURRENCY');
     return this.value.lt(other.value);
   }
 
@@ -122,7 +122,7 @@ export class Amount<T extends Currency = Currency> {
    * @throws 'CURRENCY' if the amounts have different currencies.
    */
   public lte(other: Amount<T>): boolean {
-    invariant(this.currency.eq(other.currency), 'CURRENCY');
+    invariant(this.asset.eq(other.asset), 'CURRENCY');
     return this.value.lte(other.value);
   }
 
@@ -133,7 +133,7 @@ export class Amount<T extends Currency = Currency> {
    * @throws 'CURRENCY' if the amounts have different currencies.
    */
   public gt(other: Amount<T>): boolean {
-    invariant(this.currency.eq(other.currency), 'CURRENCY');
+    invariant(this.asset.eq(other.asset), 'CURRENCY');
     return this.value.gt(other.value);
   }
 
@@ -144,7 +144,7 @@ export class Amount<T extends Currency = Currency> {
    * @throws 'CURRENCY' if the amounts have different currencies.
    */
   public gte(other: Amount<T>): boolean {
-    invariant(this.currency.eq(other.currency), 'CURRENCY');
+    invariant(this.asset.eq(other.asset), 'CURRENCY');
     return this.value.gte(other.value);
   }
 
@@ -155,9 +155,9 @@ export class Amount<T extends Currency = Currency> {
    * @throws 'CURRENCY' if the amounts have different currencies.
    */
   public add(other: Amount<T>): Amount<T> {
-    invariant(this.currency.eq(other.currency), 'CURRENCY');
+    invariant(this.asset.eq(other.asset), 'CURRENCY');
     const added = this.value.add(other.value);
-    return new Amount(this.currency, added);
+    return new Amount(this.asset, added);
   }
 
   /**
@@ -167,9 +167,9 @@ export class Amount<T extends Currency = Currency> {
    * @throws 'CURRENCY' if the amounts have different currencies.
    */
   public sub(other: Amount<T>): Amount<T> {
-    invariant(this.currency.eq(other.currency), 'CURRENCY');
+    invariant(this.asset.eq(other.asset), 'CURRENCY');
     const subtracted = this.value.sub(other.value);
-    return new Amount(this.currency, subtracted);
+    return new Amount(this.asset, subtracted);
   }
 
   /**
@@ -179,7 +179,7 @@ export class Amount<T extends Currency = Currency> {
    */
   public mul(other: Fraction | BigIntIsh): Amount<T> {
     const multiplied = this.value.mul(other);
-    return new Amount(this.currency, multiplied);
+    return new Amount(this.asset, multiplied);
   }
 
   /**
@@ -189,7 +189,7 @@ export class Amount<T extends Currency = Currency> {
    */
   public div(other: Fraction | BigIntIsh): Amount<T> {
     const divided = this.value.div(other);
-    return new Amount(this.currency, divided);
+    return new Amount(this.asset, divided);
   }
 
   /**
@@ -197,7 +197,7 @@ export class Amount<T extends Currency = Currency> {
    * @returns The adjusted Fraction value.
    */
   public adjustForDecimals(): Fraction {
-    return this.value.div(this.currency.decimalScale);
+    return this.value.div(this.asset.decimalScale);
   }
 
   /**
@@ -218,7 +218,7 @@ export class Amount<T extends Currency = Currency> {
    */
   public toSignificant(
     significantDigits: number,
-    roundingMode?: BigNumberJs.RoundingMode,
+    roundingMode?: BignumberJs.RoundingMode,
   ): string {
     return this.adjustForDecimals().toSignificant(
       significantDigits,
@@ -234,10 +234,10 @@ export class Amount<T extends Currency = Currency> {
    * @throws 'DECIMALS' if the specified decimal places exceed the currency decimals.
    */
   public toFixed(
-    decimalPlaces: number = this.currency.decimals,
-    roundingMode?: BigNumberJs.RoundingMode,
+    decimalPlaces: number = this.asset.decimals,
+    roundingMode?: BignumberJs.RoundingMode,
   ): string {
-    invariant(decimalPlaces <= this.currency.decimals, 'DECIMALS');
+    invariant(decimalPlaces <= this.asset.decimals, 'DECIMALS');
     return this.adjustForDecimals().toFixed(decimalPlaces, roundingMode);
   }
 
@@ -250,14 +250,14 @@ export class Amount<T extends Currency = Currency> {
    * @throws 'DECIMALS' if the specified decimal places exceed the currency decimals.
    */
   public toFormat(
-    decimalPlaces: number = this.currency.decimals,
-    roundingMode?: BigNumberJs.RoundingMode,
-    format?: BigNumberJs.Format,
+    decimalPlaces: number = this.asset.decimals,
+    roundingMode?: BignumberJs.RoundingMode,
+    format?: BignumberJs.Format,
   ): string {
-    invariant(decimalPlaces <= this.currency.decimals, 'DECIMALS');
+    invariant(decimalPlaces <= this.asset.decimals, 'DECIMALS');
     return this.adjustForDecimals().toFormat(
       decimalPlaces,
-      roundingMode ?? BigNumberJs.ROUND_HALF_UP,
+      roundingMode ?? BignumberJs.ROUND_HALF_UP,
       format,
     );
   }

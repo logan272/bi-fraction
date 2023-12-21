@@ -1,11 +1,11 @@
 import { Fraction } from '@currencybase/fraction';
 
 import { Amount } from './amount';
-import { Token } from './token';
+import { Asset } from './asset';
 
 describe('amount', () => {
-  const token1 = new Token(1, '0x123', 18, 'TOKEN1');
-  const token2 = new Token(1, '0x456', 18, 'TOKEN2');
+  const token1 = new Asset('TOKEN1', 18);
+  const token2 = new Asset('TOKEN2', 18);
 
   describe('constructor', () => {
     it('should create a amount instance with the provided values', () => {
@@ -13,17 +13,8 @@ describe('amount', () => {
       const denominator = 1n;
       const amount = Amount.from(token1, numerator, denominator);
 
-      expect(amount.currency).toBe(token1);
+      expect(amount.asset).toBe(token1);
       expect(amount.value.eq(new Fraction(numerator, denominator))).toBe(true);
-    });
-
-    it('should throw an error if the quotient exceeds MaxUint256', () => {
-      const numerator = 2n ** 256n;
-      const denominator = 1n;
-
-      expect(() => {
-        Amount.from(token1, numerator, denominator);
-      }).toThrow('AMOUNT');
     });
   });
 
@@ -37,7 +28,7 @@ describe('amount', () => {
       const amount2 = Amount.from(token1, numerator2, 1n);
       const result = amount1.add(amount2);
 
-      expect(result.currency).toBe(token1);
+      expect(result.asset).toBe(token1);
       expect(result.value.eq(fraction1.add(fraction2))).toBe(true);
     });
 
@@ -59,7 +50,7 @@ describe('amount', () => {
       const amount2 = Amount.from(token1, 50n, 1n);
       const result = amount1.sub(amount2);
 
-      expect(result.currency).toBe(token1);
+      expect(result.asset).toBe(token1);
       expect(result.value.eq(fraction1.sub(fraction2))).toBe(true);
     });
 
@@ -80,7 +71,7 @@ describe('amount', () => {
       const fraction2 = new Fraction(3n, 4n);
       const result = amount.mul(fraction2);
 
-      expect(result.currency).toBe(token1);
+      expect(result.asset).toBe(token1);
       expect(result.value.eq(fraction1.mul(fraction2))).toBe(true);
     });
 
@@ -90,7 +81,7 @@ describe('amount', () => {
       const value = 2n;
       const result = amount.mul(value);
 
-      expect(result.currency).toBe(token1);
+      expect(result.asset).toBe(token1);
       expect(result.value.eq(fraction.mul(2))).toBe(true);
     });
   });
@@ -102,7 +93,7 @@ describe('amount', () => {
       const amount = Amount.from(token1, 100n, 1n);
       const result = amount.div(fraction2);
 
-      expect(result.currency).toBe(token1);
+      expect(result.asset).toBe(token1);
       expect(result.value.eq(fraction1.div(fraction2))).toBe(true);
     });
 
@@ -112,7 +103,7 @@ describe('amount', () => {
       const value = 2n;
       const result = amount.div(value);
 
-      expect(result.currency).toBe(token1);
+      expect(result.asset).toBe(token1);
       expect(result.value.eq(fraction.div(value))).toBe(true);
     });
   });

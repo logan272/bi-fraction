@@ -4,7 +4,7 @@ import type BigNumberJs from 'bignumber.js';
 import invariant from 'tiny-invariant';
 
 import { Amount } from './amount';
-import type { Currency } from './currency';
+import type { Asset } from './asset';
 
 /**
  * Subclass of Fraction. Represents a price between two currencies.
@@ -23,19 +23,16 @@ import type { Currency } from './currency';
  * Thus, the selling price of the currency pair is the amount one will receive in the quote currency for providing one unit of the base currency.
  *
  */
-export class Price<
-  TBase extends Currency = Currency,
-  TQuote extends Currency = Currency,
-> {
+export class Price<TBase extends Asset = Asset, TQuote extends Asset = Asset> {
   /**
    * The base currency of the price.
    */
-  public readonly baseCurrency: TBase;
+  public readonly baseAsset: TBase;
 
   /**
    * The quote currency of the price.
    */
-  public readonly quoteCurrency: TQuote;
+  public readonly quoteAsset: TQuote;
 
   /**
    * The underlining fraction value.
@@ -55,7 +52,7 @@ export class Price<
    * @returns A Price instance representing the parsed decimals string.
    * @throws If the string can not be parsed to a number
    */
-  public static parse<TBase extends Currency, TQuote extends Currency>(
+  public static parse<TBase extends Asset, TQuote extends Asset>(
     baseCurrency: TBase,
     quoteCurrency: TQuote,
     value: NumericString,
@@ -69,7 +66,7 @@ export class Price<
     );
   }
 
-  public static from<TBase extends Currency, TQuote extends Currency>(
+  public static from<TBase extends Asset, TQuote extends Asset>(
     baseCurrency: TBase,
     quoteCurrency: TQuote,
     denominator: BigIntIsh,
@@ -89,11 +86,11 @@ export class Price<
   public constructor(baseAmount: Amount<TBase>, quoteAmount: Amount<TQuote>) {
     const result = quoteAmount.value.div(baseAmount.value);
     this.value = new Fraction(result.numerator, result.denominator);
-    this.baseCurrency = baseAmount.currency;
-    this.quoteCurrency = quoteAmount.currency;
+    this.baseAsset = baseAmount.asset;
+    this.quoteAsset = quoteAmount.asset;
     this.scalar = new Fraction(
-      this.baseCurrency.decimalScale,
-      this.quoteCurrency.decimalScale,
+      this.baseAsset.decimalScale,
+      this.quoteAsset.decimalScale,
     );
   }
 
@@ -111,8 +108,8 @@ export class Price<
    */
   public invert(): Price<TQuote, TBase> {
     return Price.from(
-      this.quoteCurrency,
-      this.baseCurrency,
+      this.quoteAsset,
+      this.baseAsset,
       this.value.numerator,
       this.value.denominator,
     );
@@ -127,15 +124,15 @@ export class Price<
    * @returns A new Price instance representing the product.
    * @throws 'TOKEN' if the other price's base currency does not match this price's quote currency.
    */
-  public mul<TOtherQuote extends Currency>(
+  public mul<TOtherQuote extends Asset>(
     other: Price<TQuote, TOtherQuote>,
   ): Price<TBase, TOtherQuote> {
-    invariant(this.quoteCurrency.eq(other.baseCurrency), 'TOKEN');
-    invariant(this.baseCurrency.neq(other.quoteCurrency), 'TOKEN');
+    invariant(this.quoteAsset.eq(other.baseAsset), 'TOKEN');
+    invariant(this.baseAsset.neq(other.quoteAsset), 'TOKEN');
     const fraction = this.value.mul(other.value);
     return Price.from(
-      this.baseCurrency,
-      other.quoteCurrency,
+      this.baseAsset,
+      other.quoteAsset,
       fraction.denominator,
       fraction.numerator,
     );
@@ -151,9 +148,9 @@ export class Price<
    * @throws 'TOKEN' if the currency amount's currency does not match this price's base currency.
    */
   public quote(amount: Amount<TBase>): Amount<TQuote> {
-    invariant(amount.currency.eq(this.baseCurrency), 'TOKEN');
+    invariant(amount.asset.eq(this.baseAsset), 'TOKEN');
     const result = amount.value.mul(this.value);
-    return new Amount(this.quoteCurrency, result);
+    return new Amount(this.quoteAsset, result);
   }
 
   /**
