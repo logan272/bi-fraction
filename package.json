@@ -1,11 +1,13 @@
 {
   "name": "fraction-asset",
   "private": true,
-  "description": "A flexible library for arbitrary precision asset calculations, pricing, parsing, and formatting built on top a Fraction number abstraction.",
+  "description": "A flexible library for arbitrary precision asset calculations, pricing, parsing, and formatting built on top JS native BigInt and a Fraction number abstraction.",
   "author": "Logan Luo <github.com/logan272>",
   "license": "MIT",
   "keywords": [
     "fraction",
+    "BigInt",
+    "decimal",
     "arbitrary precision",
     "asset"
   ],
