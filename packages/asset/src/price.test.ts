@@ -1,7 +1,7 @@
 import { Fraction } from '@fraction-asset/fraction';
 
 import { Amount } from './amount';
-import { btc, eth, usdc } from './mockTokens';
+import { btc, eth, usdc } from './mockAssets';
 import { Price } from './price';
 
 describe('Price', () => {

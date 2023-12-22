@@ -7,7 +7,7 @@ export class Asset {
   public readonly decimals: number;
 
   /**
-   * The symbol of the `asset`, i.e. a short textual non-unique identifier
+   * The symbol of the `asset`.
    */
   public readonly symbol: string;
 
@@ -19,7 +19,7 @@ export class Asset {
   }
 
   /**
-   * Constructs an instance of the base class `Baseasset`.
+   * Constructs an instance of the `Asset` class.
    *
    * @param symbol symbol of the asset
    * @param decimals decimals of the asset
