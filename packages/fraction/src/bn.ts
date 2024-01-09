@@ -35,3 +35,50 @@ export const Bn = BigNumberJs.clone({
     suffix: '',
   },
 });
+
+// see: https://mikemcl.github.io/bignumber.js/#constructor-properties
+export enum RoundingMode {
+  /**
+   * Rounds away from zero
+   */
+  ROUND_UP = BigNumberJs.ROUND_UP,
+  /**
+   * Rounds towards zero
+   */
+  ROUND_DOWN = BigNumberJs.ROUND_DOWN,
+  /**
+   * Rounds towards Infinity
+   */
+  ROUND_CEIL = BigNumberJs.ROUND_CEIL,
+  /**
+   * Rounds towards -Infinity
+   */
+  ROUND_FLOOR = BigNumberJs.ROUND_FLOOR,
+  /**
+   * Rounds towards nearest neighbour.
+   * If equidistant, rounds away from zero
+   */
+  ROUND_HALF_UP = BigNumberJs.ROUND_HALF_UP,
+  /**
+   * Rounds towards nearest neighbour.
+   * If equidistant, rounds towards zero
+   */
+  ROUND_HALF_DOWN = BigNumberJs.ROUND_HALF_DOWN,
+  /**
+   * Rounds towards nearest neighbour.
+   * If equidistant, rounds towards even neighbour
+   */
+  ROUND_HALF_EVEN = BigNumberJs.ROUND_HALF_EVEN,
+  /**
+   * Rounds towards nearest neighbour.
+   * If equidistant, rounds towards Infinity
+   */
+  ROUND_HALF_CEIL = BigNumberJs.ROUND_HALF_CEIL,
+  /**
+   * Rounds towards nearest neighbour.
+   * If equidistant, rounds towards -Infinity
+   */
+  ROUND_HALF_FLOOR = BigNumberJs.ROUND_HALF_FLOOR,
+}
+
+export const DEFAULT_ROUNDING_MODE = RoundingMode.ROUND_HALF_UP;

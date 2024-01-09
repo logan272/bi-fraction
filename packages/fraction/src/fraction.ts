@@ -1,6 +1,7 @@
-import BigNumberJs from 'bignumber.js';
+import type BigNumberJs from 'bignumber.js';
 
-import { Bn } from './bn';
+import type { RoundingMode } from './bn';
+import { Bn, DEFAULT_ROUNDING_MODE } from './bn';
 import { gcd } from './gcd';
 import type { BigIntIsh } from './types';
 
@@ -359,11 +360,11 @@ export class Fraction {
    */
   public toSignificant(
     significantDigits: number,
-    roundingMode?: BigNumberJs.RoundingMode,
+    roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
   ): string {
     return Bn(this.numerator.toString())
       .div(this.denominator.toString())
-      .precision(significantDigits, roundingMode)
+      .precision(significantDigits, roundingMode as BigNumberJs.RoundingMode)
       .toString();
   }
 
@@ -375,11 +376,11 @@ export class Fraction {
    */
   public toFixed(
     decimalPlaces = 0,
-    roundingMode?: BigNumberJs.RoundingMode,
+    roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
   ): string {
     return Bn(this.numerator.toString())
       .div(this.denominator.toString())
-      .toFixed(decimalPlaces, roundingMode);
+      .toFixed(decimalPlaces, roundingMode as BigNumberJs.RoundingMode);
   }
 
   /**
@@ -391,14 +392,14 @@ export class Fraction {
    */
   public toFormat(
     decimalPlaces = 0,
-    roundingMode?: BigNumberJs.RoundingMode,
+    roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
     format?: BigNumberJs.Format,
   ): string {
     return Bn(this.numerator.toString())
       .div(this.denominator.toString())
       .toFormat(
         decimalPlaces,
-        roundingMode ?? BigNumberJs.ROUND_HALF_UP,
+        roundingMode as BigNumberJs.RoundingMode,
         format,
       );
   }

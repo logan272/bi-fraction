@@ -1,6 +1,5 @@
 /* eslint-disable max-lines */
-import BigNumberJs from 'bignumber.js';
-
+import { RoundingMode } from './bn';
 import { Fraction } from './fraction';
 
 describe('Fraction', () => {
@@ -625,10 +624,10 @@ describe('Fraction', () => {
       expect(f1.toSignificant(12)).toBe('12345.6789');
       expect(f1.toSignificant(12)).toBe('12345.6789');
       expect(f1.toSignificant(9)).toBe('12345.6789');
-      expect(f1.toSignificant(8, BigNumberJs.ROUND_HALF_UP)).toBe('12345.679');
-      expect(f1.toSignificant(8, BigNumberJs.ROUND_FLOOR)).toBe('12345.678');
-      expect(f1.toSignificant(5, BigNumberJs.ROUND_FLOOR)).toBe('12345');
-      expect(f1.toSignificant(2, BigNumberJs.ROUND_FLOOR)).toBe('12000');
+      expect(f1.toSignificant(8, RoundingMode.ROUND_HALF_UP)).toBe('12345.679');
+      expect(f1.toSignificant(8, RoundingMode.ROUND_FLOOR)).toBe('12345.678');
+      expect(f1.toSignificant(5, RoundingMode.ROUND_FLOOR)).toBe('12345');
+      expect(f1.toSignificant(2, RoundingMode.ROUND_FLOOR)).toBe('12000');
     });
 
     it('should throw if significantDigits <= 0', () => {
@@ -677,9 +676,9 @@ describe('Fraction', () => {
       expect(pi.toFixed(1)).toBe('3.1');
       expect(pi.toFixed(2)).toBe('3.14');
       expect(pi.toFixed(3)).toBe('3.142');
-      expect(pi.toFixed(3, BigNumberJs.ROUND_FLOOR)).toBe('3.141');
+      expect(pi.toFixed(3, RoundingMode.ROUND_FLOOR)).toBe('3.141');
       expect(pi.toFixed(4)).toBe('3.1416');
-      expect(pi.toFixed(4, BigNumberJs.ROUND_FLOOR)).toBe('3.1415');
+      expect(pi.toFixed(4, RoundingMode.ROUND_FLOOR)).toBe('3.1415');
       expect(pi.toFixed(5)).toBe('3.14159');
       expect(pi.toFixed(6)).toBe('3.141590');
       expect(pi.toFixed(7)).toBe('3.1415900');
@@ -689,7 +688,7 @@ describe('Fraction', () => {
       const small = '1.2345678901234567890123';
       const f1 = Fraction.parse(small);
       expect(f1.toFixed(12)).toBe('1.234567890123');
-      expect(f1.toFixed(13, BigNumberJs.ROUND_FLOOR)).toBe('1.2345678901234');
+      expect(f1.toFixed(13, RoundingMode.ROUND_FLOOR)).toBe('1.2345678901234');
       expect(f1.toFixed(13)).toBe('1.2345678901235');
 
       const withMoreThan21DecimalPlaces = '1.234567890123456789012345';
@@ -706,9 +705,9 @@ describe('Fraction', () => {
     it('should convert the fraction to a formatted string representation', () => {
       const bigPi = Fraction.parse('314159.2653');
       expect(bigPi.toFormat()).toBe('314,159');
-      expect(bigPi.toFormat(1, BigNumberJs.ROUND_FLOOR)).toBe('314,159.2');
+      expect(bigPi.toFormat(1, RoundingMode.ROUND_FLOOR)).toBe('314,159.2');
       expect(bigPi.toFormat(1)).toBe('314,159.3');
-      expect(bigPi.toFormat(2, BigNumberJs.ROUND_FLOOR)).toBe('314,159.26');
+      expect(bigPi.toFormat(2, RoundingMode.ROUND_FLOOR)).toBe('314,159.26');
       expect(bigPi.toFormat(2)).toBe('314,159.27');
       expect(bigPi.toFormat(3)).toBe('314,159.265');
       expect(bigPi.toFormat(4)).toBe('314,159.2653');
