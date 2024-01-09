@@ -1,4 +1,10 @@
+/**
+ * Represents `Bigint` or any number of string that can be converted to `BigInt`.
+ */
 export type BigIntIsh = string | number | bigint;
+/**
+ * Represents number,or and Bigint or string that can be converted to number.
+ */
 export type BigNumberIsh = string | number | bigint;
 
 /**
