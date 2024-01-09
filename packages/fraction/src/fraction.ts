@@ -3,7 +3,7 @@ import type BigNumberJs from 'bignumber.js';
 import type { RoundingMode } from './bn';
 import { Bn, DEFAULT_ROUNDING_MODE } from './bn';
 import { gcd } from './gcd';
-import type { BigIntIsh } from './types';
+import type { BigIntIsh, BigNumberIsh } from './types';
 
 export class Fraction {
   // Fraction constants
@@ -23,13 +23,11 @@ export class Fraction {
   /**
    * Creates a Fraction instance by parsing a numeric string.
    *
-   * `Fraction.parse(str)` is less efficient compare to `new Fraction(...args)`.
-   * You should use `new Fraction(...args)` instead most of the time.
-   * @param value - The decimal string to parse.
+   * @param value - The value to parse.
    * @returns A Fraction instance representing the parsed decimals string.
-   * @throws If the string can not be parsed to a number
+   * @throws If value is not a valid BigNumberIsh.
    */
-  public static parse(value: Fraction | BigIntIsh): Fraction {
+  public static parse(value: Fraction | BigNumberIsh): Fraction {
     if (value instanceof Fraction) return value;
     if (typeof value === 'bigint') return new Fraction(value);
 
@@ -53,12 +51,12 @@ export class Fraction {
   }
 
   /**
-   * Tries to create a Fraction instance by parsing a numeric string.
    * Same as Fraction.parse, but returns `undefined` if parsing fails.
+   *
    * @param value - The value to parse into a Fraction.
    * @returns A Fraction instance if parsing is successful, otherwise `undefined`.
    */
-  public static tryParse(value: Fraction | BigIntIsh): Fraction | undefined {
+  public static tryParse(value: Fraction | BigNumberIsh): Fraction | undefined {
     try {
       return Fraction.parse(value);
     } catch (e) {
@@ -71,7 +69,7 @@ export class Fraction {
    * Creates a new Fraction instance.
    * @param numerator - The numerator of the fraction.
    * @param denominator - The denominator of the fraction. (default: 1n)
-   * @throws An error if the numerator or denominator is not a valid BigIntIsh.
+   * @throws If the numerator or denominator is not a valid BigIntIsh.
    */
   constructor(numerator: BigIntIsh, denominator: BigIntIsh = 1n) {
     const n = BigInt(numerator);
@@ -85,16 +83,6 @@ export class Fraction {
       this.numerator = n / divisor;
       this.denominator = d / divisor;
     }
-  }
-
-  /**
-   * Helper method to convert `value` as a Fraction instance.
-   * @param value - The value to be parsed.
-   * @returns A Fraction instance representing the parsed value.
-   * @throws If other is not a valid BigIntIsh
-   */
-  private toFraction(value: Fraction | BigIntIsh): Fraction {
-    return value instanceof Fraction ? value : new Fraction(BigInt(value));
   }
 
   /**
@@ -175,10 +163,10 @@ export class Fraction {
    * Checks if the fraction is equal to `other`.
    * @param other - The value to compare with.
    * @returns True if the fraction is equal to `other`, false otherwise.
-   * @throws If other is not a valid BigIntIsh
+   * @throws If other is not a valid BigNumberIsh
    */
-  public eq(other: Fraction | BigIntIsh): boolean {
-    other = this.toFraction(other);
+  public eq(other: Fraction | BigNumberIsh): boolean {
+    other = Fraction.parse(other);
 
     return (
       this.numerator * other.denominator === other.numerator * this.denominator
@@ -189,9 +177,9 @@ export class Fraction {
    * Checks if the fraction is not equal to `other`.
    * @param other - The value to compare with.
    * @returns True if the fraction is not equal to `other`, false otherwise.
-   * @throws If other is not a valid BigIntIsh
+   * @throws If other is not a valid BigNumberIsh
    */
-  public neq(other: Fraction | BigIntIsh): boolean {
+  public neq(other: Fraction | BigNumberIsh): boolean {
     return !this.eq(other);
   }
 
@@ -200,10 +188,10 @@ export class Fraction {
    *
    * @param other - The value to compare with.
    * @returns True if the fraction is less than `other`, false otherwise.
-   * @throws If other is not a valid BigIntIsh
+   * @throws If other is not a valid BigNumberIsh
    */
-  public lt(other: Fraction | BigIntIsh): boolean {
-    other = this.toFraction(other);
+  public lt(other: Fraction | BigNumberIsh): boolean {
+    other = Fraction.parse(other);
 
     return (
       this.numerator * other.denominator < other.numerator * this.denominator
@@ -214,10 +202,10 @@ export class Fraction {
    * Checks if the fraction is less than or equal to `other`.
    * @param other - The value to compare with.
    * @returns True if the fraction is less than or equal to `other`, false otherwise.
-   * @throws If other is not a valid BigIntIsh
+   * @throws If other is not a valid BigNumberIsh
    */
-  public lte(other: Fraction | BigIntIsh): boolean {
-    other = this.toFraction(other);
+  public lte(other: Fraction | BigNumberIsh): boolean {
+    other = Fraction.parse(other);
 
     return (
       this.numerator * other.denominator <= other.numerator * this.denominator
@@ -228,10 +216,10 @@ export class Fraction {
    * Checks if the fraction is greater than `other`.
    * @param other - The value to compare with.
    * @returns True if the fraction is greater than `other`, false otherwise.
-   * @throws If other is not a valid BigIntIsh
+   * @throws If other is not a valid BigNumberIsh
    */
-  public gt(other: Fraction | BigIntIsh): boolean {
-    other = this.toFraction(other);
+  public gt(other: Fraction | BigNumberIsh): boolean {
+    other = Fraction.parse(other);
 
     return (
       this.numerator * other.denominator > other.numerator * this.denominator
@@ -242,10 +230,10 @@ export class Fraction {
    * Checks if the fraction is greater than or equal to `other`.
    * @param other - The value to compare with.
    * @returns True if the fraction is greater than or equal to `other`, false otherwise.
-   * @throws If other is not a valid BigIntIsh
+   * @throws If other is not a valid BigNumberIsh
    */
-  public gte(other: Fraction | BigIntIsh): boolean {
-    other = this.toFraction(other);
+  public gte(other: Fraction | BigNumberIsh): boolean {
+    other = Fraction.parse(other);
 
     return (
       this.numerator * other.denominator >= other.numerator * this.denominator
@@ -256,10 +244,10 @@ export class Fraction {
    * Adds `other` to the fraction.
    * @param other - The value to add.
    * @returns A new Fraction representing the sum.
-   * @throws If other is not a valid BigIntIsh
+   * @throws If other is not a valid BigNumberIsh
    */
-  public add(other: Fraction | BigIntIsh): Fraction {
-    other = this.toFraction(other);
+  public add(other: Fraction | BigNumberIsh): Fraction {
+    other = Fraction.parse(other);
 
     if (this.denominator === other.denominator) {
       return new Fraction(this.numerator + other.numerator, this.denominator);
@@ -275,10 +263,10 @@ export class Fraction {
    * Subtracts `other` from the fraction.
    * @param other - The value to subtract.
    * @returns A new Fraction representing the difference.
-   * @throws If other is not a valid BigIntIsh
+   * @throws If other is not a valid BigNumberIsh
    */
-  public sub(other: Fraction | BigIntIsh): Fraction {
-    other = this.toFraction(other);
+  public sub(other: Fraction | BigNumberIsh): Fraction {
+    other = Fraction.parse(other);
 
     if (this.denominator === other.denominator) {
       return new Fraction(this.numerator - other.numerator, this.denominator);
@@ -294,10 +282,10 @@ export class Fraction {
    * Multiplies the fraction by `other`.
    * @param other - The value to multiply by.
    * @returns A new Fraction representing the product.
-   * @throws If other is not a valid BigIntIsh
+   * @throws If other is not a valid BigNumberIsh
    */
-  public mul(other: Fraction | BigIntIsh): Fraction {
-    other = this.toFraction(other);
+  public mul(other: Fraction | BigNumberIsh): Fraction {
+    other = Fraction.parse(other);
 
     return new Fraction(
       this.numerator * other.numerator,
@@ -309,10 +297,10 @@ export class Fraction {
    * Divides the fraction by `other`.
    * @param other - The value to divide by.
    * @returns A new Fraction representing the quotient.
-   * @throws If other is not a valid BigIntIsh
+   * @throws If other is not a valid BigNumberIsh
    */
-  public div(other: Fraction | BigIntIsh): Fraction {
-    other = this.toFraction(other);
+  public div(other: Fraction | BigNumberIsh): Fraction {
+    other = Fraction.parse(other);
 
     return new Fraction(
       this.numerator * other.denominator,
