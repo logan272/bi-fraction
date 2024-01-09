@@ -2,27 +2,27 @@ import { gcd } from './gcd';
 
 describe('gcd', () => {
   it('should return the GCD of two positive integers', () => {
-    expect(gcd(12, 18)).toBe(6n);
-    expect(gcd(25, 35)).toBe(5n);
-    expect(gcd(64, 48)).toBe(16n);
+    expect(gcd(12n, 18n)).toBe(6n);
+    expect(gcd(25n, 35n)).toBe(5n);
+    expect(gcd(64n, 48n)).toBe(16n);
   });
 
   it('should return the GCD of a positive integer and zero', () => {
-    expect(gcd(12, 0)).toBe(12n);
-    expect(gcd(0, 18)).toBe(18n);
-    expect(gcd(0, 0)).toBe(0n);
+    expect(gcd(12n, 0n)).toBe(12n);
+    expect(gcd(0n, 18n)).toBe(18n);
+    expect(gcd(0n, 0n)).toBe(0n);
   });
 
   it('should return the GCD of two negative integers', () => {
-    expect(gcd(-12, -18)).toBe(6n);
-    expect(gcd(-25, -35)).toBe(5n);
-    expect(gcd(-64, -48)).toBe(16n);
+    expect(gcd(-12n, -18n)).toBe(6n);
+    expect(gcd(-25n, -35n)).toBe(5n);
+    expect(gcd(-64n, -48n)).toBe(16n);
   });
 
   it('should return the GCD of a positive and negative integer', () => {
-    expect(gcd(12, -18)).toBe(6n);
-    expect(gcd(25, -35)).toBe(5n);
-    expect(gcd(64, -48)).toBe(16n);
+    expect(gcd(12n, -18n)).toBe(6n);
+    expect(gcd(25n, -35n)).toBe(5n);
+    expect(gcd(64n, -48n)).toBe(16n);
   });
 
   it('should return the GCD of two big integers', () => {
