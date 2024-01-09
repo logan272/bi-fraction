@@ -5,6 +5,17 @@ import { Fraction } from './fraction';
 
 describe('Fraction', () => {
   describe('parse', () => {
+    it('should parse empty string correctly', () => {
+      const f = Fraction.parse('');
+      expect(f.isZero()).toBe(true);
+    });
+
+    it('should parse string that only contains empty spaces', () => {
+      expect(Fraction.parse(' ').isZero()).toBe(true);
+      expect(Fraction.parse('  ').isZero()).toBe(true);
+      expect(Fraction.parse('        ').isZero()).toBe(true);
+    });
+
     it('should parse zero edge cases correctly', () => {
       const f1 = Fraction.parse('0');
       expect(f1.numerator).toBe(0n);
@@ -313,6 +324,34 @@ describe('Fraction', () => {
       const inverted3 = f3.invert();
       expect(inverted3.numerator).toBe(10n);
       expect(inverted3.denominator).toBe(3n);
+    });
+  });
+
+  describe('negate', () => {
+    it('should negate the sign of Fractions', () => {
+      const f1 = new Fraction(5, -2);
+      expect(f1.negate().eq(new Fraction(5, 2))).toBe(true);
+
+      const f2 = new Fraction(-5, -2);
+      expect(f2.negate().eq(new Fraction(5, -2))).toBe(true);
+      expect(f2.negate().eq(new Fraction(-5, 2))).toBe(true);
+
+      const f3 = new Fraction(0);
+      expect(f3.negate().isZero()).toBe(true);
+    });
+  });
+
+  describe('abs', () => {
+    it('should return absolute Fractions', () => {
+      const f1 = new Fraction(5, -2);
+      expect(f1.abs().eq(new Fraction(5, 2))).toBe(true);
+
+      const f2 = new Fraction(-5, -2);
+      expect(f2.abs().eq(new Fraction(5, 2))).toBe(true);
+      expect(f2.abs().eq(new Fraction(-5, -2))).toBe(true);
+
+      const f3 = new Fraction(0);
+      expect(f3.abs().isZero()).toBe(true);
     });
   });
 
