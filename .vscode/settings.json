@@ -6,11 +6,5 @@
   },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
-  "files.associations": {
-    // allow comments in .evn.scripts.json
-    ".scripts.config.json": "jsonc",
-    "turbo.json": "jsonc"
-  },
-  "cSpell.words": ["bignumber", "fraction-asset"]
+  "typescript.enablePromptUseWorkspaceTsdk": true
 }
