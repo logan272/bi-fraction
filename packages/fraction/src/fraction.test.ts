@@ -25,6 +25,12 @@ describe('Fraction', () => {
       expect(f4.numerator).toBe(0n);
       expect(f4.denominator).toBe(1n);
       expect(f4.isZero()).toBe(true);
+
+      const f5 = Fraction.parse('-0.123');
+      expect(f5.numerator).toBe(-123n);
+      expect(f5.denominator).toBe(1000n);
+      expect(f5.isZero()).toBe(false);
+      expect(f5.lt(0n)).toBe(true);
     });
 
     it('should parse a valid numeric string correctly', () => {
@@ -39,6 +45,10 @@ describe('Fraction', () => {
       const f3 = Fraction.parse('100.330');
       expect(f3.numerator).toBe(10033n);
       expect(f3.denominator).toBe(100n);
+
+      const f4 = Fraction.parse('100.0');
+      expect(f4.numerator).toBe(100n);
+      expect(f4.denominator).toBe(1n);
     });
 
     it('should parse a decimal with trailing zeros correctly', () => {
@@ -55,20 +65,25 @@ describe('Fraction', () => {
       expect(f3.denominator).toBe(100n);
     });
 
+    it('should be able to parse scientific notation', () => {
+      expect(Fraction.parse('1e3').eq(1e3)).toBe(true);
+      expect(Fraction.parse('1e6').eq(1e6)).toBe(true);
+      expect(Fraction.parse('10e10').eq(10e10)).toBe(true);
+      expect(Fraction.parse('3e+24').eq(3e24)).toBe(true);
+      expect(
+        Fraction.parse('3.0000000000000005e+21').eq(3.0000000000000005e21),
+      ).toBe(true);
+    });
+
     it('should throw when parsing an invalid numeric string', () => {
       expect(() => Fraction.parse('1n')).toThrow();
       expect(() => Fraction.parse('123n')).toThrow();
-      expect(() => Fraction.parse('1e3')).toThrow();
-      expect(() => Fraction.parse('1e6')).toThrow();
-      expect(() => Fraction.parse('10e10')).toThrow();
-      expect(() => Fraction.parse('3e+24')).toThrow();
       expect(() => Fraction.parse('25_000')).toThrow();
       expect(() => Fraction.parse('25,000')).toThrow();
       expect(() => Fraction.parse('2.5,000')).toThrow();
       expect(() => Fraction.parse('2.5.000')).toThrow();
       expect(() => Fraction.parse('$2.5000')).toThrow();
       expect(() => Fraction.parse('2.5000 USD')).toThrow();
-      expect(() => Fraction.parse('3.0000000000000005e+21')).toThrow();
       expect(() => Fraction.parse('random invalid numeric string')).toThrow();
     });
   });

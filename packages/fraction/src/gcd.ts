@@ -1,4 +1,4 @@
-import type { BigIntIsh } from './constants';
+import type { BigIntIsh } from './types';
 
 /**
  * Find the greatest common divisor(GCD) of `a` and `b`.

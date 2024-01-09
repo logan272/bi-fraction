@@ -1,10 +1,14 @@
 import BigNumberJs from 'bignumber.js';
 
 import { Bn } from './bn';
-import type { BigIntIsh, NumericString } from './constants';
 import { gcd } from './gcd';
+import type { BigIntIsh } from './types';
 
 export class Fraction {
+  // Fraction constants
+  public static readonly ZERO = new Fraction(0);
+  public static readonly ONE = new Fraction(1);
+
   /**
    * The numerator of the fraction.
    */
@@ -24,26 +28,49 @@ export class Fraction {
    * @returns A Fraction instance representing the parsed decimals string.
    * @throws If the string can not be parsed to a number
    */
-  public static parse(value: NumericString): Fraction {
+  public static parse(value: Fraction | BigIntIsh): Fraction {
+    if (value instanceof Fraction) return value;
+    if (typeof value === 'bigint') return new Fraction(value);
+
+    const n = Number(value);
+    if (Number.isNaN(n)) throw Error(`Failed to parse "${value}"`);
+    if (Number.isInteger(n)) return new Fraction(n);
+
     const bn = Bn(value);
-
-    if (bn.isZero()) return new Fraction(0);
-    if (bn.isInteger()) return new Fraction(value);
-
     const parts = bn.toFixed().split('.');
     const [integerPart, decimalPart] = parts;
+
     const decimalPlaces = BigInt(decimalPart.length);
     const denominator = 10n ** decimalPlaces;
-    const numerator = BigInt(integerPart) * denominator + BigInt(decimalPart);
+    let numerator = BigInt(integerPart) * denominator + BigInt(decimalPart);
+
+    if (numerator > 0n && bn.isNegative()) {
+      numerator *= -1n;
+    }
 
     return new Fraction(numerator, denominator);
   }
 
   /**
-   * Creates a new Fraction instance with the give `numerator` and `denominator`.
+   * Tries to create a Fraction instance by parsing a numeric string.
+   * Same as Fraction.parse, but returns `undefined` if parsing fails.
+   * @param value - The value to parse into a Fraction.
+   * @returns A Fraction instance if parsing is successful, otherwise `undefined`.
+   */
+  public static tryParse(value: Fraction | BigIntIsh): Fraction | undefined {
+    try {
+      return Fraction.parse(value);
+    } catch (e) {
+      console.log(`Failed to parse "${value}", ${e}`);
+      return undefined;
+    }
+  }
+
+  /**
+   * Creates a new Fraction instance.
    * @param numerator - The numerator of the fraction.
    * @param denominator - The denominator of the fraction. (default: 1n)
-   * @throws If numerator or denominator is not a valid BigIntIsh
+   * @throws An error if the numerator or denominator is not a valid BigIntIsh.
    */
   constructor(numerator: BigIntIsh, denominator: BigIntIsh = 1n) {
     const n = BigInt(numerator);
@@ -70,14 +97,16 @@ export class Fraction {
   }
 
   /**
-   * The quotient of the fraction after performing floor division.
+   * Gets the quotient of the fraction (the integer part of the division).
+   * @returns The quotient of the fraction.
    */
   public get quotient(): bigint {
     return this.numerator / this.denominator;
   }
 
   /**
-   * The remainder of the fraction after performing floor division.
+   * Gets the remainder of the fraction as a new Fraction instance.
+   * @returns A Fraction instance representing the remainder of the division.
    */
   public get remainder(): Fraction {
     return new Fraction(this.numerator % this.denominator, this.denominator);
@@ -89,6 +118,48 @@ export class Fraction {
    */
   public invert(): Fraction {
     return new Fraction(this.denominator, this.numerator);
+  }
+
+  /**
+   * Negates the sign of the Fraction.
+   * @returns The Fraction with the sign inverted.
+   */
+  public negate(): Fraction {
+    return this.mul(-1);
+  }
+
+  /**
+   * Returns the absolute value of the fraction.
+   * @returns A new Fraction instance representing the absolute value of the fraction.
+   */
+  public abs(): Fraction {
+    if (this.numerator * this.denominator < 0) {
+      if (this.numerator < 0) {
+        return new Fraction(-this.numerator, this.denominator);
+      } else {
+        return new Fraction(this.numerator, -this.denominator);
+      }
+    } else {
+      return this;
+    }
+  }
+
+  /**
+   * Expands the fraction by multiplying it by 10 raised to the specified decimal places.
+   * @param decimals - The number of decimal places to expand.
+   * @returns A new Fraction instance representing the expanded fraction.
+   */
+  public expandDecimals(decimals: number): Fraction {
+    return this.mul(10 ** decimals);
+  }
+
+  /**
+   * Normalizes the fraction by dividing it by 10 raised to the specified decimal places.
+   * @param decimals - The number of decimal places to normalize.
+  @return A new Fraction instance representing the normalized fraction.
+   */
+  public normalizeDecimals(decimals: number): Fraction {
+    return this.div(10 ** decimals);
   }
 
   /**

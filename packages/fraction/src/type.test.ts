@@ -1,4 +1,4 @@
-import { isValidBigIntIsh } from './constants';
+import { isValidBigIntIsh } from './types';
 
 describe('isValidBigIntIsh', () => {
   it('should return true for a valid BigInt string', () => {
