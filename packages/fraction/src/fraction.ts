@@ -1,7 +1,7 @@
 import type BigNumberJs from 'bignumber.js';
 
-import type { RoundingMode } from './bn';
-import { Bn, DEFAULT_ROUNDING_MODE } from './bn';
+import type { Format, RoundingMode } from './bn';
+import { Bn, DEFAULT_FORMAT, DEFAULT_ROUNDING_MODE } from './bn';
 import { gcd } from './gcd';
 import type { BigIntIsh, BigNumberIsh } from './types';
 
@@ -381,15 +381,14 @@ export class Fraction {
   public toFormat(
     decimalPlaces = 0,
     roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
-    format?: BigNumberJs.Format,
+    format: Format = {},
   ): string {
     return Bn(this.numerator.toString())
       .div(this.denominator.toString())
-      .toFormat(
-        decimalPlaces,
-        roundingMode as BigNumberJs.RoundingMode,
-        format,
-      );
+      .toFormat(decimalPlaces, roundingMode as BigNumberJs.RoundingMode, {
+        ...DEFAULT_FORMAT,
+        ...format,
+      });
   }
 
   /**

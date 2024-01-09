@@ -3,6 +3,48 @@ import { RoundingMode } from './bn';
 import { Fraction } from './fraction';
 
 describe('Fraction', () => {
+  describe('Getting Started', () => {
+    it('should pass', () => {
+      const a = Fraction.parse('0.1');
+      const b = Fraction.parse('0.3');
+      const c = a.div(b);
+      const d = new Fraction(1, 3);
+
+      expect(c.eq(d)).toBe(true);
+      expect(c.numerator === d.numerator).toBe(true);
+      expect(c.denominator === d.denominator).toBe(true);
+
+      const x = Fraction.parse('1234.5');
+      const y = Fraction.parse(1234.5);
+
+      expect(x.eq(y)).toBe(true);
+      expect(x.toFixed(0)).toBe('1235');
+      expect(x.toFixed(0, RoundingMode.ROUND_DOWN)).toBe('1234');
+      expect(x.toFixed(2)).toBe('1234.50');
+      expect(y.toFixed(2)).toBe('1234.50');
+      expect(y.toFixed(3)).toBe('1234.500');
+
+      const z = x.mul(y); // 1523990.25
+
+      expect(z.toFixed(0)).toBe('1523990');
+      expect(z.toFixed(1)).toBe('1523990.3');
+      expect(z.toFixed(2)).toBe('1523990.25');
+      expect(z.toFixed(3)).toBe('1523990.250');
+
+      expect(z.toSignificant(4)).toBe('1524000');
+      expect(z.toSignificant(4, RoundingMode.ROUND_DOWN)).toBe('1523000');
+      expect(z.toSignificant(9)).toBe('1523990.25');
+      expect(z.toSignificant(18)).toBe('1523990.25');
+      expect(z.toSignificant(100)).toBe('1523990.25');
+
+      expect(z.toFormat(0)).toBe('1,523,990');
+      expect(z.toFormat(0, undefined, { groupSize: 4 })).toBe('152,3990');
+      expect(z.toFormat(0, undefined, { groupSeparator: '_' })).toBe(
+        '1_523_990',
+      );
+    });
+  });
+
   describe('parse', () => {
     it('should parse empty string correctly', () => {
       const f = Fraction.parse('');
