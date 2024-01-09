@@ -1,7 +1,7 @@
 {
-  "name": "fraction-asset",
+  "name": "bi-fraction",
   "private": true,
-  "description": "A flexible library for arbitrary precision asset calculations, pricing, parsing, and formatting built on top JS native BigInt and a Fraction number abstraction.",
+  "description": "Arbitrary precision fraction number implemented on top Native BigInt.",
   "author": "Logan Luo <github.com/logan272>",
   "license": "MIT",
   "keywords": [
