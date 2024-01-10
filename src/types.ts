@@ -5,7 +5,7 @@ export type BigIntIsh = string | number | bigint;
 /**
  * Represents number,or and Bigint or string that can be converted to number.
  */
-export type BigNumberIsh = string | number | bigint;
+export type NumberIsh = string | number | bigint;
 
 /**
  * Checks if a value is a valid BigIntIsh.
@@ -22,10 +22,10 @@ export const isValidBigIntIsh = (value: BigIntIsh): boolean => {
 };
 
 /**
- * Checks if a value is a valid BigNumberIsh.
+ * Checks if a value is a valid NumberIsh.
  * @param value - The value to check.
- * @returns True if the value is a valid BigNumberIsh, false otherwise.
+ * @returns True if the value is a valid NumberIsh, false otherwise.
  */
-export const isValidBigNumberIsh = (value: BigNumberIsh): boolean => {
+export const isValidNumberIsh = (value: NumberIsh): boolean => {
   return !Number.isNaN(Number(value));
 };

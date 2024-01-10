@@ -19,6 +19,7 @@
     "preinstall": "npx only-allow pnpm",
     "build": "tsc;tsc --module commonjs --outDir dist/cjs",
     "test": "jest",
+    "coverage": "jest --coverage",
     "lint": "eslint src",
     "fix": "eslint src --fix",
     "ts-check": "tsc --noEmit",

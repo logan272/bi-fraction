@@ -5,8 +5,8 @@ import { Fraction } from './fraction';
 describe('Fraction', () => {
   describe('Getting Started', () => {
     it('should pass', () => {
-      const a = Fraction.parse('0.1');
-      const b = Fraction.parse('0.3');
+      const a = new Fraction('0.1');
+      const b = new Fraction('0.3');
       const c = a.div(b);
       const d = new Fraction(1, 3);
 
@@ -14,8 +14,8 @@ describe('Fraction', () => {
       expect(c.numerator === d.numerator).toBe(true);
       expect(c.denominator === d.denominator).toBe(true);
 
-      const x = Fraction.parse('1234.5');
-      const y = Fraction.parse(1234.5);
+      const x = new Fraction('1234.5');
+      const y = new Fraction(1234.5);
 
       expect(x.eq(y)).toBe(true);
       expect(x.toFixed(0)).toBe('1235');
@@ -42,43 +42,50 @@ describe('Fraction', () => {
       expect(z.toFormat(0, undefined, { groupSeparator: '_' })).toBe(
         '1_523_990',
       );
+      const bigNumber = new Fraction(
+        '10000000000000000000000000000000001.0000000001',
+      );
+      const bigInteger = new Fraction(1_000_000_000n);
+      bigNumber
+        .mul(bigInteger)
+        .eq(new Fraction(100000000000000000000000000000000010000000001n)); // true
     });
   });
 
   describe('parse', () => {
     it('should parse empty string correctly', () => {
-      const f = Fraction.parse('');
+      const f = new Fraction('');
       expect(f.isZero()).toBe(true);
     });
 
     it('should parse string that only contains empty spaces', () => {
-      expect(Fraction.parse(' ').isZero()).toBe(true);
-      expect(Fraction.parse('  ').isZero()).toBe(true);
-      expect(Fraction.parse('        ').isZero()).toBe(true);
+      expect(new Fraction(' ').isZero()).toBe(true);
+      expect(new Fraction('  ').isZero()).toBe(true);
+      expect(new Fraction('        ').isZero()).toBe(true);
     });
 
     it('should parse zero edge cases correctly', () => {
-      const f1 = Fraction.parse('0');
+      const f1 = new Fraction('0');
       expect(f1.numerator).toBe(0n);
       expect(f1.denominator).toBe(1n);
       expect(f1.isZero()).toBe(true);
 
-      const f2 = Fraction.parse('000');
+      const f2 = new Fraction('000');
       expect(f2.numerator).toBe(0n);
       expect(f2.denominator).toBe(1n);
       expect(f2.isZero()).toBe(true);
 
-      const f3 = Fraction.parse('0.000');
+      const f3 = new Fraction('0.000');
       expect(f3.numerator).toBe(0n);
       expect(f3.denominator).toBe(1n);
       expect(f3.isZero()).toBe(true);
 
-      const f4 = Fraction.parse('000.000');
+      const f4 = new Fraction('000.000');
       expect(f4.numerator).toBe(0n);
       expect(f4.denominator).toBe(1n);
       expect(f4.isZero()).toBe(true);
 
-      const f5 = Fraction.parse('-0.123');
+      const f5 = new Fraction('-0.123');
       expect(f5.numerator).toBe(-123n);
       expect(f5.denominator).toBe(1000n);
       expect(f5.isZero()).toBe(false);
@@ -86,57 +93,57 @@ describe('Fraction', () => {
     });
 
     it('should parse a valid numeric string correctly', () => {
-      const f1 = Fraction.parse('1.25');
+      const f1 = new Fraction('1.25');
       expect(f1.numerator).toBe(5n);
       expect(f1.denominator).toBe(4n);
 
-      const f2 = Fraction.parse('1.33');
+      const f2 = new Fraction('1.33');
       expect(f2.numerator).toBe(133n);
       expect(f2.denominator).toBe(100n);
 
-      const f3 = Fraction.parse('100.330');
+      const f3 = new Fraction('100.330');
       expect(f3.numerator).toBe(10033n);
       expect(f3.denominator).toBe(100n);
 
-      const f4 = Fraction.parse('100.0');
+      const f4 = new Fraction('100.0');
       expect(f4.numerator).toBe(100n);
       expect(f4.denominator).toBe(1n);
     });
 
     it('should parse a decimal with trailing zeros correctly', () => {
-      const f1 = Fraction.parse('1.25000');
+      const f1 = new Fraction('1.25000');
       expect(f1.numerator).toBe(5n);
       expect(f1.denominator).toBe(4n);
 
-      const f2 = Fraction.parse('1.33000');
+      const f2 = new Fraction('1.33000');
       expect(f2.numerator).toBe(133n);
       expect(f2.denominator).toBe(100n);
 
-      const f3 = Fraction.parse('1.33000000000000000');
+      const f3 = new Fraction('1.33000000000000000');
       expect(f3.numerator).toBe(133n);
       expect(f3.denominator).toBe(100n);
     });
 
     it('should be able to parse scientific notation', () => {
-      expect(Fraction.parse('1e3').eq(1e3)).toBe(true);
-      expect(Fraction.parse('1e6').eq(1e6)).toBe(true);
-      expect(Fraction.parse('10e10').eq(10e10)).toBe(true);
-      expect(Fraction.parse('3e+24').eq(3e24)).toBe(true);
+      expect(new Fraction('1e3').eq(1e3)).toBe(true);
+      expect(new Fraction('1e6').eq(1e6)).toBe(true);
+      expect(new Fraction('10e10').eq(10e10)).toBe(true);
+      expect(new Fraction('3e+24').eq(3e24)).toBe(true);
       expect(
-        Fraction.parse('3.0000000000000005e+21').eq(3.0000000000000005e21),
+        new Fraction('3.0000000000000005e+21').eq(3.0000000000000005e21),
       ).toBe(true);
     });
 
     it('should throw when parsing an invalid numeric string', () => {
-      expect(() => Fraction.parse('1n')).toThrow();
-      expect(() => Fraction.parse('123n')).toThrow();
-      expect(() => Fraction.parse('25_000')).toThrow();
-      expect(() => Fraction.parse('25,000')).toThrow();
-      expect(() => Fraction.parse('2.5,000')).toThrow();
-      expect(() => Fraction.parse('2.5.000')).toThrow();
-      expect(() => Fraction.parse('$2.5000')).toThrow();
-      expect(() => Fraction.parse('2.5000 USD')).toThrow();
-      expect(() => Fraction.parse('random invalid numeric string')).toThrow();
+      expect(() => new Fraction('1n')).toThrow();
+      expect(() => new Fraction('123n')).toThrow();
+      expect(() => new Fraction('25_000')).toThrow();
+      expect(() => new Fraction('25,000')).toThrow();
+      expect(() => new Fraction('2.5,000')).toThrow();
+      expect(() => new Fraction('2.5.000')).toThrow();
+      expect(() => new Fraction('$2.5000')).toThrow();
+      expect(() => new Fraction('2.5000 USD')).toThrow();
+      expect(() => new Fraction('random invalid numeric string')).toThrow();
     });
   });
 
@@ -222,11 +229,53 @@ describe('Fraction', () => {
       expect(f4.denominator).toBe(1n);
     });
 
+    it('should be able create new Fraction from valid decimal string correctly', () => {
+      expect(new Fraction('1.1').eq(new Fraction(11, 10))).toBe(true);
+      expect(
+        new Fraction('1.000000001').eq(new Fraction(1000000001, 1000000000)),
+      ).toBe(true);
+      expect(new Fraction('2.5000').eq(new Fraction(25, 10))).toBe(true);
+      expect(new Fraction('100.1').eq(new Fraction(1001, 10))).toBe(true);
+      expect(new Fraction(1, '1.1').eq(new Fraction(10, 11))).toBe(true);
+      expect(
+        new Fraction(2, '1.000000001').eq(new Fraction(2000000000, 1000000001)),
+      ).toBe(true);
+      expect(new Fraction(3, '2.5').eq(new Fraction(30, 25))).toBe(true);
+      expect(new Fraction(5, '100.1').eq(new Fraction(50, 1001))).toBe(true);
+
+      expect(new Fraction('1.1', 1.1).eq(new Fraction(1))).toBe(true);
+      expect(
+        new Fraction('21.12', '1.000000001').eq(
+          new Fraction(21120000000, 1000000001),
+        ),
+      ).toBe(true);
+      expect(new Fraction('321.123', 2.5).eq(new Fraction(321123, 2500))).toBe(
+        true,
+      );
+      expect(
+        new Fraction('54321.12345', 100.1).eq(
+          new Fraction(5432112345, 10010000),
+        ),
+      ).toBe(true);
+    });
+
+    it('should be able create new Fraction from valid decimal number correctly', () => {
+      expect(new Fraction(1.1).eq(new Fraction(11, 10))).toBe(true);
+      expect(
+        new Fraction(1.000000001).eq(new Fraction(1000000001, 1000000000)),
+      ).toBe(true);
+      expect(new Fraction(2.5).eq(new Fraction(25, 10))).toBe(true);
+      expect(new Fraction(100.1).eq(new Fraction(1001, 10))).toBe(true);
+      expect(new Fraction(1, 1.1).eq(new Fraction(10, 11))).toBe(true);
+      expect(
+        new Fraction(2, 1.000000001).eq(new Fraction(2000000000, 1000000001)),
+      ).toBe(true);
+      expect(new Fraction(3, 2.5).eq(new Fraction(30, 25))).toBe(true);
+      expect(new Fraction(5, 100.1).eq(new Fraction(50, 1001))).toBe(true);
+    });
+
     it('should throw if passing invalid string `numerator` or `denominator` value', () => {
       expect(() => new Fraction('invalid numeric string')).toThrow();
-      expect(() => new Fraction('1.1')).toThrow();
-      expect(() => new Fraction('1.000000001')).toThrow();
-      expect(() => new Fraction('2.5000')).toThrow();
       expect(() => new Fraction('2.5000 USD')).toThrow();
       expect(() => new Fraction('$2.5000')).toThrow();
       expect(() => new Fraction('25,000')).toThrow();
@@ -235,41 +284,8 @@ describe('Fraction', () => {
       expect(() => new Fraction('25_000')).toThrow();
       expect(() => new Fraction('1n')).toThrow();
       expect(() => new Fraction('123n')).toThrow();
-
-      expect(() => new Fraction(0, 'invalid numeric string')).toThrow();
-      expect(() => new Fraction(1, '1.1')).toThrow();
-      expect(() => new Fraction(2, '1.000000001')).toThrow();
-      expect(() => new Fraction(3, '2.5000')).toThrow();
-      expect(() => new Fraction(4, '2.5000 USD')).toThrow();
-      expect(() => new Fraction(5, '$2.5000')).toThrow();
-      expect(() => new Fraction(6, '25,000')).toThrow();
-      expect(() => new Fraction(7, '2.5,000')).toThrow();
-      expect(() => new Fraction(8, '2.5.000')).toThrow();
-      expect(() => new Fraction(9, '25_000')).toThrow();
       expect(() => new Fraction(10, '1n')).toThrow();
       expect(() => new Fraction(11, '123n')).toThrow();
-    });
-
-    it('should throw if passing decimal `numerator` or `denominator` value', () => {
-      expect(() => new Fraction(1.1)).toThrow();
-      expect(() => new Fraction(1.000000001)).toThrow();
-      expect(() => new Fraction(2.5)).toThrow();
-      expect(() => new Fraction(0.1 + 0.2)).toThrow();
-      expect(() => new Fraction(100.1)).toThrow();
-
-      expect(() => new Fraction(1, 1.1)).toThrow();
-      expect(() => new Fraction(2, 1.000000001)).toThrow();
-      expect(() => new Fraction(3, 2.5)).toThrow();
-      expect(() => new Fraction(4, 0.1 + 0.2)).toThrow();
-      expect(() => new Fraction(5, 100.1)).toThrow();
-    });
-
-    it('should throw if both `numerator` or `denominator` are invalid', () => {
-      expect(() => new Fraction('1.1', 1.1)).toThrow();
-      expect(() => new Fraction('21.12', 1.000000001)).toThrow();
-      expect(() => new Fraction('321.123', 2.5)).toThrow();
-      expect(() => new Fraction('4321.1234', 0.1 + 0.2)).toThrow();
-      expect(() => new Fraction('54321.12345', 100.1)).toThrow();
     });
   });
 
@@ -341,7 +357,7 @@ describe('Fraction', () => {
       expect(f4.remainder.numerator).toBe(123n);
       expect(f4.remainder.denominator).toBe(124n);
 
-      const f5 = Fraction.parse('3.14');
+      const f5 = new Fraction('3.14');
       expect(f5.remainder.toFixed(2)).toBe('0.14');
       expect(f5.remainder.toFixed(4)).toBe('0.1400');
       expect(f5.remainder.toSignificant(2)).toBe('0.14');
@@ -662,7 +678,7 @@ describe('Fraction', () => {
 
   describe('toSignificant', () => {
     it('should convert to an string with the specified significant digits', () => {
-      const f1 = Fraction.parse('12345.67890');
+      const f1 = new Fraction('12345.67890');
       expect(f1.toSignificant(12)).toBe('12345.6789');
       expect(f1.toSignificant(12)).toBe('12345.6789');
       expect(f1.toSignificant(9)).toBe('12345.6789');
@@ -680,7 +696,7 @@ describe('Fraction', () => {
 
     it('should convert to an string with the specified significant digits for very large/small number', () => {
       const large = '12345678901234567890';
-      const f1 = Fraction.parse(large);
+      const f1 = new Fraction(large);
       expect(f1.toSignificant(12)).toBe(
         '123456789012'.padEnd(large.length, '0'),
       );
@@ -688,31 +704,31 @@ describe('Fraction', () => {
       expect(f1.toSignificant(2)).toBe('12'.padEnd(large.length, '0'));
 
       const huge = '12345678901234567890123';
-      const f2 = Fraction.parse(huge);
+      const f2 = new Fraction(huge);
       expect(f2.toSignificant(12)).toBe('1.23456789012e+22');
       expect(f2.toSignificant(2)).toBe('1.2e+22');
 
       const small = '1.2345678901234567890';
-      const f3 = Fraction.parse(small);
+      const f3 = new Fraction(small);
       expect(f3.toSignificant(20)).toBe('1.234567890123456789');
       expect(f3.toSignificant(12)).toBe('1.23456789012');
       expect(f3.toSignificant(12)).toBe('1.23456789012');
       expect(f3.toSignificant(2)).toBe('1.2');
 
       const withMoreThan21DecimalPlaces = '1.23456789012345678901234567890';
-      const f4 = Fraction.parse(withMoreThan21DecimalPlaces);
+      const f4 = new Fraction(withMoreThan21DecimalPlaces);
       expect(f4.toSignificant(100)).toBe('1.23456789012345678901');
     });
   });
 
   describe('toFixed', () => {
     it('should throw if `decimalPlaces < 0`', () => {
-      const pi = Fraction.parse('3.14159');
+      const pi = new Fraction('3.14159');
       expect(() => pi.toFixed(-1)).toThrow();
     });
 
     it('should convert the fraction to a fixed-point decimal string representation correctly', () => {
-      const pi = Fraction.parse('3.14159');
+      const pi = new Fraction('3.14159');
       expect(pi.toFixed()).toBe('3');
       expect(pi.toFixed(0)).toBe('3');
       expect(pi.toFixed(1)).toBe('3.1');
@@ -728,13 +744,13 @@ describe('Fraction', () => {
 
     it('should convert the fraction to a fixed-point decimal string representation correctly for very large/small number', () => {
       const small = '1.2345678901234567890123';
-      const f1 = Fraction.parse(small);
+      const f1 = new Fraction(small);
       expect(f1.toFixed(12)).toBe('1.234567890123');
       expect(f1.toFixed(13, RoundingMode.ROUND_FLOOR)).toBe('1.2345678901234');
       expect(f1.toFixed(13)).toBe('1.2345678901235');
 
       const withMoreThan21DecimalPlaces = '1.234567890123456789012345';
-      const f2 = Fraction.parse(withMoreThan21DecimalPlaces);
+      const f2 = new Fraction(withMoreThan21DecimalPlaces);
       expect(f2.toFixed(20)).toBe('1.23456789012345678901');
       expect(f2.toFixed(21)).toBe('1.234567890123456789010');
       expect(f2.toFixed(22)).toBe('1.2345678901234567890100');
@@ -745,7 +761,7 @@ describe('Fraction', () => {
 
   describe('toFormat', () => {
     it('should convert the fraction to a formatted string representation', () => {
-      const bigPi = Fraction.parse('314159.2653');
+      const bigPi = new Fraction('314159.2653');
       expect(bigPi.toFormat()).toBe('314,159');
       expect(bigPi.toFormat(1, RoundingMode.ROUND_FLOOR)).toBe('314,159.2');
       expect(bigPi.toFormat(1)).toBe('314,159.3');
@@ -759,11 +775,11 @@ describe('Fraction', () => {
 
   describe('asFraction', () => {
     it('should pass', () => {
-      const pi = Fraction.parse('3.14159');
+      const pi = new Fraction('3.14159');
       expect(pi.asFraction.numerator).toBe(pi.numerator);
       expect(pi.asFraction.denominator).toBe(pi.denominator);
 
-      const e = Fraction.parse('2.71');
+      const e = new Fraction('2.71');
       expect(e.asFraction.numerator).toBe(e.numerator);
       expect(e.asFraction.denominator).toBe(e.denominator);
     });

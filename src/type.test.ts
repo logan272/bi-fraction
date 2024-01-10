@@ -1,4 +1,4 @@
-import { isValidBigIntIsh, isValidBigNumberIsh } from './types';
+import { isValidBigIntIsh, isValidNumberIsh } from './types';
 
 describe('types', () => {
   describe('isValidBigIntIsh', () => {
@@ -25,25 +25,25 @@ describe('types', () => {
     });
   });
 
-  describe('isValidBigNumberIsh', () => {
-    it('should return true for a valid BigNumberIsh string', () => {
-      expect(isValidBigNumberIsh('1234567890')).toBe(true);
-      expect(isValidBigNumberIsh('-9876543210')).toBe(true);
-      expect(isValidBigNumberIsh('12.34')).toBe(true);
-      expect(isValidBigNumberIsh('0.001')).toBe(true);
-      expect(isValidBigNumberIsh('0')).toBe(true);
-      expect(isValidBigNumberIsh('000000')).toBe(true);
-      expect(isValidBigNumberIsh('000.000')).toBe(true);
-      expect(isValidBigNumberIsh('')).toBe(true);
-      expect(isValidBigNumberIsh('   ')).toBe(true);
+  describe('isValidNumberIsh', () => {
+    it('should return true for a valid NumberIsh string', () => {
+      expect(isValidNumberIsh('1234567890')).toBe(true);
+      expect(isValidNumberIsh('-9876543210')).toBe(true);
+      expect(isValidNumberIsh('12.34')).toBe(true);
+      expect(isValidNumberIsh('0.001')).toBe(true);
+      expect(isValidNumberIsh('0')).toBe(true);
+      expect(isValidNumberIsh('000000')).toBe(true);
+      expect(isValidNumberIsh('000.000')).toBe(true);
+      expect(isValidNumberIsh('')).toBe(true);
+      expect(isValidNumberIsh('   ')).toBe(true);
     });
 
-    it('should return true for a valid BigNumberIsh number', () => {
-      expect(isValidBigNumberIsh(1234567890)).toBe(true);
-      expect(isValidBigNumberIsh(-9876543210)).toBe(true);
-      expect(isValidBigNumberIsh(12.34)).toBe(true);
-      expect(isValidBigNumberIsh(0.001)).toBe(true);
-      expect(isValidBigNumberIsh(0)).toBe(true);
+    it('should return true for a valid NumberIsh number', () => {
+      expect(isValidNumberIsh(1234567890)).toBe(true);
+      expect(isValidNumberIsh(-9876543210)).toBe(true);
+      expect(isValidNumberIsh(12.34)).toBe(true);
+      expect(isValidNumberIsh(0.001)).toBe(true);
+      expect(isValidNumberIsh(0)).toBe(true);
     });
 
     it('should return true for a valid BigInt', () => {
@@ -51,10 +51,10 @@ describe('types', () => {
       expect(isValidBigIntIsh(BigInt('-9876543210'))).toBe(true);
     });
 
-    it('should return false for an invalid BigNumberIshIsh value', () => {
-      expect(isValidBigNumberIsh('123abc')).toBe(false);
-      expect(isValidBigNumberIsh('abc')).toBe(false);
-      expect(isValidBigNumberIsh(NaN)).toBe(false);
+    it('should return false for an invalid NumberIshIsh value', () => {
+      expect(isValidNumberIsh('123abc')).toBe(false);
+      expect(isValidNumberIsh('abc')).toBe(false);
+      expect(isValidNumberIsh(NaN)).toBe(false);
     });
   });
 });

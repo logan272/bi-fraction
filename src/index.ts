@@ -1,3 +1,3 @@
 export { Format, RoundingMode } from './bn';
-export * from './fraction';
-export * from './types';
+export { Fraction } from './fraction';
+export { isValidNumberIsh, NumberIsh } from './types';

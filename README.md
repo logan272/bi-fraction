@@ -4,21 +4,37 @@ bi-fraction is a lightweight and efficient library for working with fraction num
 
 [API Doc](https://logan272.github.io/bi-fraction/api/)
 
+## Tests
+
+```sh
+pnpm test
+pnpm coverage
+```
+
 ## Getting Started
 
 ```ts
 import { Fraction } from 'bi-fraction';
 
-const a = Fraction.parse('0.1');
-const b = Fraction.parse('0.3');
+// new Fraction(numerator, denominator)
+const a = new Fraction('0.1');
+const b = new Fraction('0.3');
 const c = a.div(b);
 const d = a.add(0.1);
 
 c.eq(new Fraction(1, 3)); // true
 d.eq(new Fraction(2, 10)); // true
 
-const x = Fraction.parse('1234.5');
-const y = Fraction.parse(1234.5);
+const x = new Fraction('1234.5');
+const y = new Fraction(1234.5);
+
+const bigNumber = new Fraction(
+  '10000000000000000000000000000000001.0000000001',
+);
+const bigInteger = new Fraction(1_000_000_000n);
+bigNumber
+  .mul(bigInteger)
+  .eq(new Fraction(100000000000000000000000000000000010000000001n)); // true
 
 // Fraction.toFixed(decimalPlaces?: number, roundingMode?: RoundingMode)
 x.eq(y); // true
