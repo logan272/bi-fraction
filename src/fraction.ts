@@ -429,4 +429,14 @@ export class Fraction {
   public get asFraction(): Fraction {
     return new Fraction(this.numerator, this.denominator);
   }
+
+  /**
+   * Converts the Fraction object to a JSON representation for avoiding serialization errors.
+   */
+  public toJSON() {
+    return {
+      numerator: this.numerator.toString(),
+      denominator: this.denominator.toString(),
+    };
+  }
 }
