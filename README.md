@@ -19,7 +19,7 @@ import { Fraction } from 'bi-fraction';
 0.1 + 0.2 === 0.3; // false
 new Fraction(0.1).add(0.2).eq(0.3); // true
 
-// new Fraction(numerator, denominator)
+// new Fraction(numerator: FractionIsh, denominator?: FractionIsh = 1)
 const a = new Fraction('0.1');
 const b = new Fraction('0.3');
 const c = a.div(b);

@@ -28,7 +28,7 @@ export class Fraction {
    * @returns [bigint, bigint] representing the successfully parsed Fraction numerator and denominator.
    * @throws If value is not a valid NumberIsh.
    */
-  private static parse(value: Fraction | NumberIsh): [bigint, bigint] {
+  private static parse(value: FractionIsh): [bigint, bigint] {
     if (value instanceof Fraction) return [value.numerator, value.denominator];
     if (typeof value === 'bigint') return [value, 1n];
 
@@ -69,7 +69,7 @@ export class Fraction {
    * @param value - The value to parse.
    * @returns The parsed Fraction value, or undefined if `value` is not a valid NumberIsh.
    */
-  public static tryParse(value: Fraction | NumberIsh): Fraction | undefined {
+  public static tryParse(value: FractionIsh): Fraction | undefined {
     try {
       return new Fraction(value);
     } catch (_) {
@@ -83,10 +83,7 @@ export class Fraction {
    * @param denominator - The denominator of the fraction. (default: 1n)
    * @throws If the numerator or denominator is not a valid NumberIsh.
    */
-  constructor(
-    numerator: Fraction | NumberIsh,
-    denominator?: Fraction | NumberIsh,
-  ) {
+  constructor(numerator: FractionIsh, denominator?: FractionIsh) {
     if (denominator === undefined) {
       if (numerator instanceof Fraction) {
         this.numerator = numerator.numerator;
@@ -199,7 +196,7 @@ export class Fraction {
    * @returns True if the fraction is equal to `other`, false otherwise.
    * @throws If other is not a valid NumberIsh
    */
-  public eq(other: Fraction | NumberIsh): boolean {
+  public eq(other: FractionIsh): boolean {
     other = new Fraction(other);
 
     return (
@@ -213,7 +210,7 @@ export class Fraction {
    * @returns True if the fraction is not equal to `other`, false otherwise.
    * @throws If other is not a valid NumberIsh
    */
-  public neq(other: Fraction | NumberIsh): boolean {
+  public neq(other: FractionIsh): boolean {
     return !this.eq(other);
   }
 
@@ -224,7 +221,7 @@ export class Fraction {
    * @returns True if the fraction is less than `other`, false otherwise.
    * @throws If other is not a valid NumberIsh
    */
-  public lt(other: Fraction | NumberIsh): boolean {
+  public lt(other: FractionIsh): boolean {
     other = new Fraction(other);
 
     return (
@@ -238,7 +235,7 @@ export class Fraction {
    * @returns True if the fraction is less than or equal to `other`, false otherwise.
    * @throws If other is not a valid NumberIsh
    */
-  public lte(other: Fraction | NumberIsh): boolean {
+  public lte(other: FractionIsh): boolean {
     other = new Fraction(other);
 
     return (
@@ -252,7 +249,7 @@ export class Fraction {
    * @returns True if the fraction is greater than `other`, false otherwise.
    * @throws If other is not a valid NumberIsh
    */
-  public gt(other: Fraction | NumberIsh): boolean {
+  public gt(other: FractionIsh): boolean {
     other = new Fraction(other);
 
     return (
@@ -266,7 +263,7 @@ export class Fraction {
    * @returns True if the fraction is greater than or equal to `other`, false otherwise.
    * @throws If other is not a valid NumberIsh
    */
-  public gte(other: Fraction | NumberIsh): boolean {
+  public gte(other: FractionIsh): boolean {
     other = new Fraction(other);
 
     return (
@@ -280,7 +277,7 @@ export class Fraction {
    * @returns A new Fraction representing the sum.
    * @throws If other is not a valid NumberIsh
    */
-  public add(other: Fraction | NumberIsh): Fraction {
+  public add(other: FractionIsh): Fraction {
     other = new Fraction(other);
 
     if (this.denominator === other.denominator) {
@@ -299,7 +296,7 @@ export class Fraction {
    * @returns A new Fraction representing the difference.
    * @throws If other is not a valid NumberIsh
    */
-  public sub(other: Fraction | NumberIsh): Fraction {
+  public sub(other: FractionIsh): Fraction {
     other = new Fraction(other);
 
     if (this.denominator === other.denominator) {
@@ -318,7 +315,7 @@ export class Fraction {
    * @returns A new Fraction representing the product.
    * @throws If other is not a valid NumberIsh
    */
-  public mul(other: Fraction | NumberIsh): Fraction {
+  public mul(other: FractionIsh): Fraction {
     other = new Fraction(other);
 
     return new Fraction(
@@ -333,7 +330,7 @@ export class Fraction {
    * @returns A new Fraction representing the quotient.
    * @throws If other is not a valid NumberIsh
    */
-  public div(other: Fraction | NumberIsh): Fraction {
+  public div(other: FractionIsh): Fraction {
     other = new Fraction(other);
 
     return new Fraction(

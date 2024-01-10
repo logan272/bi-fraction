@@ -1,14 +1,14 @@
 /**
- * Represents `Bigint` or any number of string that can be converted to `BigInt`.
+ * Represents bigint or any number and string that can be converted to bigInt.
  */
 export type BigIntIsh = string | number | bigint;
 /**
- * Represents number,or and Bigint or string that can be converted to number.
+ * Represents number, bigint, or string that can be converted to number or bigint.
  */
 export type NumberIsh = string | number | bigint;
 
 /**
- * Checks if a value is a valid BigIntIsh.
+ * Checks if value is a valid BigIntIsh.
  * @param value - The value to check.
  * @returns True if the value is a valid BigIntIsh, false otherwise.
  */
@@ -22,7 +22,7 @@ export const isValidBigIntIsh = (value: BigIntIsh): boolean => {
 };
 
 /**
- * Checks if a value is a valid NumberIsh.
+ * Checks if value is a valid NumberIsh.
  * @param value - The value to check.
  * @returns True if the value is a valid NumberIsh, false otherwise.
  */
