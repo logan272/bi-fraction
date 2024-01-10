@@ -1,8 +1,8 @@
 {
   "name": "bi-fraction",
-  "private": true,
   "description": "Arbitrary precision fraction number implemented on top of JS Native BigInt.",
   "author": "Logan Luo <github.com/logan272>",
+  "version": "0.1.0",
   "license": "MIT",
   "keywords": [
     "Fraction",
@@ -12,9 +12,21 @@
   ],
   "engines": {
     "node": ">= 16",
-    "pnpm": ">= 8"
+    "pnpm": ">= 8.6"
   },
   "packageManager": "pnpm@8.6.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "types": "./dist/esm/index.d.ts",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "build": "tsc;tsc --module commonjs --outDir dist/cjs",
