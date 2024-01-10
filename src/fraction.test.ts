@@ -5,6 +5,9 @@ import { Fraction } from './fraction';
 describe('Fraction', () => {
   describe('Getting Started', () => {
     it('should pass', () => {
+      expect(0.1 + 0.2 === 0.3).toBe(false);
+      expect(new Fraction(0.1).add(0.2).eq(0.3)).toBe(true);
+
       const a = new Fraction('0.1');
       const b = new Fraction('0.3');
       const c = a.div(b);
