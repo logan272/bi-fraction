@@ -40,11 +40,13 @@ describe('Fraction', () => {
       expect(z.toSignificant(18)).toBe('1523990.25');
       expect(z.toSignificant(100)).toBe('1523990.25');
 
-      expect(z.toFormat(0)).toBe('1,523,990');
-      expect(z.toFormat(0, undefined, { groupSize: 4 })).toBe('152,3990');
-      expect(z.toFormat(0, undefined, { groupSeparator: '_' })).toBe(
-        '1_523_990',
+      expect(z.toFormat({ decimalPlaces: 0 })).toBe('1,523,990');
+      expect(z.toFormat({ decimalPlaces: 0, format: { groupSize: 4 } })).toBe(
+        '152,3990',
       );
+      expect(
+        z.toFormat({ decimalPlaces: 0, format: { groupSeparator: '_' } }),
+      ).toBe('1_523_990');
       const bigNumber = new Fraction(
         '10000000000000000000000000000000001.0000000001',
       );
@@ -766,13 +768,23 @@ describe('Fraction', () => {
     it('should convert the fraction to a formatted string representation', () => {
       const bigPi = new Fraction('314159.2653');
       expect(bigPi.toFormat()).toBe('314,159');
-      expect(bigPi.toFormat(1, RoundingMode.ROUND_FLOOR)).toBe('314,159.2');
-      expect(bigPi.toFormat(1)).toBe('314,159.3');
-      expect(bigPi.toFormat(2, RoundingMode.ROUND_FLOOR)).toBe('314,159.26');
-      expect(bigPi.toFormat(2)).toBe('314,159.27');
-      expect(bigPi.toFormat(3)).toBe('314,159.265');
-      expect(bigPi.toFormat(4)).toBe('314,159.2653');
-      expect(bigPi.toFormat(5)).toBe('314,159.26530');
+      expect(
+        bigPi.toFormat({
+          decimalPlaces: 1,
+          roundingMode: RoundingMode.ROUND_FLOOR,
+        }),
+      ).toBe('314,159.2');
+      expect(bigPi.toFormat({ decimalPlaces: 1 })).toBe('314,159.3');
+      expect(
+        bigPi.toFormat({
+          decimalPlaces: 2,
+          roundingMode: RoundingMode.ROUND_FLOOR,
+        }),
+      ).toBe('314,159.26');
+      expect(bigPi.toFormat({ decimalPlaces: 2 })).toBe('314,159.27');
+      expect(bigPi.toFormat({ decimalPlaces: 3 })).toBe('314,159.265');
+      expect(bigPi.toFormat({ decimalPlaces: 4 })).toBe('314,159.2653');
+      expect(bigPi.toFormat({ decimalPlaces: 5 })).toBe('314,159.26530');
     });
   });
 

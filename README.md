@@ -1,20 +1,24 @@
+[![npm version](https://badge.fury.io/js/bi-fraction.svg)](https://badge.fury.io/js/bi-fraction)
+
 # bi-fraction
 
 bi-fraction is a lightweight and efficient library for working with fraction numbers. Built on top of Native JavaScript BigInt, it provides a simple and reliable solution for handling fractions with arbitrary precision and magnitude.
 
 [API Doc](https://logan272.github.io/bi-fraction/api/)
 
-## Tests
-
-```sh
-pnpm test
-pnpm coverage
-```
-
 ## Getting Started
 
+```sh
+# install with npm
+npm install bi-fraction
+
+# install with pnpm
+pnpm add bi-fraction
+
+```
+
 ```ts
-import { Fraction } from 'bi-fraction';
+import { Fraction, RoundingMode } from 'bi-fraction';
 
 0.1 + 0.2 === 0.3; // false
 new Fraction(0.1).add(0.2).eq(0.3); // true
@@ -57,7 +61,14 @@ z.toSignificant(18); // '1523990.25'
 z.toSignificant(100); // '1523990.25'
 
 // Fraction.toFormat(decimalPlaces?: number, roundingMode?: RoundingMode, format?: Format)
-z.toFormat(0); // '1,523,990';
-z.toFormat(0, undefined, { groupSize: 4 }); // '152,3990'
-z.toFormat(0, undefined, { groupSeparator: '_' }); // '1_523_990'
+z.toFormat({ decimalPlaces: 0 }); // '1,523,990';
+z.toFormat({ decimalPlaces: 0, format: { groupSize: 4 } }); // '152,3990'
+z.toFormat({ decimalPlaces: 0, { groupSeparator: '_' }}); // '1_523_990'
+```
+
+## Tests
+
+```sh
+pnpm test
+pnpm coverage
 ```

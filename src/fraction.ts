@@ -5,6 +5,12 @@ import { Bn, DEFAULT_FORMAT, DEFAULT_ROUNDING_MODE } from './bn';
 import { gcd } from './gcd';
 import type { NumberIsh } from './types';
 
+type ToFormatOptions = {
+  decimalPlaces?: number;
+  roundingMode?: RoundingMode;
+  format?: Format;
+};
+
 export type FractionIsh = Fraction | NumberIsh;
 export class Fraction {
   // Fraction constants
@@ -84,7 +90,7 @@ export class Fraction {
    * @throws If the numerator or denominator is not a valid NumberIsh.
    */
   constructor(numerator: FractionIsh, denominator?: FractionIsh) {
-    if (denominator === undefined) {
+    if (denominator === undefined || denominator === null) {
       if (numerator instanceof Fraction) {
         this.numerator = numerator.numerator;
         this.denominator = numerator.denominator;
@@ -404,16 +410,16 @@ export class Fraction {
 
   /**
    * Converts the fraction to a formatted string representation.
-   * @param decimalPlaces - The number of decimal places to include. (default: 0)
-   * @param roundingMode - The rounding mode to use. (optional)
-   * @param format - The format to apply. (optional)
+   * @param opts.decimalPlaces - The number of decimal places to include. (default: 0)
+   * @param opts.roundingMode - The rounding mode to use. (optional)
+   * @param opts.format - The format to apply. (optional)
    * @returns The formatted string representation of the fraction.
    */
-  public toFormat(
-    decimalPlaces = 0,
-    roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
-    format: Format = {},
-  ): string {
+  public toFormat(opts?: ToFormatOptions): string {
+    const decimalPlaces = opts?.decimalPlaces ?? 0;
+    const roundingMode = opts?.roundingMode ?? DEFAULT_ROUNDING_MODE;
+    const format = opts?.format ?? {};
+
     return Bn(this.numerator.toString())
       .div(this.denominator.toString())
       .toFormat(decimalPlaces, roundingMode as BigNumberJs.RoundingMode, {
