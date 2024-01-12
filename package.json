@@ -2,7 +2,7 @@
   "name": "bi-fraction",
   "description": "Arbitrary precision fraction number implemented on top of JS Native BigInt.",
   "author": "Logan Luo <github.com/logan272>",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "license": "MIT",
   "keywords": [
     "Fraction",
