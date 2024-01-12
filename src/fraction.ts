@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import type BigNumberJs from 'bignumber.js';
 
 import type { Format, RoundingMode } from './bn';
@@ -39,7 +40,8 @@ export class Fraction {
     if (typeof value === 'bigint') return [value, 1n];
 
     const n = Number(value);
-    if (Number.isNaN(n)) throw Error(`Failed to parse "${value}"`);
+    if (Number.isNaN(n))
+      throw new Error(`Cannot convert ${value} to a Fraction`);
     if (Number.isInteger(n)) return [BigInt(n), 1n];
 
     const bn = Bn(value);
@@ -87,7 +89,9 @@ export class Fraction {
    * Creates a new Fraction instance.
    * @param numerator - The numerator of the fraction.
    * @param denominator - The denominator of the fraction. (default: 1n)
-   * @throws If the numerator or denominator is not a valid NumberIsh.
+   * @throws
+   *  1. If the numerator or denominator is not a valid NumberIsh.
+   *  2. If denominator is zero.
    */
   constructor(numerator: FractionIsh, denominator?: FractionIsh) {
     if (denominator === undefined || denominator === null) {
@@ -112,9 +116,11 @@ export class Fraction {
     const n = n1 * d2;
     const d = d1 * n2;
 
-    if (n === 0n || d === 0n) {
+    if (d === 0n) throw new Error('Division by zero');
+
+    if (n === 0n) {
       this.numerator = 0n;
-      this.denominator = d;
+      this.denominator = 1n;
     } else {
       const divisor = gcd(n, d);
       this.numerator = n / divisor;
@@ -143,6 +149,8 @@ export class Fraction {
    * @returns The inverted fraction.
    */
   public invert(): Fraction {
+    if (this.isZero()) return this;
+
     return new Fraction(this.denominator, this.numerator);
   }
 
@@ -159,6 +167,8 @@ export class Fraction {
    * @returns A new Fraction instance representing the absolute value of the fraction.
    */
   public abs(): Fraction {
+    if (this.isZero()) return this;
+
     if (this.numerator * this.denominator < 0) {
       if (this.numerator < 0) {
         return new Fraction(-this.numerator, this.denominator);
@@ -334,7 +344,9 @@ export class Fraction {
    * Divides the fraction by `other`.
    * @param other - The value to divide by.
    * @returns A new Fraction representing the quotient.
-   * @throws If other is not a valid NumberIsh
+   * @throws
+   *  1. If other is not a valid NumberIsh.
+   *  2. other is zero.
    */
   public div(other: FractionIsh): Fraction {
     other = new Fraction(other);

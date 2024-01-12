@@ -156,18 +156,23 @@ describe('Fraction', () => {
     it('should parse zero edge cases correctly', () => {
       const f1 = new Fraction(0, 100);
       expect(f1.numerator).toBe(0n);
-      expect(f1.denominator).toBe(100n);
+      expect(f1.denominator).toBe(1n);
       expect(f1.isZero()).toBe(true);
-
-      const f2 = new Fraction(1000, 0);
-      expect(f2.numerator).toBe(0n);
-      expect(f2.denominator).toBe(0n);
-      expect(f2.isZero()).toBe(true);
 
       const f3 = new Fraction('0', 1);
       expect(f3.numerator).toBe(0n);
       expect(f3.denominator).toBe(1n);
       expect(f3.isZero()).toBe(true);
+    });
+
+    it(`should throw 'Division by zero' error if denominator is zero`, () => {
+      expect(() => new Fraction(1, 0)).toThrow();
+      expect(() => new Fraction(1, 0.0)).toThrow();
+      expect(() => new Fraction(1, 0n)).toThrow();
+      expect(() => new Fraction(1, '0')).toThrow();
+      expect(() => new Fraction(1, '000')).toThrow();
+      expect(() => new Fraction(1, '0.0')).toThrow();
+      expect(() => new Fraction(1, '000.000')).toThrow();
     });
 
     it('should create a Fraction correctly with integers', () => {
@@ -443,9 +448,9 @@ describe('Fraction', () => {
 
   describe('eq', () => {
     it('should handle zero edge cases correctly', () => {
-      const f1 = new Fraction(10, 0);
-      const f2 = new Fraction(0, 2);
-      const f3 = new Fraction(10, 0);
+      const f1 = new Fraction(0, 1);
+      const f2 = new Fraction(0, 3);
+      const f3 = new Fraction(0, 5);
       expect(f1.eq(f2)).toBe(true);
       expect(f1.eq(f3)).toBe(true);
       expect(f3.isZero()).toBe(true);
@@ -662,6 +667,23 @@ describe('Fraction', () => {
       expect(result.numerator).toBe(2n);
       expect(result.denominator).toBe(1n);
     });
+
+    it('should return 0 when multiply zero', () => {
+      const f1 = new Fraction(0).mul(0);
+      expect(f1.isZero()).toBe(true);
+      expect(f1.numerator).toBe(0n);
+      expect(f1.denominator).toBe(1n);
+
+      const f2 = new Fraction(100).mul(0);
+      expect(f2.isZero()).toBe(true);
+      expect(f2.numerator).toBe(0n);
+      expect(f2.denominator).toBe(1n);
+
+      const f3 = new Fraction(0).mul('123.4');
+      expect(f3.isZero()).toBe(true);
+      expect(f3.numerator).toBe(0n);
+      expect(f3.denominator).toBe(1n);
+    });
   });
 
   describe('div', () => {
@@ -671,6 +693,8 @@ describe('Fraction', () => {
       const result = f1.div(f2);
       expect(result.numerator).toBe(9n);
       expect(result.denominator).toBe(8n);
+      expect(Fraction.ZERO.div(f1).isZero()).toBe(true);
+      expect(Fraction.ZERO.div(f2).isZero()).toBe(true);
     });
 
     it('should divide a fraction by an integer correctly', () => {
@@ -678,6 +702,17 @@ describe('Fraction', () => {
       const result = f1.div(2);
       expect(result.numerator).toBe(3n);
       expect(result.denominator).toBe(8n);
+    });
+
+    it(`should throw 'Division by zero' error`, () => {
+      expect(() => new Fraction(1).div(Fraction.ZERO)).toThrow();
+      expect(() => new Fraction(1).div(0)).toThrow();
+      expect(() => new Fraction(1).div(0n)).toThrow();
+      expect(() => new Fraction(1).div('0')).toThrow();
+      expect(() => new Fraction(1).div('000')).toThrow();
+      expect(() => new Fraction(1).div('0.0')).toThrow();
+      expect(() => new Fraction(1).div('0.000')).toThrow();
+      expect(() => new Fraction(1).div('000.000')).toThrow();
     });
   });
 
