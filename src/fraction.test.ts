@@ -1,6 +1,5 @@
 /* eslint-disable max-lines */
-import { RoundingMode } from './bn';
-import { Fraction } from './fraction';
+import { Fraction, RoundingMode } from './fraction';
 
 describe('Fraction', () => {
   describe('Getting Started', () => {

@@ -1,22 +1,85 @@
 /* eslint-disable max-lines */
 import type BigNumberJs from 'bignumber.js';
 
-import type { Format } from './bn';
-import { Bn, DEFAULT_ROUNDING_MODE, RoundingMode } from './bn';
+import { Bn } from './bn';
 import { gcd } from './gcd';
 import type { NumberIsh } from './types';
 
-export type ToFormatOptions = {
+export enum RoundingMode {
+  /**
+   * Rounds away from zero
+   */
+  ROUND_UP = 0,
+  /**
+   * Rounds towards zero
+   */
+  ROUND_DOWN = 1,
+  /**
+   * Rounds towards Infinity
+   */
+  ROUND_CEIL = 2,
+  /**
+   * Rounds towards Infinity
+   * Rounds towards -Infinity
+   */
+  ROUND_FLOOR = 3,
+  /**
+   * Rounds towards nearest neighbour.
+   * If equidistant, rounds away from zero
+   */
+  ROUND_HALF_UP = 4,
+  /**
+   * Rounds towards nearest neighbour.
+   * If equidistant, rounds towards zero
+   */
+  ROUND_HALF_DOWN = 5,
+  /**
+   * Rounds towards nearest neighbour.
+   * If equidistant, rounds towards even neighbour
+   */
+  ROUND_HALF_EVEN = 6,
+  /**
+   * Rounds towards nearest neighbour.
+   * If equidistant, rounds towards Infinity
+   */
+  ROUND_HALF_CEIL = 7,
+  /**
+   * Rounds towards nearest neighbour.
+   * If equidistant, rounds towards -Infinity
+   */
+  ROUND_HALF_FLOOR = 8,
+}
+
+export type ToFormatOptions = Config;
+export type ToFixedOption = Pick<Config, 'roundingMode' | 'trailingZeros'>;
+
+type Config = {
   decimalPlaces?: number;
   roundingMode?: RoundingMode;
   trailingZeros?: boolean;
   format?: Format;
 };
 
-export type ToFixedOption = {
-  roundingMode?: RoundingMode;
-  trailingZeros?: boolean;
+type Format = {
+  // decimal separator
+  decimalSeparator?: string;
+  // grouping separator of the integer part
+  groupSeparator?: string;
+  // primary grouping size of the integer part
+  groupSize?: number;
 };
+
+// The default config object
+const CONFIG = {
+  decimalPlaces: 0,
+  trailingZeros: true,
+  roundingMode: RoundingMode.ROUND_HALF_UP,
+  format: {
+    decimalSeparator: '.',
+    groupSeparator: ',',
+    groupSize: 3,
+  },
+} as const;
 
 export type FractionIsh = Fraction | NumberIsh;
 export class Fraction {
@@ -415,7 +478,7 @@ export class Fraction {
    */
   public toSignificant(
     significantDigits: number,
-    roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
+    roundingMode: RoundingMode = CONFIG.roundingMode,
   ): string {
     return Bn(this.numerator.toString())
       .div(this.denominator.toString())
@@ -446,8 +509,8 @@ export class Fraction {
    */
   public toFixed(decimalPlaces = 0, opts?: ToFixedOption): string {
     if (decimalPlaces < 0) throw new Error('invalid decimalPlaces');
-    const roundingMode = opts?.roundingMode ?? DEFAULT_ROUNDING_MODE;
-    const trailingZeros = opts?.trailingZeros ?? true;
+    const roundingMode = opts?.roundingMode ?? CONFIG.roundingMode;
+    const trailingZeros = opts?.trailingZeros ?? CONFIG.trailingZeros;
 
     const abs = this.abs();
     const d = abs.denominator;
@@ -465,6 +528,7 @@ export class Fraction {
       i += 1;
     }
 
+    // The carry that should be added to the integer part
     let carry = 0n;
 
     if (decimalPartStr.length < decimalPlaces) {
@@ -503,6 +567,19 @@ export class Fraction {
     return isPositive ? decimalPartStr : `-${decimalPartStr}`;
   }
 
+  /**
+   * Handles rounding of a fractional number based on the provided inputs.
+   *
+   * @param opts - The rounding inputs.
+   * @param opts.integerPart - The integer part of the number.
+   * @param opts.decimalPart - The decimal part of the number.
+   * @param opts.decimalPlaces - The number of decimal places.
+   * @param opts.nextDigit - The next digit after the decimal places.
+   * @param opts.roundingMode - The rounding mode to apply.
+   * @param opts.isPositive - Indicates if the number is positive.
+   * @returns The rounded value as a bigint.
+   * @throws {Error} If an unreachable rounding mode is provided.
+   */
   private handleRounding(opts: {
     integerPart: bigint;
     decimalPart: bigint;
@@ -649,13 +726,22 @@ export class Fraction {
 
     return this.addSeparator(
       str,
-      format.groupSize ?? 3,
-      format.groupSeparator ?? ',',
-      format.decimalSeparator ?? '.',
+      format.groupSize ?? CONFIG.format.groupSize,
+      format.groupSeparator ?? CONFIG.format.groupSeparator,
+      format.decimalSeparator ?? CONFIG.format.decimalSeparator,
     );
   }
 
-  private addSeparator(
+  /**
+   * Adds separators to a string representing a number.
+   *
+   * @param str - The string representation of the number.
+   * @param groupSize - The primary grouping size for grouping digits in the integer part.
+   * @param groupSeparator - The character used as the grouping separator in the integer part.
+   * @param decimalSeparator - The character used as the decimal separator.
+   * @returns The string representation of the number with separators added.
+   */
+  protected addSeparator(
     str: string,
     groupSize: number,
     groupSeparator: string,

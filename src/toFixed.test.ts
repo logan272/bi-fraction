@@ -1,6 +1,5 @@
-import { RoundingMode } from './bn';
 import type { ToFixedOption } from './fraction';
-import { Fraction } from './fraction';
+import { Fraction, RoundingMode } from './fraction';
 
 describe('Fraction.toFixed', () => {
   it('should throw if `decimalPlaces < 0`', () => {
