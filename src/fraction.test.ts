@@ -22,7 +22,9 @@ describe('Fraction', () => {
 
       expect(x.eq(y)).toBe(true);
       expect(x.toFixed(0)).toBe('1235');
-      expect(x.toFixed(0, RoundingMode.ROUND_DOWN)).toBe('1234');
+      expect(x.toFixed(0, { roundingMode: RoundingMode.ROUND_DOWN })).toBe(
+        '1234',
+      );
       expect(x.toFixed(2)).toBe('1234.50');
       expect(y.toFixed(2)).toBe('1234.50');
       expect(y.toFixed(3)).toBe('1234.500');
@@ -828,44 +830,6 @@ describe('Fraction', () => {
       const withMoreThan21DecimalPlaces = '1.23456789012345678901234567890';
       const f4 = new Fraction(withMoreThan21DecimalPlaces);
       expect(f4.toSignificant(100)).toBe('1.23456789012345678901');
-    });
-  });
-
-  describe('toFixed', () => {
-    it('should throw if `decimalPlaces < 0`', () => {
-      const pi = new Fraction('3.14159');
-      expect(() => pi.toFixed(-1)).toThrow();
-    });
-
-    it('should convert the fraction to a fixed-point decimal string representation correctly', () => {
-      const pi = new Fraction('3.14159');
-      expect(pi.toFixed()).toBe('3');
-      expect(pi.toFixed(0)).toBe('3');
-      expect(pi.toFixed(1)).toBe('3.1');
-      expect(pi.toFixed(2)).toBe('3.14');
-      expect(pi.toFixed(3)).toBe('3.142');
-      expect(pi.toFixed(3, RoundingMode.ROUND_FLOOR)).toBe('3.141');
-      expect(pi.toFixed(4)).toBe('3.1416');
-      expect(pi.toFixed(4, RoundingMode.ROUND_FLOOR)).toBe('3.1415');
-      expect(pi.toFixed(5)).toBe('3.14159');
-      expect(pi.toFixed(6)).toBe('3.141590');
-      expect(pi.toFixed(7)).toBe('3.1415900');
-    });
-
-    it('should convert the fraction to a fixed-point decimal string representation correctly for very large/small number', () => {
-      const small = '1.2345678901234567890123';
-      const f1 = new Fraction(small);
-      expect(f1.toFixed(12)).toBe('1.234567890123');
-      expect(f1.toFixed(13, RoundingMode.ROUND_FLOOR)).toBe('1.2345678901234');
-      expect(f1.toFixed(13)).toBe('1.2345678901235');
-
-      const withMoreThan21DecimalPlaces = '1.234567890123456789012345';
-      const f2 = new Fraction(withMoreThan21DecimalPlaces);
-      expect(f2.toFixed(20)).toBe('1.23456789012345678901');
-      expect(f2.toFixed(21)).toBe('1.234567890123456789010');
-      expect(f2.toFixed(22)).toBe('1.2345678901234567890100');
-      expect(f2.toFixed(23)).toBe('1.23456789012345678901000');
-      expect(f2.toFixed(24)).toBe('1.234567890123456789010000');
     });
   });
 

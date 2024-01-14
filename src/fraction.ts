@@ -1,8 +1,8 @@
 /* eslint-disable max-lines */
 import type BigNumberJs from 'bignumber.js';
 
-import type { Format, RoundingMode } from './bn';
-import { Bn, DEFAULT_FORMAT, DEFAULT_ROUNDING_MODE } from './bn';
+import type { Format } from './bn';
+import { Bn, DEFAULT_FORMAT, DEFAULT_ROUNDING_MODE, RoundingMode } from './bn';
 import { gcd } from './gcd';
 import type { NumberIsh } from './types';
 
@@ -10,6 +10,11 @@ type ToFormatOptions = {
   decimalPlaces?: number;
   roundingMode?: RoundingMode;
   format?: Format;
+};
+
+type ToFixedOption = {
+  roundingMode?: RoundingMode;
+  removeTrailingZeros?: boolean;
 };
 
 export type FractionIsh = Fraction | NumberIsh;
@@ -417,20 +422,213 @@ export class Fraction {
       .toString();
   }
 
+  // /**
+  //  * Converts the fraction to a fixed-point decimal string representation.
+  //  * @param decimalPlaces - The number of decimal places to include. (default: 0)
+  //  * @param roundingMode - The rounding mode to use. (optional)
+  //  * @returns The fixed-point decimal string representation of the fraction.
+  //  */
+  // public toFixed(
+  //   decimalPlaces = 0,
+  //   roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
+  // ): string {
+  //   return Bn(this.numerator.toString())
+  //     .div(this.denominator.toString())
+  //     .toFixed(decimalPlaces, roundingMode as BigNumberJs.RoundingMode);
+  // }
+
   /**
    * Converts the fraction to a fixed-point decimal string representation.
-   * @param decimalPlaces - The number of decimal places to include. (default: 0)
-   * @param roundingMode - The rounding mode to use. (optional)
+   * @param dp - The number of decimal places to include. (default: 0)
+   * @param opts - The optional config object.
    * @returns The fixed-point decimal string representation of the fraction.
    */
-  public toFixed(
-    decimalPlaces = 0,
-    roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
-  ): string {
-    return Bn(this.numerator.toString())
-      .div(this.denominator.toString())
-      .toFixed(decimalPlaces, roundingMode as BigNumberJs.RoundingMode);
+  public toFixed(decimalPlaces = 0, opts?: ToFixedOption): string {
+    if (decimalPlaces < 0) throw new Error('invalid decimalPlaces');
+    const roundingMode = opts?.roundingMode ?? DEFAULT_ROUNDING_MODE;
+
+    const abs = this.abs();
+    const d = abs.denominator;
+    const isPositive = this.gte(0);
+
+    let r = abs.numerator % d;
+
+    let i = 0;
+    let decimalPartStr = '';
+
+    while (r > 0n && i < decimalPlaces) {
+      const v = r * 10n;
+      decimalPartStr += v / d;
+      r = v % d;
+      i += 1;
+    }
+
+    let carry = 0n;
+
+    if (decimalPartStr.length < decimalPlaces) {
+      if (!opts?.removeTrailingZeros) {
+        decimalPartStr = decimalPartStr.padEnd(decimalPlaces, '0');
+      }
+    } else {
+      const nextDigit = (r * 10n) / d;
+
+      if (nextDigit > 0n) {
+        const decimalPart = BigInt(decimalPartStr);
+
+        const x = this.handleRounding({
+          integerPart: abs.quotient,
+          decimalPart,
+          decimalPlaces: decimalPlaces,
+          nextDigit,
+          roundingMode,
+          isPositive,
+        });
+
+        const y = 10n ** BigInt(decimalPlaces);
+        carry = x / y;
+
+        decimalPartStr =
+          decimalPlaces === 0 ? '' : `${x % y}`.padStart(decimalPlaces, '0');
+      }
+    }
+
+    const integerPart = abs.quotient + carry;
+
+    decimalPartStr = decimalPartStr
+      ? `${integerPart}.${decimalPartStr}`
+      : `${integerPart}`;
+
+    return isPositive ? decimalPartStr : `-${decimalPartStr}`;
   }
+
+  private handleRounding(opts: {
+    integerPart: bigint;
+    decimalPart: bigint;
+    decimalPlaces: number;
+    nextDigit: bigint;
+    roundingMode: RoundingMode;
+    isPositive: boolean;
+  }): bigint {
+    const {
+      integerPart,
+      decimalPart,
+      decimalPlaces,
+      nextDigit,
+      roundingMode,
+      isPositive,
+    } = opts;
+
+    // (0) ROUND_UP
+    // Rounds away from zero
+    if (roundingMode === RoundingMode.ROUND_UP) {
+      return decimalPart + 1n;
+    }
+
+    // (1) ROUND_DOWN
+    // Rounds towards from zero
+    if (roundingMode === RoundingMode.ROUND_DOWN) {
+      return decimalPart;
+    }
+
+    // (2) ROUND_CEIL
+    // Rounds towards Infinity
+    if (roundingMode === RoundingMode.ROUND_CEIL) {
+      return isPositive ? decimalPart + 1n : decimalPart;
+    }
+
+    // (3) ROUND_FLOOR
+    // Rounds towards -Infinity
+    if (roundingMode === RoundingMode.ROUND_FLOOR) {
+      return isPositive ? decimalPart : decimalPart + 1n;
+    }
+
+    // (4) ROUND_HALF_UP
+    // Rounds towards nearest neighbour. If equidistant, rounds away from zero
+    if (roundingMode === RoundingMode.ROUND_HALF_UP) {
+      return nextDigit >= 5 ? decimalPart + 1n : decimalPart;
+    }
+
+    // (5) ROUND_HALF_DOWN
+    // Rounds towards nearest neighbour. If equidistant, rounds towards zero
+    if (roundingMode === RoundingMode.ROUND_HALF_DOWN) {
+      return nextDigit > 5 ? decimalPart + 1n : decimalPart;
+    }
+
+    // (6) ROUND_HALF_EVEN
+    // Rounds towards nearest neighbour. If equidistant, rounds towards even neighbour
+    if (roundingMode === RoundingMode.ROUND_HALF_EVEN) {
+      // check if the last digit is event
+      const isEvent =
+        decimalPlaces === 0 ? integerPart % 2n === 0n : decimalPart % 2n === 0n;
+
+      if (nextDigit < 5n) return decimalPart;
+      if (nextDigit === 5n) return isEvent ? decimalPart : decimalPart + 1n;
+      return decimalPart + 1n;
+    }
+
+    // (7) ROUND_HALF_CEIL
+    // Rounds towards nearest neighbour. If equidistant, rounds towards Infinity
+    if (roundingMode === RoundingMode.ROUND_HALF_CEIL) {
+      if (nextDigit < 5n) return decimalPart;
+      if (nextDigit === 5n) return isPositive ? decimalPart + 1n : decimalPart;
+      return decimalPart + 1n;
+    }
+
+    // (8) ROUND_HALF_FLOOR
+    // Rounds towards nearest neighbour. If equidistant, rounds towards -Infinity
+    if (roundingMode === RoundingMode.ROUND_HALF_FLOOR) {
+      if (nextDigit < 5n) return decimalPart;
+      if (nextDigit === 5n) return isPositive ? decimalPart : decimalPart + 1n;
+      return decimalPart + 1n;
+    }
+
+    throw new Error('Unreachable');
+  }
+
+  /**
+   * Checks if the fraction is an integer
+   */
+  public isInteger(): boolean {
+    return this.numerator % this.denominator === 0n;
+  }
+
+  // /**
+  //  * Finds the recurring decimal part of the Fraction
+  //  *
+  //  * @returns
+  //  *  1. The recurring decimal part of the fraction, if the Fraction is a recurring decimal
+  //  *  2. `undefined`, if the Fraction is not a recurring decimal
+  //  */
+  // private getRecurringDecimal(): string | undefined {
+  //   if (this.isInteger()) return undefined;
+
+  //   const remainderMap = new Map();
+
+  //   let n = this.numerator;
+  //   const d = this.denominator;
+  //   let q = n / d;
+  //   let r = n % d;
+
+  //   let decimal = '';
+
+  //   while (r !== 0n && !remainderMap.has(r)) {
+  //     remainderMap.set(r, decimal.length);
+
+  //     n = r * 10n;
+  //     q = n / d;
+  //     r = n % d;
+  //     decimal += q.toString();
+  //   }
+
+  //   return r !== 0n ? decimal.slice(remainderMap.get(r)) : undefined;
+  // }
+
+  // /**
+  //  * Checks if the fraction is a recurring decimal
+  //  */
+  // private isRecurringDecimal() {
+  //   return this.getRecurringDecimal() !== undefined;
+  // }
 
   /**
    * Converts the fraction to a formatted string representation.

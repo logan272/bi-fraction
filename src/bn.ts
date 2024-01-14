@@ -44,6 +44,7 @@ export enum RoundingMode {
    */
   ROUND_HALF_FLOOR = BigNumberJs.ROUND_HALF_FLOOR,
 }
+
 export const DEFAULT_ROUNDING_MODE = RoundingMode.ROUND_HALF_UP;
 
 export type Format = BigNumberJs.Format;
