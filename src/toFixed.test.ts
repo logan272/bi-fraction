@@ -27,7 +27,10 @@ describe('Fraction.toFixed', () => {
 
     expect(new Fraction(0.6).toFixed(0)).toBe('1');
     expect(new Fraction(0.6666).toFixed(3)).toBe('0.667');
+  });
 
+  it('should handle recurring fraction correctly', () => {
+    // 1/3: 0.333333333333333
     const f1 = new Fraction(1, 3);
     expect(f1.toFixed(0)).toBe('0');
     expect(f1.toFixed(1)).toBe('0.3');
@@ -44,6 +47,35 @@ describe('Fraction.toFixed', () => {
     expect(f2.toFixed(5)).toBe('0.00333');
     expect(f2.toFixed(6)).toBe('0.003333');
     expect(f2.toFixed(100)).toBe('0.00' + '3'.repeat(98));
+
+    // 1/7: 0.14285714285714285
+    const f3 = new Fraction(1, 7);
+    expect(f3.toFixed(0)).toBe('0');
+    expect(f3.toFixed(1)).toBe('0.1');
+    expect(f3.toFixed(2)).toBe('0.14');
+    expect(f3.toFixed(3)).toBe('0.143');
+    expect(f3.toFixed(4)).toBe('0.1429');
+    expect(f3.toFixed(5)).toBe('0.14286');
+    expect(f3.toFixed(6)).toBe('0.142857');
+    expect(f3.toFixed(7)).toBe('0.1428571');
+    expect(f3.toFixed(8)).toBe('0.14285714');
+    expect(f3.toFixed(100)).toBe('0.' + '142857'.repeat(16) + '1429');
+
+    // 1/7000: 0.00014285714285714285
+    const f4 = new Fraction(1, 7000);
+    expect(f4.toFixed(0)).toBe('0');
+    expect(f4.toFixed(1)).toBe('0.0');
+    expect(f4.toFixed(2)).toBe('0.00');
+    expect(f4.toFixed(3)).toBe('0.000');
+    expect(f4.toFixed(4)).toBe('0.0001');
+    expect(f4.toFixed(5)).toBe('0.00014');
+    expect(f4.toFixed(6)).toBe('0.000143');
+    expect(f4.toFixed(7)).toBe('0.0001429');
+    expect(f4.toFixed(8)).toBe('0.00014286');
+    expect(f4.toFixed(9)).toBe('0.000142857');
+    expect(f4.toFixed(10)).toBe('0.0001428571');
+    expect(f4.toFixed(11)).toBe('0.00014285714');
+    expect(f4.toFixed(100)).toBe('0.000' + '142857'.repeat(16) + '1');
   });
 
   it('should convert the fraction to a fixed-point decimal string representation correctly for very large/small number', () => {
@@ -225,7 +257,7 @@ describe('Fraction.toFixed', () => {
     });
   });
 
-  describe('Trailing Zero', () => {
+  describe('trailing zeros', () => {
     it('should have trailing zeros', () => {
       expect(new Fraction('1.4').toFixed(0)).toBe('1');
       expect(new Fraction('1.4').toFixed(1)).toBe('1.4');
