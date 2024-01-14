@@ -213,4 +213,25 @@ describe('bn', () => {
       });
     });
   });
+
+  describe('toPrecision', () => {
+    it('should pass', () => {
+      const B = Bn.clone();
+      expect(B('56').toPrecision(1)).toBe('6e+1');
+      expect(B('56').toPrecision(2)).toBe('56');
+      expect(B('56').toPrecision(3)).toBe('56.0');
+      expect(B('56').toPrecision(5)).toBe('56.000');
+
+      const v1 = B('123456.12345');
+      expect(v1.toPrecision(1)).toBe('1e+5');
+      expect(v1.toPrecision(2)).toBe('1.2e+5');
+      expect(v1.toPrecision(3)).toBe('1.23e+5');
+      expect(v1.toPrecision(4)).toBe('1.235e+5');
+      expect(v1.toPrecision(5)).toBe('1.2346e+5');
+      expect(v1.toPrecision(6)).toBe('123456');
+      expect(v1.toPrecision(7)).toBe('123456.1');
+      expect(v1.toPrecision(8)).toBe('123456.12');
+      expect(v1.toPrecision(100)).toBe('123456.12345' + '0'.repeat(89));
+    });
+  });
 });

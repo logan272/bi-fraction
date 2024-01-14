@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */
 import type BigNumberJs from 'bignumber.js';
 
+import { addSeparators } from './addSeparators';
 import { Bn } from './bn';
 import { gcd } from './gcd';
 import type { NumberIsh } from './types';
@@ -724,49 +725,12 @@ export class Fraction {
       roundingMode: opts?.roundingMode,
     });
 
-    return this.addSeparator(
+    return addSeparators(
       str,
       format.groupSize ?? CONFIG.format.groupSize,
       format.groupSeparator ?? CONFIG.format.groupSeparator,
       format.decimalSeparator ?? CONFIG.format.decimalSeparator,
     );
-  }
-
-  /**
-   * Adds separators to a string representing a number.
-   *
-   * @param str - The string representation of the number.
-   * @param groupSize - The primary grouping size for grouping digits in the integer part.
-   * @param groupSeparator - The character used as the grouping separator in the integer part.
-   * @param decimalSeparator - The character used as the decimal separator.
-   * @returns The string representation of the number with separators added.
-   */
-  protected addSeparator(
-    str: string,
-    groupSize: number,
-    groupSeparator: string,
-    decimalSeparator: string,
-  ): string {
-    const parts = str.split('.');
-    const integerPart = parts[0];
-    const decimalPart = parts[1] || '';
-
-    let formattedIntegerPart = '';
-    let counter = 0;
-
-    for (let i = integerPart.length - 1; i >= 0; i--) {
-      formattedIntegerPart = integerPart[i] + formattedIntegerPart;
-      counter++;
-
-      if (counter === groupSize && i !== 0) {
-        formattedIntegerPart = groupSeparator + formattedIntegerPart;
-        counter = 0;
-      }
-    }
-
-    return decimalPart
-      ? formattedIntegerPart + decimalSeparator + decimalPart
-      : formattedIntegerPart;
   }
 
   /**
