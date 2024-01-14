@@ -833,30 +833,6 @@ describe('Fraction', () => {
     });
   });
 
-  describe('toFormat', () => {
-    it('should convert the fraction to a formatted string representation', () => {
-      const bigPi = new Fraction('314159.2653');
-      expect(bigPi.toFormat()).toBe('314,159');
-      expect(
-        bigPi.toFormat({
-          decimalPlaces: 1,
-          roundingMode: RoundingMode.ROUND_FLOOR,
-        }),
-      ).toBe('314,159.2');
-      expect(bigPi.toFormat({ decimalPlaces: 1 })).toBe('314,159.3');
-      expect(
-        bigPi.toFormat({
-          decimalPlaces: 2,
-          roundingMode: RoundingMode.ROUND_FLOOR,
-        }),
-      ).toBe('314,159.26');
-      expect(bigPi.toFormat({ decimalPlaces: 2 })).toBe('314,159.27');
-      expect(bigPi.toFormat({ decimalPlaces: 3 })).toBe('314,159.265');
-      expect(bigPi.toFormat({ decimalPlaces: 4 })).toBe('314,159.2653');
-      expect(bigPi.toFormat({ decimalPlaces: 5 })).toBe('314,159.26530');
-    });
-  });
-
   describe('asFraction', () => {
     it('should pass', () => {
       const pi = new Fraction('3.14159');

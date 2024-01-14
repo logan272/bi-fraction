@@ -1,4 +1,5 @@
 import { RoundingMode } from './bn';
+import type { ToFixedOption } from './fraction';
 import { Fraction } from './fraction';
 
 describe('Fraction.toFixed', () => {
@@ -243,7 +244,7 @@ describe('Fraction.toFixed', () => {
     });
 
     it('should remove trailing zeros', () => {
-      const opts = { removeTrailingZeros: true };
+      const opts: ToFixedOption = { trailingZeros: false };
       expect(new Fraction('1.4').toFixed(0, opts)).toBe('1');
       expect(new Fraction('1.4').toFixed(1, opts)).toBe('1.4');
       expect(new Fraction('1.4').toFixed(2, opts)).toBe('1.4');

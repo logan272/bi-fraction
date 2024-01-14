@@ -2,19 +2,20 @@
 import type BigNumberJs from 'bignumber.js';
 
 import type { Format } from './bn';
-import { Bn, DEFAULT_FORMAT, DEFAULT_ROUNDING_MODE, RoundingMode } from './bn';
+import { Bn, DEFAULT_ROUNDING_MODE, RoundingMode } from './bn';
 import { gcd } from './gcd';
 import type { NumberIsh } from './types';
 
-type ToFormatOptions = {
+export type ToFormatOptions = {
   decimalPlaces?: number;
   roundingMode?: RoundingMode;
+  trailingZeros?: boolean;
   format?: Format;
 };
 
-type ToFixedOption = {
+export type ToFixedOption = {
   roundingMode?: RoundingMode;
-  removeTrailingZeros?: boolean;
+  trailingZeros?: boolean;
 };
 
 export type FractionIsh = Fraction | NumberIsh;
@@ -446,6 +447,7 @@ export class Fraction {
   public toFixed(decimalPlaces = 0, opts?: ToFixedOption): string {
     if (decimalPlaces < 0) throw new Error('invalid decimalPlaces');
     const roundingMode = opts?.roundingMode ?? DEFAULT_ROUNDING_MODE;
+    const trailingZeros = opts?.trailingZeros ?? true;
 
     const abs = this.abs();
     const d = abs.denominator;
@@ -466,7 +468,7 @@ export class Fraction {
     let carry = 0n;
 
     if (decimalPartStr.length < decimalPlaces) {
-      if (!opts?.removeTrailingZeros) {
+      if (trailingZeros) {
         decimalPartStr = decimalPartStr.padEnd(decimalPlaces, '0');
       }
     } else {
@@ -638,16 +640,47 @@ export class Fraction {
    * @returns The formatted string representation of the fraction.
    */
   public toFormat(opts?: ToFormatOptions): string {
-    const decimalPlaces = opts?.decimalPlaces ?? 0;
-    const roundingMode = opts?.roundingMode ?? DEFAULT_ROUNDING_MODE;
     const format = opts?.format ?? {};
 
-    return Bn(this.numerator.toString())
-      .div(this.denominator.toString())
-      .toFormat(decimalPlaces, roundingMode as BigNumberJs.RoundingMode, {
-        ...DEFAULT_FORMAT,
-        ...format,
-      });
+    const str = this.toFixed(opts?.decimalPlaces, {
+      trailingZeros: opts?.trailingZeros,
+      roundingMode: opts?.roundingMode,
+    });
+
+    return this.addSeparator(
+      str,
+      format.groupSize ?? 3,
+      format.groupSeparator ?? ',',
+      format.decimalSeparator ?? '.',
+    );
+  }
+
+  private addSeparator(
+    str: string,
+    groupSize: number,
+    groupSeparator: string,
+    decimalSeparator: string,
+  ): string {
+    const parts = str.split('.');
+    const integerPart = parts[0];
+    const decimalPart = parts[1] || '';
+
+    let formattedIntegerPart = '';
+    let counter = 0;
+
+    for (let i = integerPart.length - 1; i >= 0; i--) {
+      formattedIntegerPart = integerPart[i] + formattedIntegerPart;
+      counter++;
+
+      if (counter === groupSize && i !== 0) {
+        formattedIntegerPart = groupSeparator + formattedIntegerPart;
+        counter = 0;
+      }
+    }
+
+    return decimalPart
+      ? formattedIntegerPart + decimalSeparator + decimalPart
+      : formattedIntegerPart;
   }
 
   /**
