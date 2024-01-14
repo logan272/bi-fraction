@@ -38,37 +38,57 @@ export class Fraction {
   private static parse(value: FractionIsh): [bigint, bigint] {
     if (value instanceof Fraction) return [value.numerator, value.denominator];
     if (typeof value === 'bigint') return [value, 1n];
+    if (typeof value === 'number' && Number.isInteger(value))
+      return [BigInt(value), 1n];
 
     const n = Number(value);
+
     if (Number.isNaN(n))
       throw new Error(`Cannot convert ${value} to a Fraction`);
-    if (Number.isInteger(n)) return [BigInt(n), 1n];
+    if (
+      Number.isInteger(n) &&
+      n <= Number.MAX_SAFE_INTEGER &&
+      n >= Number.MAX_SAFE_INTEGER
+    )
+      return [BigInt(n), 1n];
 
-    const bn = Bn(value);
-    const parts = bn.toFixed().split('.');
-    const [integerPart, decimalPart] = parts;
+    const s = typeof value === 'string' ? value.trim() : value.toString();
+    // `s` may be an unsafe integer, e.g. s >= Number.MAX_SAFE_INTEGER or s <= Number.MIN_SAFE_INTEGER
+    // '9007199254740992'
+    // '-9007199254740992'
+    // '1000000000000000000'
+    // '-1000000000000000000'
+    //
+    // `s` may has scientific notation
+    //
+    // '1e25'                     => '1e25'
+    // '-1e25'                    => '-1e25'
+    // '1e+25'                    => '1e+25'
+    // '1.01e25'                  => '1.01e25'
+    // '1.01e-25'                 => '1.01e-25'
+    // (0.0000001).toString()     => '1e-7'
+    // (0.0000000001).toString()  => '1e-10'
+    // (0.0000001001).toString()  => '1.001e-7'
 
-    const decimalPlaces = BigInt(decimalPart.length);
-    const denominator = 10n ** decimalPlaces;
-    let numerator = BigInt(integerPart) * denominator + BigInt(decimalPart);
+    const sign = n > 0 ? 1n : -1n;
+    const [base, power] = s.split('e');
+    const [integer, decimal = ''] = base.split('.');
+    let denominator = 10n ** BigInt(decimal.length);
+    let numerator = BigInt(integer);
+    numerator = numerator >= 0n ? numerator : -numerator;
+    numerator = sign * (numerator * denominator + BigInt(decimal));
 
-    if (numerator > 0n && bn.isNegative()) numerator *= -1n;
+    if (power) {
+      const p = BigInt(power);
+
+      if (p >= 0n) {
+        numerator *= 10n ** p;
+      } else {
+        denominator *= 10n ** -p;
+      }
+    }
 
     return [numerator, denominator];
-  }
-
-  /**
-   * Tries to parse the given value as a BigInt.
-   * @param value - The value to parse as a BigInt. Accepts numbers, strings, or native BigInts.
-   * @returns The parsed BigInt value, or undefined if `value` is not a BigIntIsh.
-   */
-  private static tryParseBigInt(value: NumberIsh): bigint | undefined {
-    if (typeof value === 'bigint') return value;
-
-    const n = Number(value);
-    if (Number.isInteger(n)) return BigInt(n);
-
-    return undefined;
   }
 
   /**
@@ -98,14 +118,6 @@ export class Fraction {
       if (numerator instanceof Fraction) {
         this.numerator = numerator.numerator;
         this.denominator = numerator.denominator;
-        return;
-      }
-
-      const n = Fraction.tryParseBigInt(numerator);
-
-      if (n !== undefined) {
-        this.numerator = n;
-        this.denominator = 1n;
         return;
       }
     }
@@ -169,8 +181,8 @@ export class Fraction {
   public abs(): Fraction {
     if (this.isZero()) return this;
 
-    if (this.numerator * this.denominator < 0) {
-      if (this.numerator < 0) {
+    if (this.numerator * this.denominator < 0n) {
+      if (this.numerator < 0n) {
         return new Fraction(-this.numerator, this.denominator);
       } else {
         return new Fraction(this.numerator, -this.denominator);
@@ -186,7 +198,7 @@ export class Fraction {
    * @returns A new Fraction instance representing the expanded fraction.
    */
   public expandDecimals(decimals: number): Fraction {
-    return this.mul(10 ** decimals);
+    return this.mul(10n ** BigInt(decimals));
   }
 
   /**
@@ -195,7 +207,7 @@ export class Fraction {
   @return A new Fraction instance representing the normalized fraction.
    */
   public normalizeDecimals(decimals: number): Fraction {
-    return this.div(10 ** decimals);
+    return this.div(10n ** BigInt(decimals));
   }
 
   /**

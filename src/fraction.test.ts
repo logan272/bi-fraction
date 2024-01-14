@@ -113,6 +113,10 @@ describe('Fraction', () => {
       const f4 = new Fraction('100.0');
       expect(f4.numerator).toBe(100n);
       expect(f4.denominator).toBe(1n);
+
+      const f5 = new Fraction('100.0000');
+      expect(f5.numerator).toBe(100n);
+      expect(f5.denominator).toBe(1n);
     });
 
     it('should parse a decimal with trailing zeros correctly', () => {
@@ -129,14 +133,80 @@ describe('Fraction', () => {
       expect(f3.denominator).toBe(100n);
     });
 
-    it('should be able to parse scientific notation', () => {
+    it('should be able to parse scientific notation of integers as expected', () => {
       expect(new Fraction('1e3').eq(1e3)).toBe(true);
+      expect(new Fraction('-1e3').eq(-1e3)).toBe(true);
       expect(new Fraction('1e6').eq(1e6)).toBe(true);
-      expect(new Fraction('10e10').eq(10e10)).toBe(true);
-      expect(new Fraction('3e+24').eq(3e24)).toBe(true);
+      expect(new Fraction('1e10').eq(1e10)).toBe(true);
+
+      // Number.MAX_SAFE_INTEGER: 9007199254740991
+      // 1e15 < Number.MAX_SAFE_INTEGER < 1e16
+
+      // not eq cause 3e24 loses precision at runtime
+      expect(new Fraction('3e+24').eq(3e24)).toBe(false);
+      expect(new Fraction('3e+24').eq(new Fraction('3e+24'))).toBe(true);
       expect(
+        // not eq cause 3.0000000000000005e21 loses precision at runtime
         new Fraction('3.0000000000000005e+21').eq(3.0000000000000005e21),
+      ).toBe(false);
+
+      // it will lose precision at runtime
+      // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
+      expect(9007199254740992 === 9007199254740993).toBe(true);
+
+      expect(
+        // it won't cause precision loss with strings
+        new Fraction('9007199254740992').eq(new Fraction('9007199254740993')),
+      ).toBe(false);
+
+      expect(
+        // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
+        new Fraction(9007199254740992).eq(new Fraction(9007199254740993)),
       ).toBe(true);
+    });
+
+    it('should be able to parse scientific notation of decimals as expected', () => {
+      expect(new Fraction(0.0000001).toFixed(7)).toBe('0.0000001');
+      expect(new Fraction('0.0000001').eq(new Fraction(0.0000001))).toBe(true);
+      expect(new Fraction('0.0000001').eq(new Fraction('1e-7'))).toBe(true);
+      expect(new Fraction('0.000000101').eq(new Fraction('1.01e-7'))).toBe(
+        true,
+      );
+
+      expect(
+        new Fraction('1.000_000_101'.replace(/_/g, '')).eq(1.000_000_101),
+      ).toBe(true);
+
+      expect(
+        new Fraction('1_000_000.000_000_101'.replace(/_/g, '')).eq(
+          1_000_000.000_000_101,
+        ),
+      ).toBe(true);
+
+      // not equal cause precision loss at runtime
+      expect(
+        new Fraction('100_000_000.000_000_101'.replace(/_/g, '')).eq(
+          // This number literal will lose precision at runtime
+          // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
+          100_000_000.000_000_101,
+        ),
+      ).toBe(false);
+
+      // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
+      expect(100_000_000.000_000_101 === 100_000_000.000_000_102).toBe(true);
+
+      // equal cause precision loss at runtime
+      expect(
+        // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
+        new Fraction(100_000_000.000_000_101).eq(100_000_000.000_000_102),
+      ).toBe(true);
+
+      // it won't cause precision loss with strings
+      expect(
+        new Fraction('100_000_000.000_000_101'.replace(/_/g, '')).eq(
+          '100_000_000.000_000_102'.replace(/_/g, ''),
+        ),
+      ).toBe(false);
     });
 
     it('should throw when parsing an invalid numeric string', () => {
