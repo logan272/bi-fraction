@@ -35,11 +35,13 @@ describe('Fraction', () => {
       expect(z.toFixed(2)).toBe('1523990.25');
       expect(z.toFixed(3)).toBe('1523990.250');
 
-      expect(z.toSignificant(4)).toBe('1524000');
-      expect(z.toSignificant(4, RoundingMode.ROUND_DOWN)).toBe('1523000');
-      expect(z.toSignificant(9)).toBe('1523990.25');
-      expect(z.toSignificant(18)).toBe('1523990.25');
-      expect(z.toSignificant(100)).toBe('1523990.25');
+      expect(z.toPrecision(4)).toBe('1524000');
+      expect(z.toPrecision(4, { roundingMode: RoundingMode.ROUND_DOWN })).toBe(
+        '1523000',
+      );
+      expect(z.toPrecision(9)).toBe('1523990.25');
+      expect(z.toPrecision(18)).toBe('1523990.25' + '0'.repeat(9));
+      expect(z.toPrecision(100)).toBe('1523990.25' + '0'.repeat(91));
 
       expect(z.toFormat({ decimalPlaces: 0 })).toBe('1,523,990');
       expect(z.toFormat({ decimalPlaces: 0, format: { groupSize: 4 } })).toBe(
@@ -441,8 +443,8 @@ describe('Fraction', () => {
       const f5 = new Fraction('3.14');
       expect(f5.remainder.toFixed(2)).toBe('0.14');
       expect(f5.remainder.toFixed(4)).toBe('0.1400');
-      expect(f5.remainder.toSignificant(2)).toBe('0.14');
-      expect(f5.remainder.toSignificant(4)).toBe('0.14');
+      expect(f5.remainder.toPrecision(2)).toBe('0.14');
+      expect(f5.remainder.toPrecision(4)).toBe('0.1400');
     });
   });
 
@@ -790,45 +792,45 @@ describe('Fraction', () => {
   describe('toSignificant', () => {
     it('should convert to an string with the specified significant digits', () => {
       const f1 = new Fraction('12345.67890');
-      expect(f1.toSignificant(12)).toBe('12345.6789');
-      expect(f1.toSignificant(12)).toBe('12345.6789');
-      expect(f1.toSignificant(9)).toBe('12345.6789');
-      expect(f1.toSignificant(8, RoundingMode.ROUND_HALF_UP)).toBe('12345.679');
-      expect(f1.toSignificant(8, RoundingMode.ROUND_FLOOR)).toBe('12345.678');
-      expect(f1.toSignificant(5, RoundingMode.ROUND_FLOOR)).toBe('12345');
-      expect(f1.toSignificant(2, RoundingMode.ROUND_FLOOR)).toBe('12000');
+      expect(f1.toPrecision(12)).toBe('12345.6789'.padEnd(13, '0'));
+      expect(f1.toPrecision(9)).toBe('12345.6789'.padEnd(10, '0'));
+      expect(
+        f1.toPrecision(8, { roundingMode: RoundingMode.ROUND_HALF_UP }),
+      ).toBe('12345.679');
+      expect(
+        f1.toPrecision(8, { roundingMode: RoundingMode.ROUND_FLOOR }),
+      ).toBe('12345.678');
+      expect(
+        f1.toPrecision(5, { roundingMode: RoundingMode.ROUND_FLOOR }),
+      ).toBe('12345');
+      expect(
+        f1.toPrecision(2, { roundingMode: RoundingMode.ROUND_FLOOR }),
+      ).toBe('12000');
     });
 
     it('should throw if significantDigits <= 0', () => {
       const f1 = new Fraction(123);
-      expect(() => f1.toSignificant(0)).toThrow();
-      expect(() => f1.toSignificant(-100)).toThrow();
+      expect(() => f1.toPrecision(0)).toThrow();
+      expect(() => f1.toPrecision(-100)).toThrow();
     });
 
     it('should convert to an string with the specified significant digits for very large/small number', () => {
-      const large = '12345678901234567890';
+      const large = '12_345_678_901_234_567_890'.replace(/_/g, '');
       const f1 = new Fraction(large);
-      expect(f1.toSignificant(12)).toBe(
-        '123456789012'.padEnd(large.length, '0'),
-      );
-      expect(f1.toSignificant(10)).toBe('123456789'.padEnd(large.length, '0'));
-      expect(f1.toSignificant(2)).toBe('12'.padEnd(large.length, '0'));
+      expect(f1.toPrecision(12)).toBe('123456789012'.padEnd(large.length, '0'));
+      expect(f1.toPrecision(10)).toBe('123456789'.padEnd(large.length, '0'));
+      expect(f1.toPrecision(2)).toBe('12'.padEnd(large.length, '0'));
 
-      const huge = '12345678901234567890123';
+      const huge = '12_345_678_901_234_567_890_123'.replace(/_/g, '');
       const f2 = new Fraction(huge);
-      expect(f2.toSignificant(12)).toBe('1.23456789012e+22');
-      expect(f2.toSignificant(2)).toBe('1.2e+22');
+      expect(f2.toPrecision(12)).toBe('123456789012'.padEnd(huge.length, '0'));
+      expect(f2.toPrecision(2)).toBe('12'.padEnd(huge.length, '0'));
 
-      const small = '1.2345678901234567890';
+      const small = '1.2_345_678_901_234_567_890'.replace(/_/g, '');
       const f3 = new Fraction(small);
-      expect(f3.toSignificant(20)).toBe('1.234567890123456789');
-      expect(f3.toSignificant(12)).toBe('1.23456789012');
-      expect(f3.toSignificant(12)).toBe('1.23456789012');
-      expect(f3.toSignificant(2)).toBe('1.2');
-
-      const withMoreThan21DecimalPlaces = '1.23456789012345678901234567890';
-      const f4 = new Fraction(withMoreThan21DecimalPlaces);
-      expect(f4.toSignificant(100)).toBe('1.23456789012345678901');
+      expect(f3.toPrecision(20)).toBe('1.234567890123456789'.padEnd(21, '0'));
+      expect(f3.toPrecision(12)).toBe('1.23456789012'.padEnd(13, '0'));
+      expect(f3.toPrecision(2)).toBe('1.2');
     });
   });
 

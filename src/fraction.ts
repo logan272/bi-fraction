@@ -1,10 +1,9 @@
 /* eslint-disable max-lines */
-import type BigNumberJs from 'bignumber.js';
 
 import { addSeparators } from './addSeparators';
-import { Bn } from './bn';
 import { gcd } from './gcd';
 import { toFixed } from './toFixed';
+import { toPrecision } from './toPrecision';
 import type { NumberIsh } from './types';
 
 export enum RoundingMode {
@@ -52,9 +51,6 @@ export enum RoundingMode {
   ROUND_HALF_FLOOR = 8,
 }
 
-export type ToFormatOptions = Config;
-export type ToFixedOption = Pick<Config, 'roundingMode' | 'trailingZeros'>;
-
 type Config = {
   decimalPlaces?: number;
   roundingMode?: RoundingMode;
@@ -83,7 +79,11 @@ const CONFIG = {
   },
 } as const;
 
+export type ToFormatOption = Config;
+export type ToFixedOption = Pick<Config, 'roundingMode' | 'trailingZeros'>;
+export type ToPrecisionOption = Pick<Config, 'roundingMode'>;
 export type FractionIsh = Fraction | NumberIsh;
+
 export class Fraction {
   // Fraction constants
   public static readonly ZERO = new Fraction(0);
@@ -124,6 +124,7 @@ export class Fraction {
       return [BigInt(n), 1n];
 
     const s = typeof value === 'string' ? value.trim() : value.toString();
+
     // `s` may be an unsafe integer, e.g. s >= Number.MAX_SAFE_INTEGER or s <= Number.MIN_SAFE_INTEGER
     // '9007199254740992'
     // '-9007199254740992'
@@ -440,52 +441,21 @@ export class Fraction {
     );
   }
 
-  /**
-   * Converts the fraction to a Javascript number.
-   *
-   * ```ts
-   * x = new Fraction('45987349857634085409857349856430985')
-   * x.toNumber()                    // 4.598734985763409e+34
-   *
-   * y = new Fraction(456.789)
-   * y.toNumber()                    // 456.789
-   * ```
-   * @returns The number representation of the fraction.
-   */
-  public toNumber(): number {
-    return Bn(this.numerator.toString())
-      .div(this.denominator.toString())
-      .toNumber();
-  }
-
-  /**
-   * Returns a string whose value is the value of this Fraction rounded to a precision of
-   * `significantDigits` significant digits using rounding mode `roundingMode`.
-   *
-   * If `roundingMode` is omitted or is `null` or `undefined`, `ROUNDING_MODE` will be used.
-   *
-   *
-   * ```ts
-   * x = new Fraction.parse('9876.54321')
-   * x.precision(6)                         // '9876.54'
-   * x.precision(6, BigNumber.ROUND_UP)     // '9876.55'
-   * x.precision(2)                         // '9900'
-   * x.precision(2, 1)                      // '9800'
-   * x                                      // '9876.54321'
-   * ```
-   *
-   * @param significantDigits Significant digits, integer, 1 to 1e+9.
-   * @param [roundingMode] `BigNumberJs.RoundingMode`.
-   * @throws If `significantDigits` or `roundingMode` is invalid.
-   */
-  public toSignificant(
+  public toPrecision(
     significantDigits: number,
-    roundingMode: RoundingMode = CONFIG.roundingMode,
+    opts?: ToPrecisionOption,
   ): string {
-    return Bn(this.numerator.toString())
-      .div(this.denominator.toString())
-      .precision(significantDigits, roundingMode as BigNumberJs.RoundingMode)
-      .toString();
+    if (significantDigits <= 0)
+      throw new Error(`'significantDigits' must be a  >= 1 integer.`);
+
+    const roundingMode = opts?.roundingMode ?? CONFIG.roundingMode;
+
+    return toPrecision({
+      numerator: this.numerator,
+      denominator: this.denominator,
+      significantDigits,
+      roundingMode,
+    });
   }
 
   /**
@@ -516,7 +486,7 @@ export class Fraction {
    * @param opts.format - The format to apply. (optional)
    * @returns The formatted string representation of the fraction.
    */
-  public toFormat(opts?: ToFormatOptions): string {
+  public toFormat(opts?: ToFormatOption): string {
     const format = opts?.format ?? {};
 
     const str = this.toFixed(opts?.decimalPlaces, {

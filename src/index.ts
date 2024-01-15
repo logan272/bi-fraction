@@ -3,6 +3,6 @@ export {
   FractionIsh,
   RoundingMode,
   ToFixedOption,
-  ToFormatOptions,
+  ToFormatOption as ToFormatOptions,
 } from './fraction';
 export { isValidNumberIsh, NumberIsh } from './types';
