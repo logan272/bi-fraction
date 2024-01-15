@@ -41,9 +41,6 @@
   "lint-staged": {
     "*.{ts,tsx}": "eslint --fix"
   },
-  "dependencies": {
-    "bignumber.js": "^9.1.2"
-  },
   "devDependencies": {
     "@types/jest": "^29.5.11",
     "@types/node": "^20.10.4",

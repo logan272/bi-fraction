@@ -1,8 +1,22 @@
 [![npm version](https://badge.fury.io/js/bi-fraction.svg)](https://badge.fury.io/js/bi-fraction)
 
-# bi-fraction
+## Introduce
 
-bi-fraction is a lightweight and efficient library for working with fraction numbers. Built on top of Native JavaScript BigInt, it provides a simple and reliable solution for handling fractions with arbitrary precision and magnitude.
+bi-fraction library provides fraction number abstraction for working with numbers in Javascript.
+
+### Accuracy
+
+One significant benefit of using BigInt with the Fraction abstraction is that it eliminates the need for rounding for rational numbers. You can perform mathematical operations on fractions without losing any precision. The ensures that all rational number math operations are exact, allowing you to maintain the highest level of accuracy.
+
+### Arbitrary Precision
+
+When doing math operations that produce irrational numbers or when converting a Fraction to other representations (such as strings or numbers), bi-fraction offers the "arbitrary precision and magnitude" feature. This means that you have the freedom to specify the desired precision, enabling you to obtain as many precision as needed.
+
+### Rounding Considerations
+
+bi-fraction support the same 8 rounding modes as in bignumber.js or decimal.js. But in contrast to the other libraries, bi-fraction is built on top of native JS bigint. bi-fraction excels at representing rational numbers without requiring rounding in basic arithmetic operations (`add`, `subtract`, `multiply`, `divide`). Since rational numbers can be represented precisely with fraction numbers. Rounding is only necessary when performing operations that produce irrational numbers (e.g., sqrt, sin, cos, ...) or when converting fractions to other representations (such as strings or numbers).
+
+###
 
 [API Doc](https://logan272.github.io/bi-fraction/api/)
 
@@ -11,6 +25,9 @@ bi-fraction is a lightweight and efficient library for working with fraction num
 ```sh
 # install with npm
 npm install bi-fraction
+
+# install with yarn
+yarn add bi-fraction
 
 # install with pnpm
 pnpm add bi-fraction
@@ -22,6 +39,10 @@ import { Fraction, RoundingMode } from 'bi-fraction';
 
 0.1 + 0.2 === 0.3; // false
 new Fraction(0.1).add(0.2).eq(0.3); // true
+
+1e18 + 1 === 1e18; // true
+new Fraction(1e18).add(1).eq(1e18); // false
+new Fraction('1e18').add(1).eq('1e18'); // false
 
 // new Fraction(numerator: FractionIsh, denominator?: FractionIsh = 1)
 const a = new Fraction('0.1');
@@ -43,7 +64,7 @@ bigNumber
   .mul(bigInteger)
   .eq(new Fraction(100000000000000000000000000000000010000000001n)); // true
 
-// Fraction.toFixed(decimalPlaces?: number, roundingMode?: RoundingMode)
+// Fraction.toFixed(decimalPlaces?: number, opts: ToFixedOption)
 const x = new Fraction('1234.5');
 const y = new Fraction(1234.5);
 x.eq(y); // true
@@ -53,14 +74,14 @@ y.toFixed(3); // '1234.500'
 
 const z = x.mul(y); // 1523990.25
 
-// Fraction.toSignificant(decimalPlaces?: number, roundingMode?: RoundingMode)
-z.toSignificant(4); // '1524000'
-z.toSignificant(4, RoundingMode.ROUND_DOWN); // '1523000'
-z.toSignificant(9); // '1523990.25'
-z.toSignificant(18); // '1523990.25'
-z.toSignificant(100); // '1523990.25'
+// Fraction.toPrecision(decimalPlaces?: number, opts)
+z.toPrecision(4); // '1524000'
+z.toPrecision(4, { roundingMode: RoundingMode.ROUND_DOWN }); // '1523000'
+z.toPrecision(9); // '1523990.25'
+z.toPrecision(18); // '1523990.25'
+z.toPrecision(100); // '1523990.25'
 
-// Fraction.toFormat(decimalPlaces?: number, roundingMode?: RoundingMode, format?: Format)
+// Fraction.toFormat(opts: ToFormatOption)
 z.toFormat({ decimalPlaces: 0 }); // '1,523,990';
 z.toFormat({ decimalPlaces: 0, format: { groupSize: 4 } }); // '152,3990'
 z.toFormat({ decimalPlaces: 0, { groupSeparator: '_' }}); // '1_523_990'

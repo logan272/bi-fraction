@@ -1,6 +1,5 @@
 /* eslint-disable max-lines */
-import { RoundingMode } from './bn';
-import { Fraction } from './fraction';
+import { Fraction, RoundingMode } from './fraction';
 
 describe('Fraction', () => {
   describe('Getting Started', () => {
@@ -22,7 +21,9 @@ describe('Fraction', () => {
 
       expect(x.eq(y)).toBe(true);
       expect(x.toFixed(0)).toBe('1235');
-      expect(x.toFixed(0, RoundingMode.ROUND_DOWN)).toBe('1234');
+      expect(x.toFixed(0, { roundingMode: RoundingMode.ROUND_DOWN })).toBe(
+        '1234',
+      );
       expect(x.toFixed(2)).toBe('1234.50');
       expect(y.toFixed(2)).toBe('1234.50');
       expect(y.toFixed(3)).toBe('1234.500');
@@ -34,11 +35,13 @@ describe('Fraction', () => {
       expect(z.toFixed(2)).toBe('1523990.25');
       expect(z.toFixed(3)).toBe('1523990.250');
 
-      expect(z.toSignificant(4)).toBe('1524000');
-      expect(z.toSignificant(4, RoundingMode.ROUND_DOWN)).toBe('1523000');
-      expect(z.toSignificant(9)).toBe('1523990.25');
-      expect(z.toSignificant(18)).toBe('1523990.25');
-      expect(z.toSignificant(100)).toBe('1523990.25');
+      expect(z.toPrecision(4)).toBe('1524000');
+      expect(z.toPrecision(4, { roundingMode: RoundingMode.ROUND_DOWN })).toBe(
+        '1523000',
+      );
+      expect(z.toPrecision(9)).toBe('1523990.25');
+      expect(z.toPrecision(18)).toBe('1523990.25' + '0'.repeat(9));
+      expect(z.toPrecision(100)).toBe('1523990.25' + '0'.repeat(91));
 
       expect(z.toFormat({ decimalPlaces: 0 })).toBe('1,523,990');
       expect(z.toFormat({ decimalPlaces: 0, format: { groupSize: 4 } })).toBe(
@@ -113,6 +116,10 @@ describe('Fraction', () => {
       const f4 = new Fraction('100.0');
       expect(f4.numerator).toBe(100n);
       expect(f4.denominator).toBe(1n);
+
+      const f5 = new Fraction('100.0000');
+      expect(f5.numerator).toBe(100n);
+      expect(f5.denominator).toBe(1n);
     });
 
     it('should parse a decimal with trailing zeros correctly', () => {
@@ -129,14 +136,80 @@ describe('Fraction', () => {
       expect(f3.denominator).toBe(100n);
     });
 
-    it('should be able to parse scientific notation', () => {
+    it('should be able to parse scientific notation of integers as expected', () => {
       expect(new Fraction('1e3').eq(1e3)).toBe(true);
+      expect(new Fraction('-1e3').eq(-1e3)).toBe(true);
       expect(new Fraction('1e6').eq(1e6)).toBe(true);
-      expect(new Fraction('10e10').eq(10e10)).toBe(true);
-      expect(new Fraction('3e+24').eq(3e24)).toBe(true);
+      expect(new Fraction('1e10').eq(1e10)).toBe(true);
+
+      // Number.MAX_SAFE_INTEGER: 9007199254740991
+      // 1e15 < Number.MAX_SAFE_INTEGER < 1e16
+
+      // not eq cause 3e24 loses precision at runtime
+      expect(new Fraction('3e+24').eq(3e24)).toBe(false);
+      expect(new Fraction('3e+24').eq(new Fraction('3e+24'))).toBe(true);
       expect(
+        // not eq cause 3.0000000000000005e21 loses precision at runtime
         new Fraction('3.0000000000000005e+21').eq(3.0000000000000005e21),
+      ).toBe(false);
+
+      // it will lose precision at runtime
+      // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
+      expect(9007199254740992 === 9007199254740993).toBe(true);
+
+      expect(
+        // it won't cause precision loss with strings
+        new Fraction('9007199254740992').eq(new Fraction('9007199254740993')),
+      ).toBe(false);
+
+      expect(
+        // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
+        new Fraction(9007199254740992).eq(new Fraction(9007199254740993)),
       ).toBe(true);
+    });
+
+    it('should be able to parse scientific notation of decimals as expected', () => {
+      expect(new Fraction(0.0000001).toFixed(7)).toBe('0.0000001');
+      expect(new Fraction('0.0000001').eq(new Fraction(0.0000001))).toBe(true);
+      expect(new Fraction('0.0000001').eq(new Fraction('1e-7'))).toBe(true);
+      expect(new Fraction('0.000000101').eq(new Fraction('1.01e-7'))).toBe(
+        true,
+      );
+
+      expect(
+        new Fraction('1.000_000_101'.replace(/_/g, '')).eq(1.000_000_101),
+      ).toBe(true);
+
+      expect(
+        new Fraction('1_000_000.000_000_101'.replace(/_/g, '')).eq(
+          1_000_000.000_000_101,
+        ),
+      ).toBe(true);
+
+      // not equal cause precision loss at runtime
+      expect(
+        new Fraction('100_000_000.000_000_101'.replace(/_/g, '')).eq(
+          // This number literal will lose precision at runtime
+          // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
+          100_000_000.000_000_101,
+        ),
+      ).toBe(false);
+
+      // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
+      expect(100_000_000.000_000_101 === 100_000_000.000_000_102).toBe(true);
+
+      // equal cause precision loss at runtime
+      expect(
+        // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
+        new Fraction(100_000_000.000_000_101).eq(100_000_000.000_000_102),
+      ).toBe(true);
+
+      // it won't cause precision loss with strings
+      expect(
+        new Fraction('100_000_000.000_000_101'.replace(/_/g, '')).eq(
+          '100_000_000.000_000_102'.replace(/_/g, ''),
+        ),
+      ).toBe(false);
     });
 
     it('should throw when parsing an invalid numeric string', () => {
@@ -370,8 +443,8 @@ describe('Fraction', () => {
       const f5 = new Fraction('3.14');
       expect(f5.remainder.toFixed(2)).toBe('0.14');
       expect(f5.remainder.toFixed(4)).toBe('0.1400');
-      expect(f5.remainder.toSignificant(2)).toBe('0.14');
-      expect(f5.remainder.toSignificant(4)).toBe('0.14');
+      expect(f5.remainder.toPrecision(2)).toBe('0.14');
+      expect(f5.remainder.toPrecision(4)).toBe('0.1400');
     });
   });
 
@@ -719,107 +792,45 @@ describe('Fraction', () => {
   describe('toSignificant', () => {
     it('should convert to an string with the specified significant digits', () => {
       const f1 = new Fraction('12345.67890');
-      expect(f1.toSignificant(12)).toBe('12345.6789');
-      expect(f1.toSignificant(12)).toBe('12345.6789');
-      expect(f1.toSignificant(9)).toBe('12345.6789');
-      expect(f1.toSignificant(8, RoundingMode.ROUND_HALF_UP)).toBe('12345.679');
-      expect(f1.toSignificant(8, RoundingMode.ROUND_FLOOR)).toBe('12345.678');
-      expect(f1.toSignificant(5, RoundingMode.ROUND_FLOOR)).toBe('12345');
-      expect(f1.toSignificant(2, RoundingMode.ROUND_FLOOR)).toBe('12000');
+      expect(f1.toPrecision(12)).toBe('12345.6789'.padEnd(13, '0'));
+      expect(f1.toPrecision(9)).toBe('12345.6789'.padEnd(10, '0'));
+      expect(
+        f1.toPrecision(8, { roundingMode: RoundingMode.ROUND_HALF_UP }),
+      ).toBe('12345.679');
+      expect(
+        f1.toPrecision(8, { roundingMode: RoundingMode.ROUND_FLOOR }),
+      ).toBe('12345.678');
+      expect(
+        f1.toPrecision(5, { roundingMode: RoundingMode.ROUND_FLOOR }),
+      ).toBe('12345');
+      expect(
+        f1.toPrecision(2, { roundingMode: RoundingMode.ROUND_FLOOR }),
+      ).toBe('12000');
     });
 
     it('should throw if significantDigits <= 0', () => {
       const f1 = new Fraction(123);
-      expect(() => f1.toSignificant(0)).toThrow();
-      expect(() => f1.toSignificant(-100)).toThrow();
+      expect(() => f1.toPrecision(0)).toThrow();
+      expect(() => f1.toPrecision(-100)).toThrow();
     });
 
     it('should convert to an string with the specified significant digits for very large/small number', () => {
-      const large = '12345678901234567890';
+      const large = '12_345_678_901_234_567_890'.replace(/_/g, '');
       const f1 = new Fraction(large);
-      expect(f1.toSignificant(12)).toBe(
-        '123456789012'.padEnd(large.length, '0'),
-      );
-      expect(f1.toSignificant(10)).toBe('123456789'.padEnd(large.length, '0'));
-      expect(f1.toSignificant(2)).toBe('12'.padEnd(large.length, '0'));
+      expect(f1.toPrecision(12)).toBe('123456789012'.padEnd(large.length, '0'));
+      expect(f1.toPrecision(10)).toBe('123456789'.padEnd(large.length, '0'));
+      expect(f1.toPrecision(2)).toBe('12'.padEnd(large.length, '0'));
 
-      const huge = '12345678901234567890123';
+      const huge = '12_345_678_901_234_567_890_123'.replace(/_/g, '');
       const f2 = new Fraction(huge);
-      expect(f2.toSignificant(12)).toBe('1.23456789012e+22');
-      expect(f2.toSignificant(2)).toBe('1.2e+22');
+      expect(f2.toPrecision(12)).toBe('123456789012'.padEnd(huge.length, '0'));
+      expect(f2.toPrecision(2)).toBe('12'.padEnd(huge.length, '0'));
 
-      const small = '1.2345678901234567890';
+      const small = '1.2_345_678_901_234_567_890'.replace(/_/g, '');
       const f3 = new Fraction(small);
-      expect(f3.toSignificant(20)).toBe('1.234567890123456789');
-      expect(f3.toSignificant(12)).toBe('1.23456789012');
-      expect(f3.toSignificant(12)).toBe('1.23456789012');
-      expect(f3.toSignificant(2)).toBe('1.2');
-
-      const withMoreThan21DecimalPlaces = '1.23456789012345678901234567890';
-      const f4 = new Fraction(withMoreThan21DecimalPlaces);
-      expect(f4.toSignificant(100)).toBe('1.23456789012345678901');
-    });
-  });
-
-  describe('toFixed', () => {
-    it('should throw if `decimalPlaces < 0`', () => {
-      const pi = new Fraction('3.14159');
-      expect(() => pi.toFixed(-1)).toThrow();
-    });
-
-    it('should convert the fraction to a fixed-point decimal string representation correctly', () => {
-      const pi = new Fraction('3.14159');
-      expect(pi.toFixed()).toBe('3');
-      expect(pi.toFixed(0)).toBe('3');
-      expect(pi.toFixed(1)).toBe('3.1');
-      expect(pi.toFixed(2)).toBe('3.14');
-      expect(pi.toFixed(3)).toBe('3.142');
-      expect(pi.toFixed(3, RoundingMode.ROUND_FLOOR)).toBe('3.141');
-      expect(pi.toFixed(4)).toBe('3.1416');
-      expect(pi.toFixed(4, RoundingMode.ROUND_FLOOR)).toBe('3.1415');
-      expect(pi.toFixed(5)).toBe('3.14159');
-      expect(pi.toFixed(6)).toBe('3.141590');
-      expect(pi.toFixed(7)).toBe('3.1415900');
-    });
-
-    it('should convert the fraction to a fixed-point decimal string representation correctly for very large/small number', () => {
-      const small = '1.2345678901234567890123';
-      const f1 = new Fraction(small);
-      expect(f1.toFixed(12)).toBe('1.234567890123');
-      expect(f1.toFixed(13, RoundingMode.ROUND_FLOOR)).toBe('1.2345678901234');
-      expect(f1.toFixed(13)).toBe('1.2345678901235');
-
-      const withMoreThan21DecimalPlaces = '1.234567890123456789012345';
-      const f2 = new Fraction(withMoreThan21DecimalPlaces);
-      expect(f2.toFixed(20)).toBe('1.23456789012345678901');
-      expect(f2.toFixed(21)).toBe('1.234567890123456789010');
-      expect(f2.toFixed(22)).toBe('1.2345678901234567890100');
-      expect(f2.toFixed(23)).toBe('1.23456789012345678901000');
-      expect(f2.toFixed(24)).toBe('1.234567890123456789010000');
-    });
-  });
-
-  describe('toFormat', () => {
-    it('should convert the fraction to a formatted string representation', () => {
-      const bigPi = new Fraction('314159.2653');
-      expect(bigPi.toFormat()).toBe('314,159');
-      expect(
-        bigPi.toFormat({
-          decimalPlaces: 1,
-          roundingMode: RoundingMode.ROUND_FLOOR,
-        }),
-      ).toBe('314,159.2');
-      expect(bigPi.toFormat({ decimalPlaces: 1 })).toBe('314,159.3');
-      expect(
-        bigPi.toFormat({
-          decimalPlaces: 2,
-          roundingMode: RoundingMode.ROUND_FLOOR,
-        }),
-      ).toBe('314,159.26');
-      expect(bigPi.toFormat({ decimalPlaces: 2 })).toBe('314,159.27');
-      expect(bigPi.toFormat({ decimalPlaces: 3 })).toBe('314,159.265');
-      expect(bigPi.toFormat({ decimalPlaces: 4 })).toBe('314,159.2653');
-      expect(bigPi.toFormat({ decimalPlaces: 5 })).toBe('314,159.26530');
+      expect(f3.toPrecision(20)).toBe('1.234567890123456789'.padEnd(21, '0'));
+      expect(f3.toPrecision(12)).toBe('1.23456789012'.padEnd(13, '0'));
+      expect(f3.toPrecision(2)).toBe('1.2');
     });
   });
 
