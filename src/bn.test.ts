@@ -223,6 +223,7 @@ describe('bn', () => {
       expect(B('56').toPrecision(5)).toBe('56.000');
 
       const v1 = B('123456.12345');
+      expect(v1.toPrecision()).toBe('123456.12345');
       expect(v1.toPrecision(1)).toBe('1e+5');
       expect(v1.toPrecision(2)).toBe('1.2e+5');
       expect(v1.toPrecision(3)).toBe('1.23e+5');
