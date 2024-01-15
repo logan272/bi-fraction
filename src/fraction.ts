@@ -441,23 +441,6 @@ export class Fraction {
     );
   }
 
-  public toPrecision(
-    significantDigits: number,
-    opts?: ToPrecisionOption,
-  ): string {
-    if (significantDigits <= 0)
-      throw new Error(`'significantDigits' must be a  >= 1 integer.`);
-
-    const roundingMode = opts?.roundingMode ?? CONFIG.roundingMode;
-
-    return toPrecision({
-      numerator: this.numerator,
-      denominator: this.denominator,
-      significantDigits,
-      roundingMode,
-    });
-  }
-
   /**
    * Converts the fraction to a fixed-point decimal string representation.
    * @param decimalPlaces - The number of decimal places to include. (default: 0)
@@ -466,7 +449,9 @@ export class Fraction {
    * @returns The fixed-point decimal string representation of the fraction.
    */
   public toFixed(decimalPlaces = 0, opts?: ToFixedOption): string {
-    if (decimalPlaces < 0) throw new Error('invalid decimalPlaces');
+    if (decimalPlaces < 0)
+      throw new Error(`'decimalPlaces' must be a  >= 0 integer.`);
+
     const roundingMode = opts?.roundingMode ?? CONFIG.roundingMode;
     const trailingZeros = opts?.trailingZeros ?? CONFIG.trailingZeros;
 
@@ -476,6 +461,30 @@ export class Fraction {
       decimalPlaces,
       roundingMode,
       trailingZeros,
+    });
+  }
+
+  /**
+   * Converts the fraction to a string representation with the specified significant digits.
+   * @param significantDigits - The number of significant digits in the resulting string representation.
+   * @param opts
+   * @param opts.roundingMode - The rounding mode to be applied.
+   * @returns The string representation of the fraction with the specified number of significant digits.
+   */
+  public toPrecision(
+    significantDigits: number,
+    opts?: ToPrecisionOption,
+  ): string {
+    if (significantDigits < 1)
+      throw new Error(`'significantDigits' must be a  >= 1 integer.`);
+
+    const roundingMode = opts?.roundingMode ?? CONFIG.roundingMode;
+
+    return toPrecision({
+      numerator: this.numerator,
+      denominator: this.denominator,
+      significantDigits,
+      roundingMode,
     });
   }
 

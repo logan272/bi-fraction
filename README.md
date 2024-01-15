@@ -23,6 +23,10 @@ import { Fraction, RoundingMode } from 'bi-fraction';
 0.1 + 0.2 === 0.3; // false
 new Fraction(0.1).add(0.2).eq(0.3); // true
 
+1e18 + 1 === 1e18; // true
+new Fraction(1e18).add(1).eq(1e18); // false
+new Fraction('1e18').add(1).eq('1e18'); // false
+
 // new Fraction(numerator: FractionIsh, denominator?: FractionIsh = 1)
 const a = new Fraction('0.1');
 const b = new Fraction('0.3');
@@ -43,7 +47,7 @@ bigNumber
   .mul(bigInteger)
   .eq(new Fraction(100000000000000000000000000000000010000000001n)); // true
 
-// Fraction.toFixed(decimalPlaces?: number, roundingMode?: RoundingMode)
+// Fraction.toFixed(decimalPlaces?: number, opts: ToFixedOption)
 const x = new Fraction('1234.5');
 const y = new Fraction(1234.5);
 x.eq(y); // true
@@ -53,14 +57,14 @@ y.toFixed(3); // '1234.500'
 
 const z = x.mul(y); // 1523990.25
 
-// Fraction.toSignificant(decimalPlaces?: number, roundingMode?: RoundingMode)
-z.toSignificant(4); // '1524000'
-z.toSignificant(4, RoundingMode.ROUND_DOWN); // '1523000'
-z.toSignificant(9); // '1523990.25'
-z.toSignificant(18); // '1523990.25'
-z.toSignificant(100); // '1523990.25'
+// Fraction.toPrecision(decimalPlaces?: number, opts)
+z.toPrecision(4); // '1524000'
+z.toPrecision(4, { roundingMode: RoundingMode.ROUND_DOWN }); // '1523000'
+z.toPrecision(9); // '1523990.25'
+z.toPrecision(18); // '1523990.25'
+z.toPrecision(100); // '1523990.25'
 
-// Fraction.toFormat(decimalPlaces?: number, roundingMode?: RoundingMode, format?: Format)
+// Fraction.toFormat(opts: ToFormatOption)
 z.toFormat({ decimalPlaces: 0 }); // '1,523,990';
 z.toFormat({ decimalPlaces: 0, format: { groupSize: 4 } }); // '152,3990'
 z.toFormat({ decimalPlaces: 0, { groupSeparator: '_' }}); // '1_523_990'
