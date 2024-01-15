@@ -1,8 +1,22 @@
 [![npm version](https://badge.fury.io/js/bi-fraction.svg)](https://badge.fury.io/js/bi-fraction)
 
-# bi-fraction
+## Introduce
 
-bi-fraction is a lightweight and efficient library for working with fraction numbers. Built on top of Native JavaScript BigInt, it provides a simple and reliable solution for handling fractions with arbitrary precision and magnitude.
+bi-fraction library provides fraction number abstraction for working with numbers in Javascript.
+
+### Accuracy
+
+One significant benefit of using BigInt with the Fraction abstraction is that it eliminates the need for rounding for rational numbers. You can perform mathematical operations on fractions without losing any precision. The ensures that all rational number math operations are exact, allowing you to maintain the highest level of accuracy.
+
+### Arbitrary Precision
+
+When doing math operations that produce irrational numbers or when converting a Fraction to other representations (such as strings or numbers), bi-fraction offers the "arbitrary precision and magnitude" feature. This means that you have the freedom to specify the desired precision, enabling you to obtain as many precision as needed.
+
+### Rounding Considerations
+
+bi-fraction support the same 8 rounding modes as in bignumber.js or decimal.js. But in contrast to the other libraries, bi-fraction is built on top of native JS bigint. bi-fraction excels at representing rational numbers without requiring rounding in basic arithmetic operations (`add`, `subtract`, `multiply`, `divide`). Since rational numbers can be represented precisely with fraction numbers. Rounding is only necessary when performing operations that produce irrational numbers (e.g., sqrt, sin, cos, ...) or when converting fractions to other representations (such as strings or numbers).
+
+###
 
 [API Doc](https://logan272.github.io/bi-fraction/api/)
 
@@ -11,6 +25,9 @@ bi-fraction is a lightweight and efficient library for working with fraction num
 ```sh
 # install with npm
 npm install bi-fraction
+
+# install with yarn
+yarn add bi-fraction
 
 # install with pnpm
 pnpm add bi-fraction
