@@ -2,7 +2,7 @@
 
 ## Introduce
 
-bi-fraction library provides fraction number abstraction for working with numbers in Javascript.
+[bi-fraction](https://github.com/logan272/bi-fraction) provides a fraction number abstraction for working with numbers in Javascript.
 
 ### Accuracy
 
@@ -14,7 +14,7 @@ When doing math operations that produce irrational numbers or when converting a 
 
 ### Rounding Considerations
 
-bi-fraction support the same 8 rounding modes as in bignumber.js or decimal.js. But in contrast to the other libraries, bi-fraction is built on top of native JS bigint. bi-fraction excels at representing rational numbers without requiring rounding in basic arithmetic operations (`add`, `subtract`, `multiply`, `divide`). Since rational numbers can be represented precisely with fraction numbers. Rounding is only necessary when performing operations that produce irrational numbers (e.g., sqrt, sin, cos, ...) or when converting fractions to other representations (such as strings or numbers).
+bi-fraction support the same 9 rounding modes as in [bignumber.js](https://github.com/MikeMcl/bignumber.js) or [decimal.js](https://github.com/MikeMcl/decimal.js). But in contrast to the other libraries, bi-fraction is built on top of native JS bigint. bi-fraction excels at representing rational numbers without requiring rounding in basic arithmetic operations (`add`, `subtract`, `multiply`, `divide`). Since rational numbers can be represented precisely with fraction numbers. Rounding is only necessary when performing operations that produce irrational numbers (e.g., sqrt, sin, cos, ...) or when converting fractions to other representations (such as strings or numbers).
 
 ###
 
