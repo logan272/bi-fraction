@@ -584,6 +584,17 @@ export class Fraction {
    * @param opts.roundingMode - The rounding mode to be applied.
    * @param opts.trailingZeros - Whether to keep the decimal part trailing zeros.
    * @returns The string of exponential representation of the fraction.
+   *
+   * ```ts
+   * new Fraction(0).toExponential() // '0e+0'
+   * new Fraction(0).toExponential(1) // '0.0e+0'
+   * new Fraction('0.0000001234').toExponential(4) // '1.2340e-7'
+   * new Fraction(1234.5678).toExponential(1) // '1.2e+3'
+   * new Fraction(-1234.5678).toExponential(1) // '-1.2e+3'
+   * new Fraction(1234.5678).toExponential(3) // '1.235e+3'
+   * new Fraction(1234.5678).toExponential(5) // '1.23457e+3'
+   * new Fraction(10n ** 100n).toExponential(2) // '1.00e+100'
+   * ```
    */
   toExponential(decimalPlaces = 0, opts?: ToExponentialOptions): string {
     const roundingMode = opts?.roundingMode ?? CONFIG.roundingMode;
