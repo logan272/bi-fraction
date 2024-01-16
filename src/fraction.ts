@@ -52,22 +52,6 @@ export enum RoundingMode {
   ROUND_HALF_FLOOR = 8,
 }
 
-type Config = {
-  decimalPlaces?: number;
-  roundingMode?: RoundingMode;
-  trailingZeros?: boolean;
-  format?: Format;
-};
-
-type Format = {
-  // grouping size of the integer part
-  groupSize?: number;
-  // grouping separator of the integer part
-  groupSeparator?: string;
-  // decimal separator
-  decimalSeparator?: string;
-};
-
 // The default config object
 const CONFIG = {
   decimalPlaces: 0,
@@ -80,13 +64,39 @@ const CONFIG = {
   },
 } as const;
 
-export type ToFormatOptions = Config;
-export type ToFixedOptions = Pick<Config, 'roundingMode' | 'trailingZeros'>;
-export type ToExponentialOptions = Pick<
-  Config,
-  'roundingMode' | 'trailingZeros'
->;
-export type ToPrecisionOptions = Pick<Config, 'roundingMode'>;
+export type ToFormatOptions = {
+  decimalPlaces?: number;
+  roundingMode?: RoundingMode;
+  trailingZeros?: boolean;
+  format?: {
+    /**
+     * grouping size of the integer part
+     **/
+    groupSize?: number;
+    /**
+     * grouping separator of the integer part
+     */
+    groupSeparator?: string;
+    /**
+     * decimal separator
+     */
+    decimalSeparator?: string;
+  };
+};
+
+export type ToFixedOptions = {
+  roundingMode?: RoundingMode;
+  trailingZeros?: boolean;
+};
+
+export type ToExponentialOptions = {
+  roundingMode?: RoundingMode;
+  trailingZeros?: boolean;
+};
+
+export type ToPrecisionOptions = {
+  roundingMode?: RoundingMode;
+};
 
 /**
  * Represents Fraction or NumberIsh. A `NumberIsh` can be converted to a Fraction by calling `new Fraction(numerator: NumberIsh)`
