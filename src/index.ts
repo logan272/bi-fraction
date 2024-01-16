@@ -2,6 +2,7 @@ export {
   Fraction,
   FractionIsh,
   RoundingMode,
+  ToExponentialOptions,
   ToFixedOptions,
   ToFormatOptions,
   ToPrecisionOptions,
