@@ -12,6 +12,10 @@ describe('toPrecision', () => {
     expect(Fraction.ZERO.toPrecision(2)).toBe('0.0');
     expect(Fraction.ZERO.toPrecision(3)).toBe('0.00');
     expect(Fraction.ZERO.toPrecision(4)).toBe('0.000');
+    expect(new Fraction(0).toPrecision(2)).toBe('0.0');
+    expect(new Fraction('0').toPrecision(2)).toBe('0.0');
+    expect(new Fraction('0.0').toPrecision(2)).toBe('0.0');
+    expect(new Fraction('0.000').toPrecision(2)).toBe('0.0');
   });
 
   it('should handle number with zero integer part correct', () => {

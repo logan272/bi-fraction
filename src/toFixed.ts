@@ -22,7 +22,7 @@ export const toFixed = ({
   decimalPlaces: number;
   roundingMode: RoundingMode;
   trailingZeros: boolean;
-}) => {
+}): string => {
   const isPositive = numerator * denominator >= 0n;
   const n = numerator > 0n ? numerator : -numerator;
   const d = denominator > 0n ? denominator : -denominator;
@@ -31,8 +31,8 @@ export const toFixed = ({
   let r = n % d; // reminder
   let carry = 0n;
   let decimalPartStr = '';
-
   let i = 0;
+
   while (r > 0n && i < decimalPlaces) {
     const v = r * 10n;
     decimalPartStr += v / d;
@@ -57,11 +57,11 @@ export const toFixed = ({
 
   const integerPart = q + carry;
 
-  const str = decimalPartStr
+  const s = decimalPartStr
     ? `${integerPart}.${decimalPartStr}`
     : `${integerPart}`;
 
-  return isPositive ? str : `-${str}`;
+  return isPositive ? s : `-${s}`;
 };
 
 // /**

@@ -2,7 +2,8 @@ export {
   Fraction,
   FractionIsh,
   RoundingMode,
-  ToFixedOption,
-  ToFormatOption as ToFormatOptions,
+  ToFixedOptions,
+  ToFormatOptions,
+  ToPrecisionOptions,
 } from './fraction';
 export { isValidNumberIsh, NumberIsh } from './types';

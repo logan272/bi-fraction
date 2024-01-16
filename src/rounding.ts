@@ -30,33 +30,18 @@ export const rounding = ({
   let x: bigint;
 
   if (roundingMode === RoundingMode.ROUND_UP) {
-    // (0) ROUND_UP
-    // Rounds away from zero
     x = decimalPart + 1n;
   } else if (roundingMode === RoundingMode.ROUND_DOWN) {
-    // (1) ROUND_DOWN
-    // Rounds towards from zero
     x = decimalPart;
   } else if (roundingMode === RoundingMode.ROUND_CEIL) {
-    // (2) ROUND_CEIL
-    // Rounds towards Infinity
     x = isPositive ? decimalPart + 1n : decimalPart;
   } else if (roundingMode === RoundingMode.ROUND_FLOOR) {
-    // (3) ROUND_FLOOR
-    // Rounds towards -Infinity
     x = isPositive ? decimalPart : decimalPart + 1n;
   } else if (roundingMode === RoundingMode.ROUND_HALF_UP) {
-    // (4) ROUND_HALF_UP
-    // Rounds towards nearest neighbour. If equidistant, rounds away from zero
     x = nextDigit < 5 ? decimalPart : decimalPart + 1n;
   } else if (roundingMode === RoundingMode.ROUND_HALF_DOWN) {
-    // (5) ROUND_HALF_DOWN
-    // Rounds towards nearest neighbour. If equidistant, rounds towards zero
     x = nextDigit <= 5 ? decimalPart : decimalPart + 1n;
   } else if (roundingMode === RoundingMode.ROUND_HALF_EVEN) {
-    // (6) ROUND_HALF_EVEN
-    // Rounds towards nearest neighbour. If equidistant, rounds towards even neighbour
-    // check if the last digit is event
     const isEvent =
       decimalPlaces === 0 ? integerPart % 2n === 0n : decimalPart % 2n === 0n;
 
@@ -68,8 +53,6 @@ export const rounding = ({
       x = decimalPart + 1n;
     }
   } else if (roundingMode === RoundingMode.ROUND_HALF_CEIL) {
-    // (7) ROUND_HALF_CEIL
-    // Rounds towards nearest neighbour. If equidistant, rounds towards Infinity
     if (nextDigit < 5n) {
       x = decimalPart;
     } else if (nextDigit === 5n) {
@@ -78,8 +61,6 @@ export const rounding = ({
       x = decimalPart + 1n;
     }
   } else {
-    // (8) ROUND_HALF_FLOOR
-    // Rounds towards nearest neighbour. If equidistant, rounds towards -Infinity
     if (nextDigit < 5n) {
       x = decimalPart;
     } else if (nextDigit === 5n) {
@@ -89,12 +70,12 @@ export const rounding = ({
     }
   }
 
-  const factor = 10n ** BigInt(decimalPlaces);
-  const carry = x / factor;
+  const y = 10n ** BigInt(decimalPlaces);
+  const carry = x / y;
 
   let decimalPartStr = '';
   if (decimalPlaces > 0) {
-    decimalPartStr = `${x % factor}`.padStart(decimalPlaces, '0');
+    decimalPartStr = `${x % y}`.padStart(decimalPlaces, '0');
   }
 
   return [carry, decimalPartStr];

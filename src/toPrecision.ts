@@ -48,10 +48,9 @@ export const toPrecision = ({
     });
   }
 
-  const diff = sdc - significantDigits;
-  const factor = 10n ** BigInt(diff);
-  const integerPart = q / factor;
-  const nextDigit = (q % factor) / (factor / 10n);
+  const x = 10n ** BigInt(sdc - significantDigits);
+  const integerPart = q / x;
+  const nextDigit = (q % x) / (x / 10n);
 
   const [carry] = rounding({
     integerPart,
@@ -62,5 +61,5 @@ export const toPrecision = ({
     isPositive,
   });
 
-  return `${(integerPart + carry) * factor}`;
+  return `${(integerPart + carry) * x}`;
 };

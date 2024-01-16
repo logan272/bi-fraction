@@ -8,7 +8,7 @@ import type { NumberIsh } from './types';
 
 export enum RoundingMode {
   /**
-   * Rounds away from zero
+   * Rounds away zero
    */
   ROUND_UP = 0,
   /**
@@ -26,7 +26,7 @@ export enum RoundingMode {
   ROUND_FLOOR = 3,
   /**
    * Rounds towards nearest neighbour.
-   * If equidistant, rounds away from zero
+   * If equidistant, rounds away zero
    */
   ROUND_HALF_UP = 4,
   /**
@@ -79,9 +79,13 @@ const CONFIG = {
   },
 } as const;
 
-export type ToFormatOption = Config;
-export type ToFixedOption = Pick<Config, 'roundingMode' | 'trailingZeros'>;
-export type ToPrecisionOption = Pick<Config, 'roundingMode'>;
+export type ToFormatOptions = Config;
+export type ToFixedOptions = Pick<Config, 'roundingMode' | 'trailingZeros'>;
+export type ToPrecisionOptions = Pick<Config, 'roundingMode'>;
+
+/**
+ * Represents Fraction or NumberIsh. A `NumberIsh` can be converted to a Fraction by calling `new Fraction(numerator: NumberIsh)`
+ */
 export type FractionIsh = Fraction | NumberIsh;
 
 export class Fraction {
@@ -112,55 +116,37 @@ export class Fraction {
     if (typeof value === 'number' && Number.isInteger(value))
       return [BigInt(value), 1n];
 
-    const n = Number(value);
+    const v = Number(value);
 
-    if (Number.isNaN(n))
+    if (Number.isNaN(v))
       throw new Error(`Cannot convert ${value} to a Fraction`);
     if (
-      Number.isInteger(n) &&
-      n <= Number.MAX_SAFE_INTEGER &&
-      n >= Number.MAX_SAFE_INTEGER
+      Number.isInteger(v) &&
+      v <= Number.MAX_SAFE_INTEGER &&
+      v >= Number.MAX_SAFE_INTEGER
     )
-      return [BigInt(n), 1n];
+      return [BigInt(v), 1n];
 
     const s = typeof value === 'string' ? value.trim() : value.toString();
-
-    // `s` may be an unsafe integer, e.g. s >= Number.MAX_SAFE_INTEGER or s <= Number.MIN_SAFE_INTEGER
-    // '9007199254740992'
-    // '-9007199254740992'
-    // '1000000000000000000'
-    // '-1000000000000000000'
-    //
-    // `s` may has scientific notation
-    //
-    // '1e25'                     => '1e25'
-    // '-1e25'                    => '-1e25'
-    // '1e+25'                    => '1e+25'
-    // '1.01e25'                  => '1.01e25'
-    // '1.01e-25'                 => '1.01e-25'
-    // (0.0000001).toString()     => '1e-7'
-    // (0.0000000001).toString()  => '1e-10'
-    // (0.0000001001).toString()  => '1.001e-7'
-
-    const sign = n > 0 ? 1n : -1n;
-    const [base, power] = s.split('e');
+    const sign = v > 0 ? 1n : -1n;
+    const [base, exp] = s.split('e');
     const [integer, decimal = ''] = base.split('.');
-    let denominator = 10n ** BigInt(decimal.length);
-    let numerator = BigInt(integer);
-    numerator = numerator >= 0n ? numerator : -numerator;
-    numerator = sign * (numerator * denominator + BigInt(decimal));
+    let d = 10n ** BigInt(decimal.length);
+    let n = BigInt(integer);
+    n = n >= 0n ? n : -n;
+    n = sign * (n * d + BigInt(decimal));
 
-    if (power) {
-      const p = BigInt(power);
+    if (exp) {
+      const e = BigInt(exp);
 
-      if (p >= 0n) {
-        numerator *= 10n ** p;
+      if (e >= 0n) {
+        n *= 10n ** e;
       } else {
-        denominator *= 10n ** -p;
+        d *= 10n ** -e;
       }
     }
 
-    return [numerator, denominator];
+    return [n, d];
   }
 
   /**
@@ -399,10 +385,6 @@ export class Fraction {
   public sub(other: FractionIsh): Fraction {
     other = new Fraction(other);
 
-    if (this.denominator === other.denominator) {
-      return new Fraction(this.numerator - other.numerator, this.denominator);
-    }
-
     return new Fraction(
       this.numerator * other.denominator - other.numerator * this.denominator,
       this.denominator * other.denominator,
@@ -448,7 +430,7 @@ export class Fraction {
    * @param opts.trailingZeros - Whether to keep the decimal part trailing zeros.
    * @returns The fixed-point decimal string representation of the fraction.
    */
-  public toFixed(decimalPlaces = 0, opts?: ToFixedOption): string {
+  public toFixed(decimalPlaces = 0, opts?: ToFixedOptions): string {
     if (decimalPlaces < 0)
       throw new Error(`'decimalPlaces' must be a  >= 0 integer.`);
 
@@ -467,13 +449,13 @@ export class Fraction {
   /**
    * Converts the fraction to a string representation with the specified significant digits.
    * @param significantDigits - The number of significant digits in the resulting string representation.
-   * @param opts
+   * @param opts - Options
    * @param opts.roundingMode - The rounding mode to be applied.
    * @returns The string representation of the fraction with the specified number of significant digits.
    */
   public toPrecision(
     significantDigits: number,
-    opts?: ToPrecisionOption,
+    opts?: ToPrecisionOptions,
   ): string {
     if (significantDigits < 1)
       throw new Error(`'significantDigits' must be a  >= 1 integer.`);
@@ -495,7 +477,7 @@ export class Fraction {
    * @param opts.format - The format to apply. (optional)
    * @returns The formatted string representation of the fraction.
    */
-  public toFormat(opts?: ToFormatOption): string {
+  public toFormat(opts?: ToFormatOptions): string {
     const format = opts?.format ?? {};
 
     const str = this.toFixed(opts?.decimalPlaces, {

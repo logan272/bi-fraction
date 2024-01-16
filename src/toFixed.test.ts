@@ -1,4 +1,4 @@
-import type { ToFixedOption } from './fraction';
+import type { ToFixedOptions } from './fraction';
 import { Fraction, RoundingMode } from './fraction';
 
 describe('Fraction.toFixed', () => {
@@ -26,6 +26,15 @@ describe('Fraction.toFixed', () => {
 
     expect(new Fraction(0.6).toFixed(0)).toBe('1');
     expect(new Fraction(0.6666).toFixed(3)).toBe('0.667');
+  });
+
+  it('should handle the carry correctly', () => {
+    expect(new Fraction('999.999').toFixed(0)).toBe('1000');
+    expect(new Fraction('999.999').toFixed(1)).toBe('1000.0');
+    expect(new Fraction('999.999').toFixed(2)).toBe('1000.00');
+    expect(new Fraction('999.999').toFixed(3)).toBe('999.999');
+    expect(new Fraction('999.999').toFixed(4)).toBe('999.9990');
+    expect(new Fraction('999.999').toFixed(5)).toBe('999.99900');
   });
 
   it('should handle recurring fraction correctly', () => {
@@ -97,7 +106,7 @@ describe('Fraction.toFixed', () => {
 
   describe('RoundingMode.', () => {
     // (0) ROUND_UP
-    // Rounds away from zero
+    // Rounds away zero
     describe('RoundingMode.ROUND_UP', () => {
       it('should pass', () => {
         const rm = { roundingMode: RoundingMode.ROUND_UP };
@@ -157,7 +166,7 @@ describe('Fraction.toFixed', () => {
     });
 
     // (4) ROUND_HALF_UP
-    // Rounds towards nearest neighbour. If equidistant, rounds away from zero
+    // Rounds towards nearest neighbour. If equidistant, rounds away zero
     describe('RoundingMode.ROUND_HALF_UP', () => {
       it('should pass', () => {
         const rm = { roundingMode: RoundingMode.ROUND_HALF_UP };
@@ -275,7 +284,7 @@ describe('Fraction.toFixed', () => {
     });
 
     it('should remove trailing zeros', () => {
-      const opts: ToFixedOption = { trailingZeros: false };
+      const opts: ToFixedOptions = { trailingZeros: false };
       expect(new Fraction('1.4').toFixed(0, opts)).toBe('1');
       expect(new Fraction('1.4').toFixed(1, opts)).toBe('1.4');
       expect(new Fraction('1.4').toFixed(2, opts)).toBe('1.4');
