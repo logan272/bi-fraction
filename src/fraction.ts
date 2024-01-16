@@ -2,6 +2,7 @@
 
 import { addSeparators } from './addSeparators';
 import { gcd } from './gcd';
+import { toExponential } from './toExponential';
 import { toFixed } from './toFixed';
 import { toPrecision } from './toPrecision';
 import type { NumberIsh } from './types';
@@ -81,6 +82,10 @@ const CONFIG = {
 
 export type ToFormatOptions = Config;
 export type ToFixedOptions = Pick<Config, 'roundingMode' | 'trailingZeros'>;
+export type ToExponentialOptions = Pick<
+  Config,
+  'roundingMode' | 'trailingZeros'
+>;
 export type ToPrecisionOptions = Pick<Config, 'roundingMode'>;
 
 /**
@@ -570,6 +575,26 @@ export class Fraction {
       denominator: this.denominator,
       significantDigits,
       roundingMode,
+    });
+  }
+
+  /**
+   * Converts a Fraction to a string of exponential representation.
+   * @param decimalPlaces - The number of decimal places in the resulting string.
+   * @param opts.roundingMode - The rounding mode to be applied.
+   * @param opts.trailingZeros - Whether to keep the decimal part trailing zeros.
+   * @returns The string of exponential representation of the fraction.
+   */
+  toExponential(decimalPlaces = 0, opts?: ToExponentialOptions): string {
+    const roundingMode = opts?.roundingMode ?? CONFIG.roundingMode;
+    const trailingZeros = opts?.trailingZeros ?? CONFIG.trailingZeros;
+
+    return toExponential({
+      numerator: this.numerator,
+      denominator: this.denominator,
+      decimalPlaces,
+      roundingMode,
+      trailingZeros,
     });
   }
 
