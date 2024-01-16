@@ -2,7 +2,7 @@
   "name": "bi-fraction",
   "description": "A fraction number abstraction for working with numbers in Javascript.",
   "author": "Logan Luo <github.com/logan272>",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "license": "MIT",
   "keywords": [
     "Number",
