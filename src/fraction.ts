@@ -105,7 +105,6 @@ export class Fraction {
 
   /**
    * Creates a Fraction instance by parsing a numeric string.
-   *
    * @param value - The value to parse.
    * @returns [bigint, bigint] representing the successfully parsed Fraction numerator and denominator.
    * @throws If value is not a valid NumberIsh.
@@ -151,9 +150,19 @@ export class Fraction {
 
   /**
    * Tries to parse the given value as a Fraction
-   *
    * @param value - The value to parse.
    * @returns The parsed Fraction value, or undefined if `value` is not a valid NumberIsh.
+   *
+   * ```ts
+   * const a = new Fraction('1.23');
+   * const b = Fraction.tryParse('1.23');
+   * a.eq(b); // true
+   *
+   * const c = Fraction.tryParse('abc');
+   * c === undefined // true
+   *
+   * new Fraction('abc'); // throws
+   * ```
    */
   public static tryParse(value: FractionIsh): Fraction | undefined {
     try {
@@ -170,6 +179,26 @@ export class Fraction {
    * @throws
    *  1. If the numerator or denominator is not a valid NumberIsh.
    *  2. If denominator is zero.
+   *
+   * ```ts
+   * const a = new Fraction(1.23);
+   * const b = new Fraction('1.23');
+   * const c = new Fraction(123, 100);
+   * const d = new Fraction(123n, 100n);
+   * const e = new Fraction(123n, 100n);
+   * const f = new Fraction(1230n, 1000n);
+   * const g = new Fraction(a);
+   *
+   * a.eq(b); // true
+   * a.eq(c); // true
+   * a.eq(d); // true
+   * a.eq(e); // true
+   * a.eq(f); // true
+   * a.eq(g); // true
+   *
+   * new Fraction('abc'); // throws
+   * new Fraction('invalid NumberIsh'); // throws
+   * ```
    */
   constructor(numerator: FractionIsh, denominator?: FractionIsh) {
     if (denominator === undefined || denominator === null) {
@@ -201,6 +230,11 @@ export class Fraction {
   /**
    * Gets the quotient of the fraction (the integer part of the division).
    * @returns The quotient of the fraction.
+   *
+   * ```ts
+   * new Fraction('123.789').quotient // 123n
+   * new Fraction('0.789').quotient // 0n
+   * ```
    */
   public get quotient(): bigint {
     return this.numerator / this.denominator;
@@ -209,6 +243,15 @@ export class Fraction {
   /**
    * Gets the remainder of the fraction as a new Fraction instance.
    * @returns A Fraction instance representing the remainder of the division.
+   *
+   * ```ts
+   * const a = new Fraction(3, 2).remainder
+   * const b = new Fraction(1, 2);
+   * a.eq(b) // true
+   *
+   * const c = new Fraction('123.789').remainder;
+   * const d = new Fraction(123789 % 1000, 1000);
+   * ```
    */
   public get remainder(): Fraction {
     return new Fraction(this.numerator % this.denominator, this.denominator);
@@ -217,6 +260,15 @@ export class Fraction {
   /**
    * Inverts the fraction by swapping the numerator and denominator.
    * @returns The inverted fraction.
+   *
+   * ```ts
+   * const a = new Fraction(1, 2);
+   * const b = new Fraction(2, 1);
+   * a.invert(b); // true;
+   *
+   * const c = new Fraction(0);
+   * c.invert().eq(0)
+   * ```
    */
   public invert(): Fraction {
     if (this.isZero()) return this;
@@ -227,6 +279,14 @@ export class Fraction {
   /**
    * Negates the sign of the Fraction.
    * @returns The Fraction with the sign inverted.
+   *
+   * ```ts
+   * new Fraction('123').negate().eq('-123'); // true
+   *
+   * const a = new Fraction('123.456');
+   * const b = new Fraction('-123.456');
+   * a.negate().eq(b); // true
+   * ```
    */
   public negate(): Fraction {
     return this.mul(-1);
@@ -235,6 +295,10 @@ export class Fraction {
   /**
    * Returns the absolute value of the fraction.
    * @returns A new Fraction instance representing the absolute value of the fraction.
+   *
+   * ```ts
+   * new Fraction('-123').abs().eq('123');
+   * ```
    */
   public abs(): Fraction {
     if (this.isZero()) return this;
@@ -254,6 +318,11 @@ export class Fraction {
    * Expands the fraction by multiplying it by 10 raised to the specified decimal places.
    * @param decimals - The number of decimal places to expand.
    * @returns A new Fraction instance representing the expanded fraction.
+   *
+   * ```ts
+   * new Fraction(1).expandDecimals(18).eq(10n ** 18n); // true
+   * new Fraction(1).expandDecimals(6).eq(10n ** 6n); // true
+   * ```
    */
   public expandDecimals(decimals: number): Fraction {
     return this.mul(10n ** BigInt(decimals));
@@ -263,6 +332,11 @@ export class Fraction {
    * Normalizes the fraction by dividing it by 10 raised to the specified decimal places.
    * @param decimals - The number of decimal places to normalize.
   @return A new Fraction instance representing the normalized fraction.
+
+   * ```ts
+   * new Fraction('1e20').normalizeDecimals(18).eq(100); // true
+   * new Fraction('1.23e20').expandDecimals(6).eq('1.23e14'); // true
+   * ```
    */
   public normalizeDecimals(decimals: number): Fraction {
     return this.div(10n ** BigInt(decimals));
@@ -271,6 +345,11 @@ export class Fraction {
   /**
    * Checks if the fraction is zero.
    * @returns True if the fraction is zero, false otherwise.
+   *
+   * ```ts
+   * new Fraction(0).isZero(); // true
+   * new Fraction(100).isZero(); // false
+   * ```
    */
   public isZero(): boolean {
     return this.numerator === 0n;
@@ -429,6 +508,18 @@ export class Fraction {
    * @param opts.roundingMode - The rounding mode to apply.
    * @param opts.trailingZeros - Whether to keep the decimal part trailing zeros.
    * @returns The fixed-point decimal string representation of the fraction.
+   *
+   * ```ts
+   * new Fraction('123.567').toFixed(); // '124'
+   * new Fraction('123.567', { roundingMode: RoundingMode.ROUND_HALF_DOWN }).toFixed(); // '123'
+   * new Fraction('123.567').toFixed(1); // '123.6'
+   * new Fraction('123.567').toFixed(2); // '123.57'
+   * new Fraction('123.567', { roundingMode: RoundingMode.ROUND_DOWN } ).toFixed(2); // '123.56'
+   * new Fraction('123.567').toFixed(3); // '123.567'
+   * new Fraction('123.567').toFixed(4); // '123.5670'
+   * new Fraction('123.567').toFixed(5); // '123.56700'
+   * new Fraction('123.567').toFixed(5, { trailingZeros: false }); // '123.567'
+   * ```
    */
   public toFixed(decimalPlaces = 0, opts?: ToFixedOptions): string {
     if (decimalPlaces < 0)
@@ -449,9 +540,21 @@ export class Fraction {
   /**
    * Converts the fraction to a string representation with the specified significant digits.
    * @param significantDigits - The number of significant digits in the resulting string representation.
-   * @param opts - Options
    * @param opts.roundingMode - The rounding mode to be applied.
    * @returns The string representation of the fraction with the specified number of significant digits.
+   *
+   * ```ts
+   * new Fraction('1234.567').toPrecision(1); // '1000'
+   * new Fraction('1234.567').toPrecision(2); // '1200'
+   * new Fraction('1234.567').toPrecision(3); // '1230'
+   * new Fraction('1234.567').toPrecision(4); // '1235'
+   * new Fraction('1234.567').toPrecision(4, { roundingMode: RoundingMode.ROUND_DOWN }); // '1234'
+   * new Fraction('1234.567').toPrecision(5); // '1234.6'
+   * new Fraction('1234.567').toPrecision(6); // '1234.57'
+   * new Fraction('1234.567').toPrecision(7); // '1234.567'
+   * new Fraction('1234.567').toPrecision(8); // '1234.5670'
+   * new Fraction('1234.567').toPrecision(9); // '1234.56700'
+   * ```
    */
   public toPrecision(
     significantDigits: number,
@@ -476,6 +579,13 @@ export class Fraction {
    * @param opts.roundingMode - The rounding mode to use. (optional)
    * @param opts.format - The format to apply. (optional)
    * @returns The formatted string representation of the fraction.
+   *
+   * ```ts
+   * new Fraction('1234.567').toFormat(); // '123,5'
+   * new Fraction('1234.567').toFormat({ decimalPlaces: 1, format: { groupSeparator: '-' } }); // '123-4.6'
+   * new Fraction('1234.567', {}).toFormat({ decimalPlaces: 1 }); // '123,4.6'
+   * new Fraction('1234.567', {}).toFormat({ decimalPlaces: 1, roundingMode: RoundingMode.ROUND_DOWN }); // '123,4.5'
+   * ```
    */
   public toFormat(opts?: ToFormatOptions): string {
     const format = opts?.format ?? {};

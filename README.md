@@ -1,6 +1,6 @@
 [![npm version](https://badge.fury.io/js/bi-fraction.svg)](https://badge.fury.io/js/bi-fraction)
 
-## Introduce
+## Introduction
 
 [bi-fraction](https://github.com/logan272/bi-fraction) provides a fraction number abstraction for working with numbers in Javascript.
 
@@ -15,6 +15,20 @@ When doing math operations that produce irrational numbers or converting a Fract
 ### Rounding Considerations
 
 bi-fraction support the same 9 rounding modes as in [bignumber.js](https://github.com/MikeMcl/bignumber.js) and [decimal.js](https://github.com/MikeMcl/decimal.js). bi-fraction is built on top of native JS bigint and it excels at representing numbers without requiring rounding in rational math operations (e.g., `add`, `sub`, `mul`, `div`). Since rational numbers can be represented precisely with fraction numbers, rounding is only necessary when performing operations that produce irrational numbers (e.g., `sqrt`, `sin`, `cos`) or converting fractions to other representations.
+
+## Error Handling
+
+### Invalid Inputs
+
+The Fraction class ensure reliable and predictable behavior throughout its methods. Lots methods of the Fraction class accept an `other: FractionIsh` parameter as input. The FractionIsh type is defined as `type FractionIsh = Fraction | NumberIsh`.
+
+A NumberIsh represents a value that can be converted to a number. It can be either a number, bigint, or string that can be successfully converted using the `Number(str)` function. However, if `Number(str)` returns NaN, indicating a failed conversion, the input `str` is considered an invalid NumberIsh.
+
+In such cases, instead of returning NaN, all methods of the Fraction class will throw an error to indicate that the input is not a valid NumberIsh.
+
+### Division by Zero
+
+Built on top of BigInt, Fraction follows the same behavior of BigInt division by zero. In contrast to plain JavaScript numbers, which return Infinity or -Infinity when divided by zero, BigInt (and therefore Fraction) throws an error when divided by zero.
 
 ## API Doc
 
