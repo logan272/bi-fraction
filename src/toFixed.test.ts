@@ -2,9 +2,12 @@ import type { ToFixedOptions } from './fraction';
 import { Fraction, RoundingMode } from './fraction';
 
 describe('Fraction.toFixed', () => {
-  it('should throw if `decimalPlaces < 0`', () => {
-    const pi = new Fraction('3.14159');
-    expect(() => pi.toFixed(-1)).toThrow();
+  it('should throw if `decimalPlaces` is not an >= 0 integer', () => {
+    const f = new Fraction(1);
+    expect(() => f.toFixed(-1)).toThrow();
+    expect(() => f.toFixed(-123)).toThrow();
+    expect(() => f.toFixed(0.1)).toThrow();
+    expect(() => f.toFixed(1.2)).toThrow();
   });
 
   it('basic', () => {

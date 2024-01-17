@@ -471,6 +471,106 @@ describe('Fraction', () => {
     });
   });
 
+  describe('expandDecimals', () => {
+    it('should pass', () => {
+      expect(new Fraction(1).expandDecimals(0).eq(1)).toBe(true);
+      expect(new Fraction(1).expandDecimals(1).eq(10)).toBe(true);
+      expect(new Fraction(1).expandDecimals(2).eq(100)).toBe(true);
+      expect(new Fraction(1).expandDecimals(3).eq(1000)).toBe(true);
+      expect(new Fraction(1).expandDecimals(4).eq(10000)).toBe(true);
+
+      expect(new Fraction('1.23').expandDecimals(0).eq(1.23)).toBe(true);
+      expect(new Fraction('1.23').expandDecimals(1).eq(12.3)).toBe(true);
+      expect(
+        new Fraction('1.23').expandDecimals(18).eq(123n * 10n ** 16n),
+      ).toBe(true);
+      expect(new Fraction('123').expandDecimals(18).eq(123n * 10n ** 18n)).toBe(
+        true,
+      );
+    });
+
+    it('should throw if the input parameter is not a positive integer', () => {
+      expect(() => new Fraction(1).normalizeDecimals(0.1)).toThrow();
+      expect(() => new Fraction(1).normalizeDecimals(1.2)).toThrow();
+
+      expect(() => new Fraction(1).normalizeDecimals(-1)).toThrow();
+      expect(() => new Fraction(1).normalizeDecimals(-100)).toThrow();
+      expect(() => new Fraction(1).normalizeDecimals(-1.2)).toThrow();
+    });
+  });
+
+  describe('normalizeDecimals', () => {
+    it('should pass', () => {
+      expect(new Fraction(1000).normalizeDecimals(0).eq(1000)).toBe(true);
+      expect(new Fraction(1000).normalizeDecimals(1).eq(100)).toBe(true);
+      expect(new Fraction(1000).normalizeDecimals(2).eq(10)).toBe(true);
+      expect(new Fraction(1000).normalizeDecimals(3).eq(1)).toBe(true);
+      expect(new Fraction(1000).normalizeDecimals(4).eq(0.1)).toBe(true);
+
+      expect(new Fraction(1.23).normalizeDecimals(0).eq(1.23)).toBe(true);
+      expect(new Fraction(1.23).normalizeDecimals(3).eq(0.00123)).toBe(true);
+
+      expect(new Fraction('123e18').normalizeDecimals(18).eq(123)).toBe(true);
+    });
+
+    it('should throw if the input parameter is not a positive integer', () => {
+      expect(() => new Fraction(1).normalizeDecimals(0.1)).toThrow();
+      expect(() => new Fraction(1).normalizeDecimals(1.2)).toThrow();
+
+      expect(() => new Fraction(1).normalizeDecimals(-1)).toThrow();
+      expect(() => new Fraction(1).normalizeDecimals(-100)).toThrow();
+      expect(() => new Fraction(1).normalizeDecimals(-1.2)).toThrow();
+    });
+  });
+
+  describe('shl', () => {
+    it('should pass', () => {
+      expect(new Fraction(1).shl(0).eq(1)).toBe(true);
+      expect(new Fraction(1).shl(1).eq(10)).toBe(true);
+      expect(new Fraction(1).shl(2).eq(100)).toBe(true);
+      expect(new Fraction(1).shl(3).eq(1000)).toBe(true);
+      expect(new Fraction(1).shl(4).eq(10000)).toBe(true);
+
+      expect(new Fraction('1.23').shl(0).eq(1.23)).toBe(true);
+      expect(new Fraction('1.23').shl(1).eq(12.3)).toBe(true);
+      expect(new Fraction('1.23').shl(18).eq(123n * 10n ** 16n)).toBe(true);
+      expect(new Fraction('123').shl(18).eq(123n * 10n ** 18n)).toBe(true);
+    });
+
+    it('should throw if the input parameter is not a positive integer', () => {
+      expect(() => new Fraction(1).normalizeDecimals(0.1)).toThrow();
+      expect(() => new Fraction(1).normalizeDecimals(1.2)).toThrow();
+
+      expect(() => new Fraction(1).normalizeDecimals(-1)).toThrow();
+      expect(() => new Fraction(1).normalizeDecimals(-100)).toThrow();
+      expect(() => new Fraction(1).normalizeDecimals(-1.2)).toThrow();
+    });
+  });
+
+  describe('shr', () => {
+    it('should pass', () => {
+      expect(new Fraction(1000).shr(0).eq(1000)).toBe(true);
+      expect(new Fraction(1000).shr(1).eq(100)).toBe(true);
+      expect(new Fraction(1000).shr(2).eq(10)).toBe(true);
+      expect(new Fraction(1000).shr(3).eq(1)).toBe(true);
+      expect(new Fraction(1000).shr(4).eq(0.1)).toBe(true);
+
+      expect(new Fraction(1.23).shr(0).eq(1.23)).toBe(true);
+      expect(new Fraction(1.23).shr(3).eq(0.00123)).toBe(true);
+
+      expect(new Fraction('123e18').shr(18).eq(123)).toBe(true);
+    });
+
+    it('should throw if the input parameter is not a positive integer', () => {
+      expect(() => new Fraction(1).normalizeDecimals(0.1)).toThrow();
+      expect(() => new Fraction(1).normalizeDecimals(1.2)).toThrow();
+
+      expect(() => new Fraction(1).normalizeDecimals(-1)).toThrow();
+      expect(() => new Fraction(1).normalizeDecimals(-100)).toThrow();
+      expect(() => new Fraction(1).normalizeDecimals(-1.2)).toThrow();
+    });
+  });
+
   describe('isZero', () => {
     it('should return true for a zero fraction', () => {
       const fraction1 = new Fraction(0n);

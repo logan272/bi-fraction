@@ -1,6 +1,14 @@
 import { Fraction } from './fraction';
 
 describe('Fraction.toExponential', () => {
+  it('should throw if `decimalPlaces` is not an >= 0 integer', () => {
+    const f = new Fraction(1);
+    expect(() => f.toExponential(-1)).toThrow();
+    expect(() => f.toExponential(-123)).toThrow();
+    expect(() => f.toExponential(0.1)).toThrow();
+    expect(() => f.toExponential(1.2)).toThrow();
+  });
+
   it('basic', () => {
     expect(new Fraction(0).toExponential(1)).toBe('0.0e+0');
     expect(new Fraction(0).toExponential(3)).toBe('0.000e+0');

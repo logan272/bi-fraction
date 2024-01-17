@@ -1,10 +1,13 @@
 import { Fraction, RoundingMode } from './fraction';
 
 describe('toPrecision', () => {
-  it('should throw if significantDigits <= 0', () => {
-    const f1 = new Fraction(123);
-    expect(() => f1.toPrecision(0)).toThrow();
-    expect(() => f1.toPrecision(-100)).toThrow();
+  it('should throw if `significantDigits` is not an >= 1 integer', () => {
+    const f = new Fraction(1);
+    expect(() => f.toPrecision(0)).toThrow();
+    expect(() => f.toPrecision(-1)).toThrow();
+    expect(() => f.toPrecision(-123)).toThrow();
+    expect(() => f.toPrecision(0.1)).toThrow();
+    expect(() => f.toPrecision(1.2)).toThrow();
   });
 
   it('should handle zeros correct', () => {
