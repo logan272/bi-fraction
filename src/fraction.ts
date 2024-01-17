@@ -118,6 +118,20 @@ export class Fraction {
    */
   public readonly denominator: bigint;
 
+  public static get config() {
+    return {
+      decimalPlaces: 0,
+      maxDecimalPlaces: 20,
+    };
+  }
+
+  public getConfig(decimalPlaces = Fraction.config.decimalPlaces) {
+    return {
+      decimalPlaces,
+      maxDecimalPlaces: Fraction.config.maxDecimalPlaces,
+    };
+  }
+
   /**
    * Creates a Fraction instance by parsing a numeric string.
    * @param value - The value to parse.
