@@ -1,6 +1,14 @@
 import { Fraction } from './fraction';
 
 describe('Fraction.toFormat', () => {
+  it('should throw if `decimalPlaces` is not an >= 0 integer', () => {
+    const f = new Fraction(1);
+    expect(() => f.toFormat({ decimalPlaces: -1 })).toThrow();
+    expect(() => f.toFormat({ decimalPlaces: -123 })).toThrow();
+    expect(() => f.toFormat({ decimalPlaces: 0.1 })).toThrow();
+    expect(() => f.toFormat({ decimalPlaces: 1.2 })).toThrow();
+  });
+
   describe('basic', () => {
     it('should convert the fraction to a formatted string representation', () => {
       const f1 = new Fraction('123456789.12345');

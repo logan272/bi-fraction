@@ -329,31 +329,84 @@ export class Fraction {
   }
 
   /**
+   * @deprecated Use `Fraction.shl(n: number)` instead.
+   *
    * Expands the fraction by multiplying it by 10 raised to the specified decimal places.
    * @param decimals - The number of decimal places to expand.
    * @returns A new Fraction instance representing the expanded fraction.
+   * @throws If n is not a positive integer.
    *
    * ```ts
-   * new Fraction(1).expandDecimals(18).eq(10n ** 18n); // true
-   * new Fraction(1).expandDecimals(6).eq(10n ** 6n); // true
+   * new Fraction(1).expandDecimals(3).eq(1000); // true
+   * new Fraction(1).expandDecimals(4).eq(1000); // true
+   * new Fraction('123').expandDecimals(18).eq(123n * 10n ** 18n); // true
    * ```
    */
   public expandDecimals(decimals: number): Fraction {
+    if (!Number.isInteger(decimals) || decimals < 0)
+      throw new Error('`decimals` must be a > 0 integer');
+
     return this.mul(10n ** BigInt(decimals));
   }
 
   /**
+   * @deprecated Use `Fraction.shr(n: number)` instead.
+   *
    * Normalizes the fraction by dividing it by 10 raised to the specified decimal places.
    * @param decimals - The number of decimal places to normalize.
-  @return A new Fraction instance representing the normalized fraction.
-
+   * @return A new Fraction instance representing the normalized fraction.
+   * @returns A new Fraction representing the result of the left shift operation.
+   * @throws If n is not a positive integer.
+   *
    * ```ts
-   * new Fraction('1e20').normalizeDecimals(18).eq(100); // true
-   * new Fraction('1.23e20').expandDecimals(6).eq('1.23e14'); // true
+   * new Fraction(1000).normalizeDecimals(3).eq(1); // true
+   * new Fraction(1000).normalizeDecimals(4).eq(0.1); // true
+   * new Fraction('123e18').normalizeDecimals(18).eq(123); // true
    * ```
    */
   public normalizeDecimals(decimals: number): Fraction {
+    if (!Number.isInteger(decimals) || decimals < 0)
+      throw new Error('`decimals` must be a > 0 integer');
+
     return this.div(10n ** BigInt(decimals));
+  }
+
+  /**
+   * (Shift Left) Shift the fraction left by n places.
+   * @param n - The number of places to shift the Fraction by.
+   * @returns A new Fraction representing the result of the left shift operation.
+   * @throws If n is not a positive integer.
+   *
+   * ```ts
+   * new Fraction(1).shl(3).eq(1000); // true
+   * new Fraction(1).shl(4).eq(1000); // true
+   * new Fraction('123').expandDecimals(18).eq(123n * 10n ** 18n); // true
+   * ```
+   */
+  public shl(n: number): Fraction {
+    if (!Number.isInteger(n) || n < 0)
+      throw new Error('`n` must be a > 0 integer');
+
+    return this.mul(10n ** BigInt(n));
+  }
+
+  /**
+   * (Shift Right) Shift the fraction right by n places.
+   * @param n - The number of positions to shift the Fraction by.
+   * @returns A new Fraction representing the result of the right shift operation.
+   * @throws If n is not a positive integer.
+   *
+   * ```ts
+   * new Fraction(1000).shr(3).eq(1); // true
+   * new Fraction(1000).shr(4).eq(0.1); // true
+   * new Fraction('123e18').normalizeDecimals(18).eq(123); // true
+   * ```
+   */
+  public shr(n: number): Fraction {
+    if (!Number.isInteger(n) || n < 0)
+      throw new Error('`n` must be a > 0 integer');
+
+    return this.div(10n ** BigInt(n));
   }
 
   /**
@@ -535,6 +588,7 @@ export class Fraction {
    * @param opts.roundingMode - The rounding mode to apply.
    * @param opts.trailingZeros - Whether to keep the decimal part trailing zeros.
    * @returns The fixed-point decimal string representation of the fraction.
+   * @throws If `decimalPlaces` is not a positive integer.
    *
    * ```ts
    * new Fraction('123.567').toFixed(); // '124'
@@ -549,8 +603,8 @@ export class Fraction {
    * ```
    */
   public toFixed(decimalPlaces = 0, opts?: ToFixedOptions): string {
-    if (decimalPlaces < 0)
-      throw new Error(`'decimalPlaces' must be a  >= 0 integer.`);
+    if (!Number.isInteger(decimalPlaces) || decimalPlaces < 0)
+      throw new Error('`decimalPlaces` must be a >= 0 integer.');
 
     const roundingMode = opts?.roundingMode ?? CONFIG.roundingMode;
     const trailingZeros = opts?.trailingZeros ?? CONFIG.trailingZeros;
@@ -569,6 +623,7 @@ export class Fraction {
    * @param significantDigits - The number of significant digits in the resulting string representation.
    * @param opts.roundingMode - The rounding mode to be applied.
    * @returns The string representation of the fraction with the specified number of significant digits.
+   * @throws If `significantDigits` is not a >= 1 integer.
    *
    * ```ts
    * new Fraction('1234.567').toPrecision(1); // '1000'
@@ -587,7 +642,7 @@ export class Fraction {
     significantDigits: number,
     opts?: ToPrecisionOptions,
   ): string {
-    if (significantDigits < 1)
+    if (!Number.isInteger(significantDigits) || significantDigits < 1)
       throw new Error(`'significantDigits' must be a  >= 1 integer.`);
 
     const roundingMode = opts?.roundingMode ?? CONFIG.roundingMode;
@@ -606,6 +661,7 @@ export class Fraction {
    * @param opts.roundingMode - The rounding mode to be applied.
    * @param opts.trailingZeros - Whether to keep the decimal part trailing zeros.
    * @returns The string of exponential representation of the fraction.
+   * @throws If `decimalPlaces` is not a positive integer.
    *
    * ```ts
    * new Fraction(0).toExponential() // '0e+0'
@@ -619,6 +675,9 @@ export class Fraction {
    * ```
    */
   toExponential(decimalPlaces = 0, opts?: ToExponentialOptions): string {
+    if (!Number.isInteger(decimalPlaces) || decimalPlaces < 0)
+      throw new Error('`decimalPlaces` must be a >= 0 integer.');
+
     const roundingMode = opts?.roundingMode ?? CONFIG.roundingMode;
     const trailingZeros = opts?.trailingZeros ?? CONFIG.trailingZeros;
 
