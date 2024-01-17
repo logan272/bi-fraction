@@ -4,10 +4,15 @@
  * @returns The sign is ignored, it always returns the positive gcd of `a` and `b`.
  */
 export const gcd = (a: bigint, b: bigint): bigint => {
-  if (b === 0n) return a;
-  // make sure that gcd always returns a positive number
+  // Make sure that gcd always operates with and returns positive numbers
   if (a < 0n) a = -a;
   if (b < 0n) b = -b;
 
-  return gcd(b, a % b);
+  while (b !== 0n) {
+    const temp = b;
+    b = a % b;
+    a = temp;
+  }
+
+  return a;
 };
