@@ -495,6 +495,20 @@ describe('Fraction', () => {
     });
   });
 
+  describe('isInteger', () => {
+    it('should pass', () => {
+      expect(new Fraction(0).isInteger()).toBe(true);
+      expect(new Fraction('0').isInteger()).toBe(true);
+      expect(new Fraction(0.0).isInteger()).toBe(true);
+      expect(new Fraction('0.0').isInteger()).toBe(true);
+      expect(new Fraction(0n).isInteger()).toBe(true);
+      expect(new Fraction('1.00').isInteger()).toBe(true);
+      expect(new Fraction(1.0).isInteger()).toBe(true);
+      expect(new Fraction(1.2).isInteger()).toBe(false);
+      expect(new Fraction('1.234').isInteger()).toBe(false);
+    });
+  });
+
   describe('eq', () => {
     it('should handle zero edge cases correctly', () => {
       const f1 = new Fraction(0, 1);
@@ -683,6 +697,7 @@ describe('Fraction', () => {
       const result = f1.sub(f1);
       expect(result.numerator).toBe(0n);
       expect(result.denominator).toBe(1n);
+      expect(new Fraction('123.40005').sub('123.40005').isZero()).toBe(true);
     });
 
     it('should subtract two fractions correctly', () => {
@@ -691,6 +706,7 @@ describe('Fraction', () => {
       const result = f1.sub(f2);
       expect(result.numerator).toBe(1n);
       expect(result.denominator).toBe(4n);
+      expect(result.eq('0.25')).toBe(true);
     });
 
     it('should subtract an integer from a fraction correctly', () => {
