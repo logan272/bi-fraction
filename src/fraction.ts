@@ -7,95 +7,295 @@ import { toFixed } from './toFixed';
 import { toPrecision } from './toPrecision';
 import type { NumberIsh } from './types';
 
+/**
+ * The available rounding modes.
+ *
+ * The default rounding mode is `ROUND_HALF_UP`
+ */
 export enum RoundingMode {
   /**
    * Rounds away zero
+   *
+   * Examples:
+   *  1. 3.1 rounds to 4
+   *  2. -3.1 rounds to -4.
+   *  3. 3.8 rounds to 4
+   *  4. -3.8 rounds to -4.
    */
   ROUND_UP = 0,
+
   /**
    * Rounds towards zero
+   *
+   * Examples:
+   *  1. 3.1 rounds to 3
+   *  2. -3.1 rounds to -3.
+   *  3. 3.8 rounds to 3
+   *  4. -3.8 rounds to -3.
    */
   ROUND_DOWN = 1,
+
   /**
    * Rounds towards Infinity
+   *
+   * Examples:
+   *  1. 3.1 rounds to 4
+   *  2. -3.1 rounds to -3.
+   *  3. 3.8 rounds to 4
+   *  4. -3.8 rounds to -3.
    */
   ROUND_CEIL = 2,
+
   /**
-   * Rounds towards Infinity
    * Rounds towards -Infinity
+   *
+   * Examples:
+   *  1. 3.1 rounds to 3
+   *  2. -3.1 rounds to -4.
+   *  3. 3.8 rounds to 3
+   *  4. -3.8 rounds to -4.
    */
   ROUND_FLOOR = 3,
+
   /**
    * Rounds towards nearest neighbour.
    * If equidistant, rounds away zero
+   *
+   * Examples:
+   *  1. 3.1 rounds to 3
+   *  2. -3.1 rounds to -3.
+   *  3. 3.5 rounds to 4.
+   *  4. -3.5 rounds to -4.
+   *  5. 3.8 rounds to 4
+   *  6. -3.8 rounds to -4.
    */
   ROUND_HALF_UP = 4,
+
   /**
    * Rounds towards nearest neighbour.
    * If equidistant, rounds towards zero
+   *
+   * Examples:
+   *  1. 3.1 rounds to 3
+   *  2. -3.1 rounds to -3.
+   *  3. 3.5 rounds to 3.
+   *  4. -3.5 rounds to -3.
+   *  5. 3.8 rounds to 4
+   *  6. -3.8 rounds to -4.
    */
   ROUND_HALF_DOWN = 5,
+
   /**
    * Rounds towards nearest neighbour.
    * If equidistant, rounds towards even neighbour
+   *
+   * Examples:
+   *  1. 3.1 rounds to 3
+   *  2. -3.1 rounds to -3.
+   *  3. 3.5 rounds to 4.
+   *  4. -3.5 rounds to -4.
+   *  5. 2.5 rounds to 2.
+   *  6. -2.5 rounds to -2.
+   *  7. 3.8 rounds to 4
+   *  8. -3.8 rounds to -4.
    */
   ROUND_HALF_EVEN = 6,
+
   /**
    * Rounds towards nearest neighbour.
    * If equidistant, rounds towards Infinity
+   *
+   * Examples:
+   *  1. 3.1 rounds to 3
+   *  2. -3.1 rounds to -3.
+   *  3. 3.5 rounds to 4.
+   *  4. -3.5 rounds to -3.
+   *  5. 3.8 rounds to 4
+   *  6. -3.8 rounds to -4.
    */
   ROUND_HALF_CEIL = 7,
+
   /**
    * Rounds towards nearest neighbour.
    * If equidistant, rounds towards -Infinity
+   *
+   * Examples:
+   *  1. 3.1 rounds to 3
+   *  2. -3.1 rounds to -3.
+   *  3. 3.5 rounds to 3.
+   *  4. -3.5 rounds to -4.
+   *  5. 3.8 rounds to 4
+   *  6. -3.8 rounds to -4.
    */
   ROUND_HALF_FLOOR = 8,
 }
 
-// The default config object
-const CONFIG = {
-  decimalPlaces: 0,
-  trailingZeros: true,
-  roundingMode: RoundingMode.ROUND_HALF_UP,
-  format: {
-    groupSize: 3,
-    groupSeparator: ',',
-    decimalSeparator: '.',
-  },
-} as const;
+/**
+ * Configuration options for the {@link Fraction } class.
+ */
+export type Config = {
+  /**
+   * The rounding mode to use when rounding the Fraction.
+   * It only apply to methods that may incur rounding(irrational methods),
+   * or converting to a or number/string representation.
+   */
 
-export type ToFormatOptions = {
-  decimalPlaces?: number;
-  roundingMode?: RoundingMode;
-  trailingZeros?: boolean;
-  format?: {
+  roundingMode: RoundingMode;
+  /**
+   * The number of decimal places to round to.
+   * It only apply to methods that may incur rounding(irrational methods),
+   * or converting to a or number/string representation.
+   */
+  decimalPlaces: number;
+
+  /**
+   * The maximum number of decimal places preserved in the Fraction, it only apply to methods that incur rounding(irrational method).
+   */
+  maxDecimalPlaces: number;
+
+  /**
+   * The number of significant digits to preserve when calling the {@link Fraction.toPrecision | Fraction..toPrecision} method.
+   */
+  significantDigits: number;
+
+  /**
+   * Determines whether trailing zeros are preserved when converting the Fraction to a string representation.
+   */
+  trailingZeros: boolean;
+
+  /**
+   * Optional configuration for the {@link Fraction.toFixed | Fraction.toFixed} method.
+   */
+  toFixed?: {
     /**
-     * grouping size of the integer part
-     **/
-    groupSize?: number;
-    /**
-     * grouping separator of the integer part
+     * The number of decimal places to round to.
      */
-    groupSeparator?: string;
+    decimalPlaces?: number;
+
     /**
-     * decimal separator
+     * The {@link RoundingMode | rounding mode} to be applied.
      */
-    decimalSeparator?: string;
+    roundingMode?: RoundingMode;
+
+    /**
+     * Determines whether trailing zeros are preserved.
+     */
+    trailingZeros?: boolean;
+  };
+
+  /**
+   * Optional configuration for the {@link Fraction.toPrecision | Fraction.toPrecision} method.
+   */
+  toPrecision?: {
+    /**
+     * The number of significant digits to preserve when using the toPrecision() method.
+     */
+    significantDigits?: number;
+
+    /**
+     * The rounding mode.
+     */
+    roundingMode?: RoundingMode;
+  };
+
+  /**
+   * Optional configuration for the toExponential() method.
+   */
+  toExponential?: {
+    /**
+     * The number of decimal places to round to when using the toExponential() method.
+     */
+    decimalPlaces?: number;
+
+    /**
+     * The {@link RoundingMode | rounding mode} to be applied.
+     */
+    roundingMode?: RoundingMode;
+
+    /**
+     * Determines whether trailing zeros are preserved when using the toExponential() method.
+     */
+    trailingZeros?: boolean;
+  };
+
+  /**
+   * Optional configuration for the toFormat() method.
+   */
+  toFormat?: {
+    /**
+     * The number of decimal places to round to when using the toFormat() method.
+     */
+    decimalPlaces?: number;
+
+    /**
+     * The {@link RoundingMode | rounding mode} to be applied.
+     */
+    roundingMode?: RoundingMode;
+
+    /**
+     * Determines whether trailing zeros are preserved.
+     */
+    trailingZeros?: boolean;
+
+    /**
+     * Formatting options for the {@link Fraction.toFormat | Fraction.toFormat} method.
+     */
+    format?: {
+      /**
+       * The grouping size of the integer part, default to `3`.
+       */
+      groupSize?: number;
+
+      /**
+       * The grouping separator of the integer part, default to `,`.
+       */
+      groupSeparator?: string;
+
+      /**
+       * The decimal separator, default to `.`.
+       */
+      decimalSeparator?: string;
+    };
   };
 };
 
-export type ToFixedOptions = {
-  roundingMode?: RoundingMode;
-  trailingZeros?: boolean;
-};
+/**
+ * Default configuration options for the Fraction class.
+ *
+ * @see {@link Config}
+ */
+export const DEFAULT_CONFIG = {
+  roundingMode: RoundingMode.ROUND_HALF_UP,
+  decimalPlaces: 0,
+  maxDecimalPlaces: 20,
+  significantDigits: 1,
+  trailingZeros: true,
+  toFormat: {
+    format: {
+      groupSize: 3,
+      groupSeparator: ',',
+      decimalSeparator: '.',
+    },
+  },
+} as const;
 
-export type ToExponentialOptions = {
-  roundingMode?: RoundingMode;
-  trailingZeros?: boolean;
-};
-
-export type ToPrecisionOptions = {
-  roundingMode?: RoundingMode;
+/**
+ * Merges a partial configuration object with the default configuration.
+ * @param c - The partial configuration object to merge.
+ * @returns A configuration object with default values merged with the provided partial configuration.
+ */
+export const mergeWithDefaultConfig = (c: Partial<Config>): Config => {
+  return {
+    ...DEFAULT_CONFIG,
+    ...c,
+    toFormat: {
+      ...c?.toFormat,
+      format: {
+        ...DEFAULT_CONFIG.toFormat.format,
+        ...c.toFormat?.format,
+      },
+    },
+  };
 };
 
 /**
@@ -118,18 +318,12 @@ export class Fraction {
    */
   public readonly denominator: bigint;
 
-  public static get config() {
-    return {
-      decimalPlaces: 0,
-      maxDecimalPlaces: 20,
-    };
+  public static get config(): Config {
+    return DEFAULT_CONFIG;
   }
 
-  public getConfig(decimalPlaces = Fraction.config.decimalPlaces) {
-    return {
-      decimalPlaces,
-      maxDecimalPlaces: Fraction.config.maxDecimalPlaces,
-    };
+  protected get config(): Config {
+    return Fraction.config;
   }
 
   /**
@@ -343,7 +537,7 @@ export class Fraction {
   }
 
   /**
-   * @deprecated Use `Fraction.shl(n: number)` instead.
+   * @deprecated Use {@link Fraction.shl | Fraction.shl} instead.
    *
    * Expands the fraction by multiplying it by 10 raised to the specified decimal places.
    * @param decimals - The number of decimal places to expand.
@@ -364,7 +558,7 @@ export class Fraction {
   }
 
   /**
-   * @deprecated Use `Fraction.shr(n: number)` instead.
+   * @deprecated Use {@link Fraction.shl | Fraction.shr} instead.
    *
    * Normalizes the fraction by dividing it by 10 raised to the specified decimal places.
    * @param decimals - The number of decimal places to normalize.
@@ -616,12 +810,24 @@ export class Fraction {
    * new Fraction('123.567').toFixed(5, { trailingZeros: false }); // '123.567'
    * ```
    */
-  public toFixed(decimalPlaces = 0, opts?: ToFixedOptions): string {
+  public toFixed(decimalPlaces?: number, opts?: Config['toFormat']): string {
+    decimalPlaces =
+      decimalPlaces ??
+      opts?.decimalPlaces ??
+      this.config?.toFixed?.decimalPlaces ??
+      this.config.decimalPlaces;
+
     if (!Number.isInteger(decimalPlaces) || decimalPlaces < 0)
       throw new Error('`decimalPlaces` must be a >= 0 integer.');
 
-    const roundingMode = opts?.roundingMode ?? CONFIG.roundingMode;
-    const trailingZeros = opts?.trailingZeros ?? CONFIG.trailingZeros;
+    const roundingMode =
+      opts?.roundingMode ??
+      this.config.toFixed?.roundingMode ??
+      this.config.roundingMode;
+    const trailingZeros =
+      opts?.trailingZeros ??
+      this.config.toFixed?.trailingZeros ??
+      this.config.trailingZeros;
 
     return toFixed({
       numerator: this.numerator,
@@ -653,13 +859,22 @@ export class Fraction {
    * ```
    */
   public toPrecision(
-    significantDigits: number,
-    opts?: ToPrecisionOptions,
+    significantDigits?: number,
+    opts?: Config['toPrecision'],
   ): string {
+    significantDigits =
+      significantDigits ??
+      opts?.significantDigits ??
+      this.config.toPrecision?.significantDigits ??
+      this.config.significantDigits;
+
     if (!Number.isInteger(significantDigits) || significantDigits < 1)
       throw new Error(`'significantDigits' must be a  >= 1 integer.`);
 
-    const roundingMode = opts?.roundingMode ?? CONFIG.roundingMode;
+    const roundingMode =
+      opts?.roundingMode ??
+      this.config.toPrecision?.roundingMode ??
+      this.config.roundingMode;
 
     return toPrecision({
       numerator: this.numerator,
@@ -688,12 +903,28 @@ export class Fraction {
    * new Fraction(10n ** 100n).toExponential(2) // '1.00e+100'
    * ```
    */
-  toExponential(decimalPlaces = 0, opts?: ToExponentialOptions): string {
+  toExponential(
+    decimalPlaces?: number,
+    opts?: Config['toExponential'],
+  ): string {
+    decimalPlaces =
+      decimalPlaces ??
+      opts?.decimalPlaces ??
+      this.config.toExponential?.decimalPlaces ??
+      this.config.decimalPlaces;
+
     if (!Number.isInteger(decimalPlaces) || decimalPlaces < 0)
       throw new Error('`decimalPlaces` must be a >= 0 integer.');
 
-    const roundingMode = opts?.roundingMode ?? CONFIG.roundingMode;
-    const trailingZeros = opts?.trailingZeros ?? CONFIG.trailingZeros;
+    const roundingMode =
+      opts?.roundingMode ??
+      this.config.toExponential?.roundingMode ??
+      this.config.roundingMode;
+
+    const trailingZeros =
+      opts?.trailingZeros ??
+      this.config.toExponential?.trailingZeros ??
+      this.config.trailingZeros;
 
     return toExponential({
       numerator: this.numerator,
@@ -718,20 +949,47 @@ export class Fraction {
    * new Fraction('1234.567', {}).toFormat({ decimalPlaces: 1, roundingMode: RoundingMode.ROUND_DOWN }); // '123,4.5'
    * ```
    */
-  public toFormat(opts?: ToFormatOptions): string {
-    const format = opts?.format ?? {};
+  public toFormat(opts?: Config['toFormat']): string {
+    const decimalPlaces =
+      opts?.decimalPlaces ??
+      this.config.toFormat?.decimalPlaces ??
+      this.config.decimalPlaces;
 
-    const str = this.toFixed(opts?.decimalPlaces, {
-      trailingZeros: opts?.trailingZeros,
-      roundingMode: opts?.roundingMode,
+    const roundingMode =
+      opts?.roundingMode ??
+      this.config.toFormat?.roundingMode ??
+      this.config.roundingMode;
+
+    const trailingZeros =
+      opts?.trailingZeros ??
+      this.config.toFormat?.trailingZeros ??
+      this.config.trailingZeros;
+
+    const groupSize =
+      opts?.format?.groupSize ??
+      this.config.toFormat?.format?.groupSize ??
+      DEFAULT_CONFIG.toFormat.format.groupSize;
+
+    const groupSeparator =
+      opts?.format?.groupSeparator ??
+      this.config.toFormat?.format?.groupSeparator ??
+      DEFAULT_CONFIG.toFormat.format.groupSeparator;
+
+    const decimalSeparator =
+      opts?.format?.decimalSeparator ??
+      this.config.toFormat?.format?.decimalSeparator ??
+      DEFAULT_CONFIG.toFormat.format.decimalSeparator;
+
+    const str = this.toFixed(decimalPlaces, {
+      trailingZeros,
+      roundingMode,
     });
 
-    return addSeparators(
-      str,
-      format.groupSize ?? CONFIG.format.groupSize,
-      format.groupSeparator ?? CONFIG.format.groupSeparator,
-      format.decimalSeparator ?? CONFIG.format.decimalSeparator,
-    );
+    return addSeparators(str, {
+      groupSize,
+      groupSeparator,
+      decimalSeparator,
+    });
   }
 
   /**

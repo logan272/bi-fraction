@@ -9,9 +9,15 @@
  */
 export const addSeparators = (
   str: string,
-  groupSize: number,
-  groupSeparator: string,
-  decimalSeparator: string,
+  {
+    groupSize,
+    groupSeparator,
+    decimalSeparator,
+  }: {
+    groupSize: number;
+    groupSeparator: string;
+    decimalSeparator: string;
+  },
 ): string => {
   const [integerPart, decimalPart] = str.split('.');
 
