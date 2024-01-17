@@ -247,8 +247,8 @@ export class Fraction {
    * @returns The quotient of the fraction.
    *
    * ```ts
-   * new Fraction('123.789').quotient // 123n
-   * new Fraction('0.789').quotient // 0n
+   * new Fraction('123.789').quotient; // 123n
+   * new Fraction('0.789').quotient; // 0n
    * ```
    */
   public get quotient(): bigint {
@@ -260,12 +260,13 @@ export class Fraction {
    * @returns A Fraction instance representing the remainder of the division.
    *
    * ```ts
-   * const a = new Fraction(3, 2).remainder
+   * const a = new Fraction(3, 2).remainder;
    * const b = new Fraction(1, 2);
-   * a.eq(b) // true
+   * a.eq(b); // true
    *
    * const c = new Fraction('123.789').remainder;
    * const d = new Fraction(123789 % 1000, 1000);
+   * c.eq(d); // true
    * ```
    */
   public get remainder(): Fraction {
@@ -277,12 +278,10 @@ export class Fraction {
    * @returns The inverted fraction.
    *
    * ```ts
-   * const a = new Fraction(1, 2);
-   * const b = new Fraction(2, 1);
-   * a.invert(b); // true;
-   *
-   * const c = new Fraction(0);
-   * c.invert().eq(0)
+   * new Fraction('0.5').invert().eq(2); // true
+   * new Fraction('0.25').invert().eq(4); // true
+   * new Fraction(1, 3).invert().eq(3); // true
+   * new Fraction(0).invert().eq(0); // true
    * ```
    */
   public invert(): Fraction {
@@ -368,6 +367,19 @@ export class Fraction {
    */
   public isZero(): boolean {
     return this.numerator === 0n;
+  }
+
+  /**
+   * Checks if the fraction is an integer.
+   * @returns True if the fraction is an integer, false otherwise.
+   *
+   * ```ts
+   * new Fraction(1).isInteger(); // true
+   * new Fraction(1.1).isInteger(); // false
+   * ```
+   */
+  public isInteger(): boolean {
+    return this.remainder.isZero();
   }
 
   /**
