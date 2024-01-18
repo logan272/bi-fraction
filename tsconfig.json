@@ -22,5 +22,11 @@
     "rootDir": "src",
     "outDir": "./dist/esm"
   },
-  "exclude": ["**/*.spec.ts", "**/*.test.ts", "**/*.spec.tsx", "**/*.test.tsx"]
+  "exclude": [
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/*.spec.tsx",
+    "**/*.test.tsx",
+    "benchmark/**/*"
+  ]
 }

@@ -81,3 +81,5 @@ docs/api/
 
 # turbo
 .turbo
+
+benchmark/results
