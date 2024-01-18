@@ -28,7 +28,7 @@ In such cases, instead of returning `NaN`, all methods of the Fraction class wil
 
 ### Division by Zero
 
-Built on top of BigInt, Fraction follows the same behavior of BigInt division by zero. In contrast to plain JavaScript numbers, which return `Infinity` or `-Infinity` when divided by zero, BigInt (and therefore Fraction) throws an error when divided by zero.
+Built on top of BigInt, Fraction follows the same behavior of BigInt. In contrast to plain JavaScript numbers, which return `Infinity` or `-Infinity` when divided by zero, BigInt and therefore Fraction throws an error.
 
 ## API Doc
 

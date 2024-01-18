@@ -518,7 +518,7 @@ export class Fraction {
    * ```
    */
   public negate(): Fraction {
-    return this.mul(-1);
+    return this.mul(-1n);
   }
 
   /**
@@ -530,16 +530,12 @@ export class Fraction {
    * ```
    */
   public abs(): Fraction {
-    if (this.isZero()) return this;
+    if (this.gte(0n)) return this;
 
-    if (this.numerator * this.denominator < 0n) {
-      if (this.numerator < 0n) {
-        return new Fraction(-this.numerator, this.denominator);
-      } else {
-        return new Fraction(this.numerator, -this.denominator);
-      }
+    if (this.numerator < 0n) {
+      return new Fraction(-this.numerator, this.denominator);
     } else {
-      return this;
+      return new Fraction(this.numerator, -this.denominator);
     }
   }
 
