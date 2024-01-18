@@ -289,7 +289,7 @@ export const mergeWithDefaultConfig = (c: Partial<Config>): Config => {
     ...DEFAULT_CONFIG,
     ...c,
     toFormat: {
-      ...c?.toFormat,
+      ...c.toFormat,
       format: {
         ...DEFAULT_CONFIG.toFormat.format,
         ...c.toFormat?.format,
@@ -342,21 +342,16 @@ export class Fraction {
 
     if (Number.isNaN(v))
       throw new Error(`Cannot convert ${value} to a Fraction`);
-    if (
-      Number.isInteger(v) &&
-      v <= Number.MAX_SAFE_INTEGER &&
-      v >= Number.MAX_SAFE_INTEGER
-    )
-      return [BigInt(v), 1n];
 
-    const s = typeof value === 'string' ? value.trim() : value.toString();
-    const sign = v > 0 ? 1n : -1n;
+    const s = typeof value === 'string' ? value.trim() : `${value}`;
     const [base, exp] = s.split('e');
     const [integer, decimal = ''] = base.split('.');
+
+    if (!exp && !decimal) return [BigInt(integer), 1n];
+
     let d = 10n ** BigInt(decimal.length);
     let n = BigInt(integer);
-    n = n >= 0n ? n : -n;
-    n = sign * (n * d + BigInt(decimal));
+    n = v > 0 ? n * d + BigInt(decimal) : n * d - BigInt(decimal);
 
     if (exp) {
       const e = BigInt(exp);
@@ -424,25 +419,20 @@ export class Fraction {
    * ```
    */
   constructor(numerator: FractionIsh, denominator?: FractionIsh) {
-    if (denominator === undefined || denominator === null) {
-      if (numerator instanceof Fraction) {
-        this.numerator = numerator.numerator;
-        this.denominator = numerator.denominator;
-        return;
-      }
-    }
+    const x = Fraction.parse(numerator);
+    const y = Fraction.parse(denominator ?? 1n);
 
-    const [n1, d1] = Fraction.parse(numerator);
-    const [n2, d2] = Fraction.parse(denominator ?? 1n);
-
-    const n = n1 * d2;
-    const d = d1 * n2;
+    const n = x[0] * y[1];
+    const d = x[1] * y[0];
 
     if (d === 0n) throw new Error('Division by zero');
 
     if (n === 0n) {
       this.numerator = 0n;
       this.denominator = 1n;
+    } else if (d === 1n) {
+      this.numerator = n;
+      this.denominator = d;
     } else {
       const divisor = gcd(n, d);
       this.numerator = n / divisor;
@@ -732,10 +722,6 @@ export class Fraction {
    */
   public add(other: FractionIsh): Fraction {
     other = new Fraction(other);
-
-    if (this.denominator === other.denominator) {
-      return new Fraction(this.numerator + other.numerator, this.denominator);
-    }
 
     return new Fraction(
       this.numerator * other.denominator + other.numerator * this.denominator,

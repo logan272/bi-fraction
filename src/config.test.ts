@@ -2,9 +2,9 @@ import type { Config } from './fraction';
 import { Fraction, mergeWithDefaultConfig, RoundingMode } from './fraction';
 
 /**
- * Clone Fraction by extends it Fraction.
+ * Clone Fraction by extends Fraction.
  *
- * This is the recommended way to `clone` the Fraction class with only config updated.
+ * This is the recommended way to customize the Fraction default configurations.
  */
 class MyFraction extends Fraction {
   public static override get config(): Config {

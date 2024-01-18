@@ -34,9 +34,9 @@ export const toFixed = ({
   let i = 0;
 
   while (r > 0n && i < decimalPlaces) {
-    const v = r * 10n;
-    decimalPartStr += v / d;
-    r = v % d;
+    const x = r * 10n;
+    decimalPartStr += x / d;
+    r = x % d;
     i += 1;
   }
 

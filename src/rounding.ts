@@ -38,9 +38,9 @@ export const rounding = ({
   } else if (roundingMode === RoundingMode.ROUND_FLOOR) {
     x = isPositive ? decimalPart : decimalPart + 1n;
   } else if (roundingMode === RoundingMode.ROUND_HALF_UP) {
-    x = nextDigit < 5 ? decimalPart : decimalPart + 1n;
+    x = nextDigit < 5n ? decimalPart : decimalPart + 1n;
   } else if (roundingMode === RoundingMode.ROUND_HALF_DOWN) {
-    x = nextDigit <= 5 ? decimalPart : decimalPart + 1n;
+    x = nextDigit <= 5n ? decimalPart : decimalPart + 1n;
   } else if (roundingMode === RoundingMode.ROUND_HALF_EVEN) {
     const isEvent =
       decimalPlaces === 0 ? integerPart % 2n === 0n : decimalPart % 2n === 0n;
