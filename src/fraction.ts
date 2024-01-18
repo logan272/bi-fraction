@@ -284,7 +284,7 @@ export const DEFAULT_CONFIG = {
  * @param c - The partial configuration object to merge.
  * @returns A configuration object with default values merged with the provided partial configuration.
  */
-export const mergeWithDefaultConfig = (c: Partial<Config>): Config => {
+const mergeWithDefaultConfig = (c: Partial<Config>): Config => {
   return {
     ...DEFAULT_CONFIG,
     ...c,
@@ -318,12 +318,29 @@ export class Fraction {
    */
   public readonly denominator: bigint;
 
+  private static _config: Config = DEFAULT_CONFIG;
+
+  /**
+   * Returns the current configuration.
+   */
   public static get config(): Config {
-    return DEFAULT_CONFIG;
+    return Fraction._config;
   }
 
-  protected get config(): Config {
-    return Fraction.config;
+  /**
+   * Sets the configuration by merging with the provided partial configuration.
+   * @param c - The partial configuration to merge.
+   * @returns The updated configuration.
+   */
+  public static setConfig(c: Partial<Config>) {
+    Fraction._config = mergeWithDefaultConfig(c);
+  }
+
+  /**
+   * private instance getter.
+   */
+  private get config(): Config {
+    return Fraction._config;
   }
 
   /**
