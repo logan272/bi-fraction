@@ -14,7 +14,7 @@ When doing math operations that produce irrational numbers or converting a Fract
 
 ### Rounding Considerations
 
-bi-fraction support 9 rounding modes as in [bignumber.js](https://github.com/MikeMcl/bignumber.js) and [decimal.js](https://github.com/MikeMcl/decimal.js). Since rational numbers can be represented precisely with fraction numbers, rational math operations (e.g., `add`, `sub`, `mul`, `div`) never incur the rounding overhead. Rounding is only necessary when performing operations that produce irrational numbers (e.g., `sqrt`, `sin`, `cos`) or converting fractions to other representations.
+bi-fraction support [9 rounding modes](https://logan272.github.io/bi-fraction/api/enums/RoundingMode.html) as in [bignumber.js](https://github.com/MikeMcl/bignumber.js) and [decimal.js](https://github.com/MikeMcl/decimal.js). Since rational numbers can be represented precisely with fraction numbers, rational math operations (e.g., `add`, `sub`, `mul`, `div`) never incur the rounding overhead. Rounding is only necessary when performing operations that produce irrational numbers (e.g., `sqrt`, `sin`, `cos`) or converting fractions to other representations.
 
 ## Error Handling
 
@@ -28,7 +28,7 @@ In such cases, instead of returning `NaN`, all methods of the Fraction class wil
 
 ### Division by Zero
 
-Built on top of BigInt, Fraction follows the same behavior of BigInt. In contrast to plain JavaScript numbers, which return `Infinity` or `-Infinity` when divided by zero, BigInt and therefore Fraction throws an error.
+Built on top of BigInt, Fraction follows the same behavior of BigInt. In contrast to plain JavaScript numbers, which return `Infinity` or `-Infinity` when divided by zero, BigInt and therefore Fraction throw an error.
 
 ## API Doc
 
@@ -72,7 +72,6 @@ bigNumber
   .mul(bigInteger)
   .eq(new Fraction(100000000000000000000000000000000010000000001n)); // true
 
-// Fraction.toFixed(decimalPlaces?: number = 0, opts: ToFixedOption)
 const x = new Fraction(1234.5);
 x.toFixed(0); // '1235'
 x.toFixed(0, { roundingMode: RoundingMode.ROUND_DOWN }); // '1234'
@@ -81,13 +80,11 @@ x.toFixed(3, { trailingZero: false }); // '1234.5'
 
 const z = x.mul(x); // 1523990.25
 
-// Fraction.toPrecision(significantDigits: number, opts)
 z.toPrecision(4); // '1524000'
 z.toPrecision(4, { roundingMode: RoundingMode.ROUND_DOWN }); // '1523000'
 z.toPrecision(9); // '1523990.25'
 z.toPrecision(10); // '1523990.250'
 
-// Fraction.toFormat(opts: ToFormatOption)
 z.toFormat({  decimalPlaces: 0 }); // '1,523,990';
 z.toFormat({ format: { groupSize: 4 } }); // '152,3990'
 z.toFormat({ decimalPlaces: 3, { groupSeparator: '_' }}); // '1_523_990.250'

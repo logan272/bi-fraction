@@ -530,12 +530,14 @@ export class Fraction {
    * ```
    */
   public abs(): Fraction {
-    if (this.gte(0n)) return this;
-
-    if (this.numerator < 0n) {
-      return new Fraction(-this.numerator, this.denominator);
+    if (this.numerator * this.denominator < 0n) {
+      if (this.numerator < 0n) {
+        return new Fraction(-this.numerator, this.denominator);
+      } else {
+        return new Fraction(this.numerator, -this.denominator);
+      }
     } else {
-      return new Fraction(this.numerator, -this.denominator);
+      return this;
     }
   }
 

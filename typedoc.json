@@ -1,0 +1,8 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["./src/index.ts"],
+  "out": "docs/api",
+  "plugin": ["@mxssfd/typedoc-theme"],
+  "theme": "my-theme",
+  "sort": ["kind", "source-order", "instance-first", "alphabetical"]
+}
